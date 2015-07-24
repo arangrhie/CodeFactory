@@ -1,0 +1,79 @@
+/**
+ * 
+ */
+package javax.arang.txt;
+
+import java.util.Vector;
+
+import javax.arang.IO.I2Owrapper;
+import javax.arang.IO.basic.FileMaker;
+import javax.arang.IO.basic.FileReader;
+
+/**
+ * @author Arang Rhie
+ *
+ */
+public class Contains extends I2Owrapper {
+
+	/* (non-Javadoc)
+	 * @see javax.arang.IO.I2Owrapper#hooker(javax.arang.IO.FileReader, javax.arang.IO.FileReader, javax.arang.IO.FileMaker)
+	 */
+	@Override
+	public void hooker(FileReader fr1, FileReader fr2, FileMaker fm) {
+		Vector<String> lookups = new Vector<String>();
+		String token;
+		while (fr2.hasMoreLines()) {
+			token = fr2.readLine();
+			lookups.add(token);
+		}
+		
+		String line;
+		String[] tokens;
+		int count = 0;
+		
+		fm.writeLine(fr1.readLine());
+		while (fr1.hasMoreLines()) {
+			line = fr1.readLine();
+			tokens = line.split("\t");
+			if (lookups.contains(tokens[colIdx])) {
+				fm.writeLine(line);
+				count++;
+			}
+		}
+		
+		System.out.println(count + " / " + lookups.size() + " found.");
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.arang.IO.I2Owrapper#printHelp()
+	 */
+	@Override
+	public void printHelp() {
+		System.out.println("Usage: java -jar txtContains.jar <in1.txt> <in2.txt> <col_num_of_in1.txt> [out.txt]");
+		System.out.println("\tLooks up for <in2.txt> if <col_num_of_in1.txt> in <in1.txt> contains it");
+		System.out.println("\t and returns the line into [out.txt]");
+		System.out.println("\t<in1.txt>: any tab-delemited file");
+		System.out.println("\t<in2.txt>: values to look up. 1-value 1-line.");
+		System.out.println("\t<col_num_of_in1.txt>: INTEGER, 0-based column number to look up. DEFAULT=1");
+		System.out.println("\t[out.txt]: OPTIONAL. DEFAULT=<in1.txt>_in_<in2.txt>");
+		System.out.println("\t2013-07-26");
+	}
+	
+	private static int colIdx = 0;
+
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		if (args.length == 3) {
+			colIdx = Integer.parseInt(args[2]);
+			new Contains().go(args[0], args[1], args[0] + "_in_" + args[1]);
+		} else if (args.length == 4) {
+			colIdx = Integer.parseInt(args[2]);
+			new Contains().go(args[0], args[1], args[3]);
+		} else {
+			new Contains().printHelp();
+		}
+	}
+
+}
