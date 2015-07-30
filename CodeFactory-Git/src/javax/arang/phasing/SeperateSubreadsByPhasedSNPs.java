@@ -16,8 +16,8 @@ public class SeperateSubreadsByPhasedSNPs extends BamBaiIFileOwrapper {
 	
 	@Override
 	public void printHelp() {
-		System.out.println("Usage: java -jar phasingSeperateSubreadsByPhasedSNPs.jar <in.bam> <in.phased.snp> <out_prefix>");
-		System.out.println("\t<in.bam>: hg19_subreads.bam");
+		System.out.println("Usage: java -jar phasingSeperateSubreadsByPhasedSNPs.jar <in.sam> <in.phased.snp> <out_prefix>");
+		System.out.println("\t<in.bam>: hg19_subreads.sam");
 		System.out.println("\t<in.phased.snp>: phased SNPs. CHR POS BaseOfHaplotypeA BaseOfHaplotypeB");
 		System.out.println("\t<out_prefix>: <out_prefix>.HaplotypeA.list, <out_prefix>.HaplotypeB.list, <out_prefix>.unphased.list\n"
 				+ "\t\twill be generated containing the Read ID of fasta.");
