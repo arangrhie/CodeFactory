@@ -33,10 +33,10 @@ public class FilterHomoOfPhasedReadsToSnpBlock extends IOwrapper {
 			AtoB = Integer.parseInt(tokens[SWITCHED_FROM_PREV_A_TO_B]);
 			BtoA = Integer.parseInt(tokens[SWITCHED_FROM_PREV_B_TO_A]);
 			
-			if (AtoA > 15 && BtoB <= 15 && BtoA > 15 && AtoB <= 15) {
+			if (AtoA > 15 && BtoB <= 15 && AtoB <= 15) {
 				// A Homozygotes
 				writeHomozygotes(fm, tokens, IS_A);
-			} else if (AtoA <= 15 && BtoB > 15 && AtoB <= 15 && BtoA > 15) {
+			} else if (AtoA <= 15 && BtoB > 15 && BtoA <= 15) {
 				// B Homozygotes
 				writeHomozygotes(fm, tokens, IS_B);
 			} else {
