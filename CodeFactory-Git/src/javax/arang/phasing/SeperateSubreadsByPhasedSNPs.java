@@ -1,16 +1,13 @@
 package javax.arang.phasing;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
-import javax.arang.IO.bam.BamBaiIFileOwrapper;
-import javax.arang.IO.bambasic.BamReader;
 import javax.arang.IO.basic.FileMaker;
 import javax.arang.IO.basic.FileReader;
-import javax.arang.IO.basic.RegExp;
-import javax.arang.bam.util.Bai;
-import javax.arang.bam.util.BamRecord;
 
-public class SeperateSubreadsByPhasedSNPs extends BamBaiIFileOwrapper {
+public class SeperateSubreadsByPhasedSNPs extends Phase {
 
 	private static String outPrefix;
 	
@@ -34,52 +31,76 @@ public class SeperateSubreadsByPhasedSNPs extends BamBaiIFileOwrapper {
 		}
 	}
 
-	private static short CHR = 0;
-	private static short POS = 1;
-	private static short HAPLOTYPE_A = 2;
-	private static short HAPLOTYPE_B = 3;
-	private static short PS = 4;
-	private static short DISTANCE = 5;
+	private FileMaker fmHaplotypeA;
+	private FileMaker fmHaplotypeB;
+	private FileMaker fmUnknown;
+	private FileMaker fmAmbiguous;
+	private FileMaker fmReadHaplotypeA;
+	private FileMaker fmReadHaplotypeB;
+	private FileMaker fmReadUnknown;
+	private FileMaker fmReadAmbiguous;
+	
 	
 	@Override
-	public void hooker(BamReader bamFr, Bai bai, FileReader fileFr, FileMaker fm) {
+	public void hooker(FileReader frSam, FileReader frSNPs, FileMaker fm) {
 		
-		// Store chr pos haplotypeA haplotypeB info
-		HashMap<String, HashMap<Integer, String>> chrPosToHaplotypeAmap = new HashMap<String, HashMap<Integer, String>>();
-		HashMap<String, HashMap<Integer, String>> chrPosToHaplotypeBmap = new HashMap<String, HashMap<Integer, String>>();
-		HashMap<String, HashMap<Integer, String>> chrPosToPSmap = new HashMap<String, HashMap<Integer, String>>();
+		HashMap<Integer, PhasedSNP> snpPosToPhasedSNPmap = Phase.readSNPsStoreSNPs(frSNPs);
+		Integer[] snpPosList = snpPosToPhasedSNPmap.keySet().toArray(new Integer[0]);
+		Arrays.sort(snpPosList);
 		
-		String line;
-		String[] tokens;
-		String chr;
-		int pos;
-		String haplotypeA;
-		String haplotypeB;
-		String ps;
-		while (fileFr.hasMoreLines()) {
-			line = fileFr.readLine();
-			tokens = line.split(RegExp.TAB);
-			chr = tokens[CHR];
-			pos = Integer.parseInt(tokens[POS]);
-			haplotypeA = tokens[HAPLOTYPE_A];
-			haplotypeB = tokens[HAPLOTYPE_B];
-			ps = tokens[PS];
-			if (!chrPosToHaplotypeAmap.containsKey(chr)) {
-				
-			}
-		}
-		
-		BamRecord record;
-		while (bamFr.hasMoreAlignmentRecord()) {
-			record = bamFr.getNextAlignmentRecord();
-			
-			record.getPos();
-			record.getSeq();
-			record.getCigar();
+		fmHaplotypeA = new FileMaker(outPrefix + ".haplotypeA.sam");
+		fmHaplotypeB = new FileMaker(outPrefix + ".haplotypeB.sam");
+		fmUnknown = new FileMaker(outPrefix + ".haplotypeUnknown.sam");
+		fmAmbiguous = new FileMaker(outPrefix + ".haplotypeAmbiguous.sam");
+		fmReadHaplotypeA = new FileMaker(outPrefix + ".haplotypeA.read");
+		fmReadHaplotypeB = new FileMaker(outPrefix + ".haplotypeB.read");
+		fmReadUnknown = new FileMaker(outPrefix + ".unknown.read");
+		fmReadAmbiguous = new FileMaker(outPrefix + ".ambiguous.read");
+		readSamDetermineSNP(frSam, snpPosList, snpPosToPhasedSNPmap);
+		fmHaplotypeA.closeMaker();
+		fmHaplotypeB.closeMaker();
+		fmUnknown.closeMaker();
+		fmAmbiguous.closeMaker();
+		fmReadHaplotypeA.closeMaker();
+		fmReadHaplotypeB.closeMaker();
+		fmReadUnknown.closeMaker();
+		fmReadAmbiguous.closeMaker();
+	}
+	
+	
+
+	@Override
+	public void determineRead(String line, String readID, int countA, int countB,
+			int seqStart, int seqEnd, ArrayList<PhasedSNP> snpsInRead,
+			String haplotype, ArrayList<Integer> snpsInReadPosList) {
+		if (snpsInRead.size() == 0) {
+			// no snps available: unknown
+			fmUnknown.writeLine(line);
+			fmReadUnknown.writeLine(readID);
+		} else if (countB == 0) {
+			// Haplotype A
+			fmHaplotypeA.write(line);
+			fmReadHaplotypeA.writeLine(readID);
+		} else if (countA == 0) {
+			// Haplotype B
+			fmHaplotypeB.writeLine(line);
+			fmReadHaplotypeB.writeLine(readID);
+		} else {
+			// Ambiguous read
+			fmAmbiguous.writeLine(line);
+			fmReadAmbiguous.writeLine(readID);
 		}
 	}
 
 	@Override
-	public void hooker(BamReader bamFr, Bai bai, FileMaker fm) {}
+	public void readSamHeader(String line) {
+		// TODO Auto-generated method stub
+		fmHaplotypeA.writeLine(line);
+		fmHaplotypeB.writeLine(line);
+		fmUnknown.writeLine(line);
+		fmAmbiguous.writeLine(line);
+	}
+
+	
 
 }
