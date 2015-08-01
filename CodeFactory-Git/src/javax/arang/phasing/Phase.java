@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
-import javax.arang.IO.I2Owrapper;
+import javax.arang.IO.R2wrapper;
 import javax.arang.IO.basic.FileReader;
 import javax.arang.IO.basic.RegExp;
 import javax.arang.genome.sam.SAMUtil;
 import javax.arang.genome.sam.Sam;
 
-public abstract class Phase extends I2Owrapper {
+public abstract class Phase extends R2wrapper {
 	
 	public static int NUM_SNPS_WITHIN_READ = 1;
 	

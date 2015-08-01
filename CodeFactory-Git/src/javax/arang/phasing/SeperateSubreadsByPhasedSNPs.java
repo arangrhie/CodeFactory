@@ -16,7 +16,7 @@ public class SeperateSubreadsByPhasedSNPs extends Phase {
 		System.out.println("Usage: java -jar phasingSeperateSubreadsByPhasedSNPs.jar <in.sam> <in.phased.snp> <out_prefix>");
 		System.out.println("\t<in.bam>: hg19_subreads.sam");
 		System.out.println("\t<in.phased.snp>: phased SNPs. CHR POS BaseOfHaplotypeA BaseOfHaplotypeB");
-		System.out.println("\t<out_prefix>: <out_prefix>.HaplotypeA.list, <out_prefix>.HaplotypeB.list, <out_prefix>.unphased.list\n"
+		System.out.println("\t<out_prefix>: <out_prefix>.HaplotypeA.list, <out_prefix>.HaplotypeB.list, <out_prefix>\n"
 				+ "\t\twill be generated containing the Read ID of fasta.");
 		System.out.println("\t\tEach list consists of: <Read_ID> <Total num. phased SNPs in this read> <Num. haplotype A SNPs> <Num. haplotype B SNPs>");
 		System.out.println("Arang Rhie, 2015-07-16. arrhie@gmail.com");
@@ -25,7 +25,7 @@ public class SeperateSubreadsByPhasedSNPs extends Phase {
 	public static void main(String[] args) {
 		if (args.length == 3) {
 			outPrefix = args[2];
-			new SeperateSubreadsByPhasedSNPs().go(args[0], args[1], args[2] + ".unphased.list");
+			new SeperateSubreadsByPhasedSNPs().go(args[0], args[1]);
 		} else {
 			new SeperateSubreadsByPhasedSNPs().printHelp();
 		}
@@ -42,7 +42,7 @@ public class SeperateSubreadsByPhasedSNPs extends Phase {
 	
 	
 	@Override
-	public void hooker(FileReader frSam, FileReader frSNPs, FileMaker fm) {
+	public void hooker(FileReader frSam, FileReader frSNPs) {
 		
 		HashMap<Integer, PhasedSNP> snpPosToPhasedSNPmap = Phase.readSNPsStoreSNPs(frSNPs);
 		Integer[] snpPosList = snpPosToPhasedSNPmap.keySet().toArray(new Integer[0]);
@@ -79,7 +79,7 @@ public class SeperateSubreadsByPhasedSNPs extends Phase {
 			fmReadUnknown.writeLine(readID);
 		} else if (countB == 0) {
 			// Haplotype A
-			fmHaplotypeA.write(line);
+			fmHaplotypeA.writeLine(line);
 			fmReadHaplotypeA.writeLine(readID);
 		} else if (countA == 0) {
 			// Haplotype B
