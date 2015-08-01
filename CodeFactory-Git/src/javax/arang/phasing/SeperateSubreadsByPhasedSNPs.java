@@ -25,7 +25,7 @@ public class SeperateSubreadsByPhasedSNPs extends Phase {
 	public static void main(String[] args) {
 		if (args.length == 3) {
 			outPrefix = args[2];
-			new SeperateSubreadsByPhasedSNPs().go(args[0], args[1]);
+			new SeperateSubreadsByPhasedSNPs().go(args[0], args[1], args[2]);
 		} else {
 			new SeperateSubreadsByPhasedSNPs().printHelp();
 		}
@@ -42,7 +42,7 @@ public class SeperateSubreadsByPhasedSNPs extends Phase {
 	
 	
 	@Override
-	public void hooker(FileReader frSam, FileReader frSNPs) {
+	public void hooker(FileReader frSam, FileReader frSNPs, FileMaker fm) {
 		
 		HashMap<Integer, PhasedSNP> snpPosToPhasedSNPmap = Phase.readSNPsStoreSNPs(frSNPs);
 		Integer[] snpPosList = snpPosToPhasedSNPmap.keySet().toArray(new Integer[0]);
@@ -79,7 +79,7 @@ public class SeperateSubreadsByPhasedSNPs extends Phase {
 			fmReadUnknown.writeLine(readID);
 		} else if (countB == 0) {
 			// Haplotype A
-			fmHaplotypeA.writeLine(line);
+			fmHaplotypeA.write(line);
 			fmReadHaplotypeA.writeLine(readID);
 		} else if (countA == 0) {
 			// Haplotype B
