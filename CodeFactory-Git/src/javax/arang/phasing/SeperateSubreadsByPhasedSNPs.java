@@ -54,8 +54,8 @@ public class SeperateSubreadsByPhasedSNPs extends Phase {
 		fmAmbiguous = new FileMaker(outPrefix + ".haplotypeAmbiguous.sam");
 		fmReadHaplotypeA = new FileMaker(outPrefix + ".haplotypeA.read");
 		fmReadHaplotypeB = new FileMaker(outPrefix + ".haplotypeB.read");
-		fmReadUnknown = new FileMaker(outPrefix + ".unknown.read");
-		fmReadAmbiguous = new FileMaker(outPrefix + ".ambiguous.read");
+		fmReadUnknown = new FileMaker(outPrefix + ".haplotypeUnknown.read");
+		fmReadAmbiguous = new FileMaker(outPrefix + ".haplotypeAmbiguous.read");
 		readSamDetermineSNP(frSam, snpPosList, snpPosToPhasedSNPmap);
 		fmHaplotypeA.closeMaker();
 		fmHaplotypeB.closeMaker();
@@ -79,7 +79,7 @@ public class SeperateSubreadsByPhasedSNPs extends Phase {
 			fmReadUnknown.writeLine(readID);
 		} else if (countB == 0) {
 			// Haplotype A
-			fmHaplotypeA.write(line);
+			fmHaplotypeA.writeLine(line);
 			fmReadHaplotypeA.writeLine(readID);
 		} else if (countA == 0) {
 			// Haplotype B
