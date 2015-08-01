@@ -25,7 +25,7 @@ public class SeperateSubreadsByPhasedSNPs extends Phase {
 	public static void main(String[] args) {
 		if (args.length == 3) {
 			outPrefix = args[2];
-			new SeperateSubreadsByPhasedSNPs().go(args[0], args[1], args[2]);
+			new SeperateSubreadsByPhasedSNPs().go(args[0], args[1]);
 		} else {
 			new SeperateSubreadsByPhasedSNPs().printHelp();
 		}
@@ -42,7 +42,7 @@ public class SeperateSubreadsByPhasedSNPs extends Phase {
 	
 	
 	@Override
-	public void hooker(FileReader frSam, FileReader frSNPs, FileMaker fm) {
+	public void hooker(FileReader frSam, FileReader frSNPs) {
 		
 		HashMap<Integer, PhasedSNP> snpPosToPhasedSNPmap = Phase.readSNPsStoreSNPs(frSNPs);
 		Integer[] snpPosList = snpPosToPhasedSNPmap.keySet().toArray(new Integer[0]);
