@@ -117,6 +117,14 @@ public class Sam {
 	public static final int REF_END_POS = 1;
 	public static final int ALGN_RANGE_START = 2;
 	public static final int ALGN_RANGE_END = 3;
+	public static final int CIGAR_TYPE = 4;
+	
+	public static final int M = 0;
+	public static final int S = 1;
+	public static final int D = 2;
+	public static final int I = 3;
+	
+			
 	
 	/***
 	 * Get matched positions (fragments)
@@ -184,10 +192,21 @@ public class Sam {
 		return output;
 	}
 	
+	public static String getCigarType(int cigarType) {
+		switch (cigarType) {
+		case M: return "M";
+		case S: return "S";
+		case D: return "D";
+		case I: return "I";
+		}
+		return "Cigar type unknown?? " + cigarType;
+	}
 	/***
 	 * Get matched and soft-clipped positions (fragments)
 	 * @param sam
-	 * @return
+	 * @return ArrayList<int[]> of positions: int[REF_START_POS, REF_END_POS, ALGN_RANGE_START, ALGN_RANGE_END, CIGAR_TYPE(M/S/D/I)]
+	 * If CIGAR_TYPE is D: no assumptions can be made for ALIGN_RANGE_START and ALIGN_RANGE_END.
+	 * If CIGAR_TYPE is I: no assumptions can be made for REF_START_POS and REF_END_POS.
 	 */
 	public static ArrayList<int[]> getAllPosition(int position, String cigar){
 		ArrayList<int[]> output = new ArrayList<int[]>();
@@ -198,7 +217,7 @@ public class Sam {
 
 		// 1-based
 		int pos = position;
-		int refStartPos = pos;
+		int refStartPos = pos;		// 1-base
 		int refEndPos = pos - 1;
 		int offset;
 		
@@ -217,11 +236,12 @@ public class Sam {
 					refEndPos += offset;
 				}
 				
-				int[] tmp = new int[4];
+				int[] tmp = new int[5];
 				tmp[REF_START_POS] = refStartPos;
 				tmp[REF_END_POS] = refEndPos;
 				tmp[ALGN_RANGE_START] = alignRangeStart;
 				tmp[ALGN_RANGE_END] = alignRangeEnd;
+				tmp[CIGAR_TYPE] = S;
 				output.add(tmp);
 				
 				alignRangeStart += offset;
@@ -235,11 +255,12 @@ public class Sam {
 				alignRangeEnd += offset;
 				refEndPos += offset;
 				
-				int[] tmp = new int[4];
+				int[] tmp = new int[5];
 				tmp[REF_START_POS] = refStartPos;
 				tmp[REF_END_POS] = refEndPos;
 				tmp[ALGN_RANGE_START] = alignRangeStart;
 				tmp[ALGN_RANGE_END] = alignRangeEnd;
+				tmp[CIGAR_TYPE] = M;
 				output.add(tmp);
 				
 				alignRangeStart += offset;
@@ -250,8 +271,18 @@ public class Sam {
 			else if( cigarOp[OP].equals("N") || cigarOp[OP].equals("D") ){
 				try {
 					offset = Integer.parseInt(cigarOp[COUNT]);
-					refStartPos += offset;
 					refEndPos += offset;
+					
+					int[] tmp = new int[5];
+					tmp[REF_START_POS] = refStartPos;
+					tmp[REF_END_POS] = refEndPos;
+					tmp[ALGN_RANGE_START] = alignRangeStart;
+					tmp[ALGN_RANGE_END] = alignRangeEnd;
+					tmp[CIGAR_TYPE] = D;
+					output.add(tmp);
+
+					refStartPos += offset;
+					
 				} catch (RuntimeException e) {
 					System.out.println(":: DEBUG :: no deletion base detected");
 					System.out.println(":: DEBUG :: " + cigar);
@@ -262,8 +293,15 @@ public class Sam {
 			// Insertion
 			else if( cigarOp[OP].equals("I") ){
 				offset = Integer.parseInt(cigarOp[COUNT]);
-				alignRangeStart += offset;
 				alignRangeEnd += offset;
+				int[] tmp = new int[5];
+				tmp[REF_START_POS] = refStartPos;
+				tmp[REF_END_POS] = refEndPos;
+				tmp[ALGN_RANGE_START] = alignRangeStart;
+				tmp[ALGN_RANGE_END] = alignRangeEnd;
+				tmp[CIGAR_TYPE] = I;
+				output.add(tmp);
+				alignRangeStart += offset;
 			}
 			isFirstSofclip = false;
 		}
@@ -273,6 +311,7 @@ public class Sam {
 	 * Get deleted positions (fragments)
 	 * @param sam
 	 * @return
+	 * @deprecated Use getAllPosition CIGAR_TYPE field == I
 	 */
 	public static ArrayList<int[]> getInsPosition(int position, String cigar){
 		ArrayList<int[]> output = new ArrayList<int[]>();
@@ -337,6 +376,7 @@ public class Sam {
 	 * Get deleted positions (fragments)
 	 * @param sam
 	 * @return
+	 * @deprecated Use getAllPosition CIGAR_TYPE == D
 	 */
 	public static ArrayList<int[]> getDelPosition(int position, String cigar){
 		ArrayList<int[]> output = new ArrayList<int[]>();

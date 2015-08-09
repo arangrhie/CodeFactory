@@ -2,6 +2,7 @@ package javax.arang.genome.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Vector;
 
@@ -9,6 +10,35 @@ import javax.arang.IO.basic.FileReader;
 import javax.arang.IO.basic.Format;
 
 public class Util {
+	
+	public static Integer[] initArr(int size) {
+		Integer[] arr = new Integer[size];
+		for (int i = 0; i < size; i++) {
+			arr[i] = 0;
+		}
+		return arr;
+	}
+
+	/***
+	 * Get the closest, smaller START position of startList containing pos
+	 * @param startList
+	 * @param pos
+	 * @return -1 if pos is greater than the greatest START
+	 */
+	public static int getRegionStartContainingPos(ArrayList<Integer> startList, int pos) {
+		int posInStartIdx = Collections.binarySearch(startList, pos);
+		// snpStartIdx will be the closest, min SNP equals or smaller than the seqStart
+		if (posInStartIdx < 0) {
+			posInStartIdx *= -1;
+			posInStartIdx -= 2;
+		}
+		// all STARTs are smaller than pos
+		if (posInStartIdx < 0 || posInStartIdx == startList.size()) {
+			return -1;
+		}
+		return startList.get(posInStartIdx);
+	}
+	
 	
 	/***
 	 * 

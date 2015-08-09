@@ -2,6 +2,13 @@ package javax.arang.snp;
 
 
 public class SNP {
+	public SNP(int pos, String alleleA, String alleleB, String id) {
+		this.pos = pos;
+		this.ref = alleleA;
+		this.alt = alleleB;
+		this.id = id;
+	}
+
 	public static String getHeaderString() {
 		return "CHR\tSTART\tSTOP\tREF\tALT\tID";
 	}
@@ -31,5 +38,10 @@ public class SNP {
 		return Integer.parseInt(chr);
 	}
 	
+	public String chr;
+	public int pos;
+	public String ref;
+	public String alt;
+	public String id;
 
 }

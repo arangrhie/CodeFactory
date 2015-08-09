@@ -252,15 +252,18 @@ public class SAMUtil {
 	 * @return the base retrieved from record
 	 */
 	public static Character getBaseAtPos(int pos, int posAligned, String[] seqData) {
-		ArrayList<int[]> cigArr = Sam.getAllPosition(posAligned, seqData[CIGAR]);
-		int seqPos = 0;
+		ArrayList<int[]> cigArr = Sam.getPosition(posAligned, seqData[CIGAR]);
+		int seqPos = -1;
 		for (int[] posArr : cigArr) {
 			//System.out.println("[DEBUG] :: " + posArr[Sam.REF_START_POS] + "," + posArr[Sam.REF_END_POS]);
 			if (posArr[Sam.REF_START_POS] <= pos && pos <= posArr[Sam.REF_END_POS]) {
 				seqPos = posArr[Sam.ALGN_RANGE_START] + (pos - posArr[Sam.REF_START_POS]);
 			}
 		}
-		return seqData[SEQ].charAt(seqPos);
+		if (seqPos == -1) {
+			return 'D';
+		}
+		return seqData[SEQ].charAt(seqPos - 1);
 	}
 	
 	public static int getMatchedBases(String cigar) {
@@ -277,5 +280,5 @@ public class SAMUtil {
 		
 		return matchs;
 	}
-
+	
 }

@@ -19,33 +19,46 @@ public class PhasedBlock implements Comparable<PhasedBlock> {
 	}
 
 	public int getStart() {
-		// TODO Auto-generated method stub
 		return blockStart;
 	}
 
 	public int getEnd() {
-		// TODO Auto-generated method stub
 		return blockEnd;
+	}
+	
+	public int getLen() {
+		return blockEnd - blockStart;
 	}
 
 	public String getPS() {
-		// TODO Auto-generated method stub
 		return blockID;
 	}
 
 	public String getChr() {
-		// TODO Auto-generated method stub
 		return this.chr;
 	}
 
 	@Override
 	public int compareTo(PhasedBlock otherBlock) {
-		// TODO Auto-generated method stub
 		return this.blockEnd - otherBlock.getStart();
 	}
 
 	public void setBlockEnd(int end) {
 		this.blockEnd = end;
+	}
+	
+	public void setBlockStart(int start) {
+		this.blockStart = start;
+	}
+	
+	private boolean mark = false;
+	
+	public boolean isMarked() {
+		return mark;
+	}
+	
+	public void setMarked(boolean mark) {
+		this.mark = mark;
 	}
 	
 }

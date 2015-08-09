@@ -33,63 +33,83 @@ public class SeperateSubreadsByPhasedSNPs extends Phase {
 
 	private FileMaker fmHaplotypeA;
 	private FileMaker fmHaplotypeB;
-	private FileMaker fmUnknown;
+	private FileMaker fmHomogenic;
+	private FileMaker fmNoSnp;
 	private FileMaker fmAmbiguous;
 	private FileMaker fmReadHaplotypeA;
 	private FileMaker fmReadHaplotypeB;
-	private FileMaker fmReadUnknown;
+	private FileMaker fmReadHomogenic;
+	private FileMaker fmReadNoSNP;
 	private FileMaker fmReadAmbiguous;
 	
 	
 	@Override
 	public void hooker(FileReader frSam, FileReader frSNPs) {
 		
-		HashMap<Integer, PhasedSNP> snpPosToPhasedSNPmap = Phase.readSNPsStoreSNPs(frSNPs);
+		HashMap<Integer, PhasedSNP> snpPosToPhasedSNPmap = readSNPsStoreSNPs(frSNPs);
 		Integer[] snpPosList = snpPosToPhasedSNPmap.keySet().toArray(new Integer[0]);
 		Arrays.sort(snpPosList);
-		
+		System.out.println(snpPosList.length + " SNPs to be processed");
 		fmHaplotypeA = new FileMaker(outPrefix + ".haplotypeA.sam");
 		fmHaplotypeB = new FileMaker(outPrefix + ".haplotypeB.sam");
-		fmUnknown = new FileMaker(outPrefix + ".haplotypeUnknown.sam");
+		fmHomogenic = new FileMaker(outPrefix + ".haplotypeHomogenic.sam");
+		fmNoSnp = new FileMaker(outPrefix + ".haplotypeNoSNP.sam");
 		fmAmbiguous = new FileMaker(outPrefix + ".haplotypeAmbiguous.sam");
-		fmReadHaplotypeA = new FileMaker(outPrefix + ".haplotypeA.read");
-		fmReadHaplotypeB = new FileMaker(outPrefix + ".haplotypeB.read");
-		fmReadUnknown = new FileMaker(outPrefix + ".haplotypeUnknown.read");
-		fmReadAmbiguous = new FileMaker(outPrefix + ".haplotypeAmbiguous.read");
+		fmReadHaplotypeA = new FileMaker(outPrefix + ".readid.haplotypeA");
+		fmReadHaplotypeB = new FileMaker(outPrefix + ".readid.haplotypeB");
+		fmReadHomogenic = new FileMaker(outPrefix + ".readid.haplotypeHomogenic");
+		fmReadNoSNP = new FileMaker(outPrefix + ".readid.haplotypeNoSNP");
+		fmReadAmbiguous = new FileMaker(outPrefix + ".readid.haplotypeAmbiguous");
 		readSamDetermineSNP(frSam, snpPosList, snpPosToPhasedSNPmap);
 		fmHaplotypeA.closeMaker();
 		fmHaplotypeB.closeMaker();
-		fmUnknown.closeMaker();
+		fmHomogenic.closeMaker();
+		fmNoSnp.closeMaker();
 		fmAmbiguous.closeMaker();
 		fmReadHaplotypeA.closeMaker();
 		fmReadHaplotypeB.closeMaker();
-		fmReadUnknown.closeMaker();
+		fmReadHomogenic.closeMaker();
+		fmReadNoSNP.closeMaker();
 		fmReadAmbiguous.closeMaker();
 	}
 	
 	
 
 	@Override
-	public void determineRead(String line, String readID, int countA, int countB,
+	public void determineRead(String line, String readID, int countA, int countB, int countO,
 			int seqStart, int seqEnd, ArrayList<PhasedSNP> snpsInRead,
 			String haplotype, ArrayList<Integer> snpsInReadPosList) {
-		if (snpsInRead.size() == 0) {
-			// no snps available: unknown
-			fmUnknown.writeLine(line);
-			fmReadUnknown.writeLine(readID);
-		} else if (countB == 0) {
+		if (countB == 0 && countA > 0) {
 			// Haplotype A
-			fmHaplotypeA.writeLine(line);
-			fmReadHaplotypeA.writeLine(readID);
-		} else if (countA == 0) {
+			writeHaplotype(fmReadHaplotypeA, fmHaplotypeA, line, readID,
+					countA, countB, countO, seqStart, seqEnd, snpsInRead, haplotype, snpsInReadPosList);
+		} else if (countA == 0 && countB > 0) {
 			// Haplotype B
-			fmHaplotypeB.writeLine(line);
-			fmReadHaplotypeB.writeLine(readID);
+			writeHaplotype(fmReadHaplotypeB, fmHaplotypeB, line, readID,
+					countA, countB, countO, seqStart, seqEnd, snpsInRead, haplotype, snpsInReadPosList);
+		} else if (countA == 0 && countB == 0) {
+			if (haplotype.length() > 0) {
+				// HOM
+				writeHaplotype(fmReadHomogenic, fmHomogenic, line, readID,
+						countA, countB, countO, seqStart, seqEnd, snpsInRead, haplotype, snpsInReadPosList);
+			} else if (haplotype.length() == 0) {
+				// no snps available
+				writeHaplotype(fmReadNoSNP, fmNoSnp, line, readID,
+						countA, countB, countO, seqStart, seqEnd, snpsInRead, haplotype, snpsInReadPosList);
+			} 
 		} else {
 			// Ambiguous read
-			fmAmbiguous.writeLine(line);
-			fmReadAmbiguous.writeLine(readID);
+			writeHaplotype(fmReadAmbiguous, fmAmbiguous, line, readID,
+					countA, countB, countO, seqStart, seqEnd, snpsInRead, haplotype, snpsInReadPosList);
 		}
+	}
+	
+	private void writeHaplotype(FileMaker fmRead, FileMaker fmSAM, String line, String readID,
+			int countA, int countB, int countO, int seqStart, int seqEnd,
+			ArrayList<PhasedSNP> snpsInRead, String haplotype,
+			ArrayList<Integer> snpsInReadPosList) {
+		//fmSAM.writeLine(line);
+		writeOut(fmRead, readID, countA, countB, countO, seqStart, seqEnd, haplotype, snpsInReadPosList);
 	}
 
 	@Override
@@ -97,8 +117,17 @@ public class SeperateSubreadsByPhasedSNPs extends Phase {
 		// TODO Auto-generated method stub
 		fmHaplotypeA.writeLine(line);
 		fmHaplotypeB.writeLine(line);
-		fmUnknown.writeLine(line);
+		fmHomogenic.writeLine(line);
+		fmNoSnp.writeLine(line);
 		fmAmbiguous.writeLine(line);
+		
+		
+	}
+
+	@Override
+	public void writePhasedSNP(String chr, int pos, String haplotypeA,
+			String haplotypeB) {
+		
 	}
 
 	

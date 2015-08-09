@@ -13,80 +13,74 @@ import javax.arang.genome.util.Util;
 
 public class PhasedReadsToSnpBlock extends I2Owrapper {
 
-	private static final int SEQ_START = 3;
-	private static final int SEQ_END = 4;
-	private static final int HAPLOTYPES_LEN = 6;
-	private static final int HAPLOTYPES = 7;
-	private static final int SNP_POS_BEGIN = 8;
-	
-	private static final int NOT_SWITCHED_FROM_PREV_A_AND_IS_A = 0;
-	private static final int NOT_SWITCHED_FROM_PREV_B_AND_IS_B = 1;
-	private static final int SWITCHED_FROM_PREV_B_TO_A = 2;
-	private static final int SWITCHED_FROM_PREV_A_TO_B = 3;
-	
 	private static final short IS_A = 0;
 	private static final short IS_B = 1;
-	private static final short IS_A_OR_B = 2; 
+	private static final short IS_HOMO = 2; 
 	
 	@Override
 	public void hooker(FileReader frPhasedReads, FileReader frSNPs, FileMaker fm) {
 		
 		// Read snp data from frHaps
-		HashMap<Integer, PhasedSNP> snpPosToPhasedSNPmap = new HashMap<Integer, PhasedSNP>();
+		HashMap<Integer, PhasedSNP> snpPosToPhasedSNPmap = PhasedSNP.readSNPsStoreSNPs(frSNPs, false);
 		HashMap<Integer, Integer[]> snpPosToCountsMap = new HashMap<Integer, Integer[]>();	// POS, A_COUNT B_COUNT SWITCHED_FROM_PREV_SNP SAME_HAPLOTYPE_FROM_PREV_SNP
-		Integer[] snpPosList;
+		
 		String line;
 		String[] tokens;
-		int pos;
-		PhasedSNP snp;
-		String a;
-		String b;
-		String chr = "";
-		while (frSNPs.hasMoreLines()) {
-			line = frSNPs.readLine();
-			tokens = line.split(RegExp.WHITESPACE);
-			//if (tokens[Haps.HAPLOTYPE_A].equals(tokens[Haps.HAPLOTYPE_B]))	continue;	// exclude homozygotes
-			chr = tokens[PhasedSNP.CHR];
-			pos = Integer.parseInt(tokens[PhasedSNP.POS]);
-			a = tokens[PhasedSNP.HAPLOTYPE_A];
-			b = tokens[PhasedSNP.HAPLOTYPE_B];
-			snp = new PhasedSNP(chr, pos, a, b, tokens[PhasedSNP.POS]);
-			snpPosToPhasedSNPmap.put(pos, snp);
-			snpPosToCountsMap.put(pos, initArr(4));
+		for (int pos : snpPosToPhasedSNPmap.keySet()) {
+			snpPosToCountsMap.put(pos, initArr(PhasedSNP.FILTER));
 		}
 		
 		
 		// Read frPhasedReads
+		String chr;
+		int pos;
 		int seqStart;
 		int seqEnd;
 		int prevBlockEnd = -1;
+		PhasedSNP snp;
 		String ps = "";
 		Integer[] counts;
 		int idx = 0;
 		ArrayList<PhasedBlock> phasedBlocks = new ArrayList<PhasedBlock>();
 		PhasedBlock block = null;
+		int countA;
+		int countB;
+		int countO;
 		int haplotypeLen = 0;
-		int prevHaplotype = NOT_SWITCHED_FROM_PREV_A_AND_IS_A;
+		int prevHaplotype = PhasedSNP.NOT_SWITCHED_FROM_PREV_A_AND_IS_A;
 		int currentHaplotype;
 		ArrayList<PhasedSNP> homoSNPsToPhase = new ArrayList<PhasedSNP>();;
 		while (frPhasedReads.hasMoreLines()) {
 			line = frPhasedReads.readLine();
 			tokens = line.split(RegExp.TAB);
-			seqStart = Integer.parseInt(tokens[SEQ_START]);
-			seqEnd = Integer.parseInt(tokens[SEQ_END]);
-			haplotypeLen = Integer.parseInt(tokens[HAPLOTYPES_LEN]);
-			pos = Integer.parseInt(tokens[SNP_POS_BEGIN]);
-			snp = snpPosToPhasedSNPmap.get(pos);
+			seqStart = Integer.parseInt(tokens[PhasedRead.START]);
+			seqEnd = Integer.parseInt(tokens[PhasedRead.END]);
+			countA = Integer.parseInt(tokens[PhasedRead.NUM_A]);
+			countB = Integer.parseInt(tokens[PhasedRead.NUM_B]);
+			countO = Integer.parseInt(tokens[PhasedRead.NUM_O]);
+			haplotypeLen = tokens[PhasedRead.HAPLOTYPE].length();
+			pos = Integer.parseInt(tokens[PhasedRead.SNP_POS_LIST]);
+			snp = snpPosToPhasedSNPmap.get(pos);	// 1st SNP
+			chr = snp.getChr();
+			counts = snpPosToCountsMap.get(pos);
 			
-			if (haplotypeLen == 1 && snp.getHaplotypeA().equals(snp.getHaplotypeB())) {
-				if (!snp.isPSset()) {
-					snp.setPS("Homo");
+			// SNPs are homo : undeterminable
+			if (countA == 0 && countB == 0 && countO > 0) {
+				for (int posIdx = PhasedRead.SNP_POS_LIST; posIdx < PhasedRead.SNP_POS_LIST + haplotypeLen; posIdx++) {
+					pos = Integer.parseInt(tokens[posIdx]);
+					counts = snpPosToCountsMap.get(pos);
+					snp = snpPosToPhasedSNPmap.get(pos);
+					if (!snp.isPSset()) {
+						snp.setPS("Homo");
+					}
+					counts[PhasedSNP.IS_UNDETERMINABLE_HOMO]++;
 				}
-				continue;
+				continue;	// this SNP will not be used for phased block extension
 			}
 			
-			if (prevBlockEnd < seqStart) {
-				ps = tokens[SEQ_START];
+			// phased block extension
+			if (prevBlockEnd < seqStart && !snp.isPSset()) {
+				ps = tokens[PhasedRead.START];
 				block = new PhasedBlock(chr, seqStart, seqEnd, ps);
 				phasedBlocks.add(block);
 				prevBlockEnd = seqEnd;
@@ -98,36 +92,47 @@ public class PhasedReadsToSnpBlock extends I2Owrapper {
 			
 			homoSNPsToPhase.clear();
 			idx = 0;
-			counts = snpPosToCountsMap.get(pos);
+			
 			// determine the 1st snp
-			if (snp.getHaplotypeA().equals(snp.getHaplotypeB())) {
-				prevHaplotype = IS_A_OR_B;
+			if (snp.isHom()) {
+				// Homo
+				prevHaplotype = IS_HOMO;
 				if (!snp.isPSset()) {
 					snp.setPS("Homo");
 				}
 				homoSNPsToPhase.add(snp);
 			} else {
-				prevHaplotype = (tokens[HAPLOTYPES].charAt(idx) == 'A') ? IS_A : IS_B;
+				// Hetero
+				prevHaplotype = (tokens[PhasedRead.HAPLOTYPE].charAt(idx) == 'A') ? IS_A : IS_B;
 				if (prevHaplotype == IS_A) {
-					counts[NOT_SWITCHED_FROM_PREV_A_AND_IS_A]++;
+					if (haplotypeLen == 1) {
+						counts[PhasedSNP.IS_SINGLE_A]++;
+					} else {
+						counts[PhasedSNP.IS_FIRST_A]++;
+					}
 				} else {
-					counts[NOT_SWITCHED_FROM_PREV_B_AND_IS_B]++;
+					if (haplotypeLen == 1) {
+						counts[PhasedSNP.IS_SINGLE_B]++;
+					} else {
+						counts[PhasedSNP.IS_FIRST_B]++;
+					}
 				}
 				snp.setPS(ps);
+				snp.setPSset(true);
 			}
 			
+			// determine the rest of the snps
 			if (haplotypeLen > 1) {
-				for (int posIdx = SNP_POS_BEGIN + 1; posIdx < SNP_POS_BEGIN + haplotypeLen; posIdx++) {
+				for (int posIdx = PhasedRead.SNP_POS_LIST + 1; posIdx < PhasedRead.SNP_POS_LIST + haplotypeLen; posIdx++) {
 					idx++;
 					pos = Integer.parseInt(tokens[posIdx]);
 					counts = snpPosToCountsMap.get(pos);
 					snp = snpPosToPhasedSNPmap.get(pos);
 
-					// currentHaplotype IS_A_OR_B
-					if (snp.getHaplotypeA().equals(snp.getHaplotypeB())) {
-						
-						if (prevHaplotype == IS_A_OR_B) {
-							// prevHaplotype and currentHaplotype are both IS_A_OR_B
+					// currentHaplotype IS_HOMO
+					if (snp.isHom()) {
+						if (prevHaplotype == IS_HOMO) {
+							// prevHaplotype and currentHaplotype are both IS_HOMO
 							if (!snp.isPSset()) {
 								snp.setPS("Homo");
 							}
@@ -139,23 +144,22 @@ public class PhasedReadsToSnpBlock extends I2Owrapper {
 							snp.setPS(ps);
 							snp.setPSset(true);
 							if (currentHaplotype == IS_A) {
-								counts[NOT_SWITCHED_FROM_PREV_A_AND_IS_A]++;
-							} else {
-								counts[NOT_SWITCHED_FROM_PREV_B_AND_IS_B]++;
+								counts[PhasedSNP.NOT_SWITCHED_FROM_PREV_A_AND_IS_A]++;
+							} else if (currentHaplotype == IS_B) {
+								counts[PhasedSNP.NOT_SWITCHED_FROM_PREV_B_AND_IS_B]++;
 							}
 						}
 						// prevHaplotype does not change.
-					}
-					
-					
-					// currentHaplotype is not Homo. IS_A or IS_B.
-					else {
-						currentHaplotype = (tokens[HAPLOTYPES].charAt(idx) == 'A') ? IS_A : IS_B;
-						if (prevHaplotype == IS_A_OR_B) {
+					} else {
+						// currentHaplotype snp is not Homo. IS_A or IS_B.
+						currentHaplotype = (tokens[PhasedRead.HAPLOTYPE].charAt(idx) == 'A') ? IS_A : IS_B;
+						if (prevHaplotype == IS_HOMO) {
+							snp.setPS(ps);
+							snp.setPSset(true);
 							if (currentHaplotype == IS_A) {
-								counts[NOT_SWITCHED_FROM_PREV_A_AND_IS_A]++;
-							} else {	// IS_B
-								counts[NOT_SWITCHED_FROM_PREV_B_AND_IS_B]++;
+								counts[PhasedSNP.NOT_SWITCHED_FROM_PREV_A_AND_IS_A]++;
+							} else if (currentHaplotype == IS_B) {	// IS_B
+								counts[PhasedSNP.NOT_SWITCHED_FROM_PREV_B_AND_IS_B]++;
 							}
 							// set previous "homo" marked snps to currentHaplotype block.
 							for (int i = 0; i < homoSNPsToPhase.size(); i++) {
@@ -164,9 +168,9 @@ public class PhasedReadsToSnpBlock extends I2Owrapper {
 								snp.setPSset(true);
 								counts = snpPosToCountsMap.get(snp.getPos());
 								if (currentHaplotype == IS_A) {
-									counts[NOT_SWITCHED_FROM_PREV_A_AND_IS_A]++;
+									counts[PhasedSNP.NOT_SWITCHED_FROM_PREV_A_AND_IS_A]++;
 								} else if (currentHaplotype == IS_B){
-									counts[NOT_SWITCHED_FROM_PREV_B_AND_IS_B]++;
+									counts[PhasedSNP.NOT_SWITCHED_FROM_PREV_B_AND_IS_B]++;
 								}
 							}
 							homoSNPsToPhase.clear();
@@ -174,43 +178,52 @@ public class PhasedReadsToSnpBlock extends I2Owrapper {
 							// prevHaplotype IS_A or IS_B
 							if (currentHaplotype != prevHaplotype) {
 								if (currentHaplotype == IS_A) {
-									counts[SWITCHED_FROM_PREV_B_TO_A]++;
+									counts[PhasedSNP.SWITCHED_FROM_PREV_B_TO_A]++;
 								} else if (currentHaplotype == IS_B){
-									counts[SWITCHED_FROM_PREV_A_TO_B]++;
+									counts[PhasedSNP.SWITCHED_FROM_PREV_A_TO_B]++;
 								}
 							} else if (currentHaplotype == prevHaplotype) {
 								if (currentHaplotype == IS_A) {
-									counts[NOT_SWITCHED_FROM_PREV_A_AND_IS_A]++;
-								} else {
-									counts[NOT_SWITCHED_FROM_PREV_B_AND_IS_B]++;
+									counts[PhasedSNP.NOT_SWITCHED_FROM_PREV_A_AND_IS_A]++;
+								} else if (currentHaplotype == IS_B) {
+									counts[PhasedSNP.NOT_SWITCHED_FROM_PREV_B_AND_IS_B]++;
 								}
 							}
 							snp.setPS(ps);
+							snp.setPSset(true);
 						}
 						prevHaplotype = currentHaplotype;
+					}
+				}
+				if (homoSNPsToPhase.size() > 0) {
+					for (int i = 0; i < homoSNPsToPhase.size(); i++) {
+						snp = homoSNPsToPhase.get(i);
+						counts = snpPosToCountsMap.get(snp.getPos());
+						counts[PhasedSNP.IS_UNDETERMINABLE_HOMO]++;
 					}
 				}
 			}
 		}
 		
-		snpPosList = snpPosToPhasedSNPmap.keySet().toArray(new Integer[0]);
+		Integer[] snpPosList = snpPosToPhasedSNPmap.keySet().toArray(new Integer[0]);
 		Arrays.sort(snpPosList);
 		
 		String countText = "";
-		int countSum = 0;
+//		int countSum = 0;
+		fm.writeLine("#CHR\tPOS\tHapA\tHapB\tPS\tIS_FIRST_A\tIS_FIRST_B\tAA\tBB\tBA\tAB\tSingleA\tSingleB\tUndeterminableHomo");
 		for (int i = 0; i < snpPosList.length; i++) {
 			pos = snpPosList[i];
 			snp = snpPosToPhasedSNPmap.get(pos);
 			counts = snpPosToCountsMap.get(pos);
 			countText = snp.getChr() + "\t" + snp.getPos() + "\t" + snp.getHaplotypeA() + "\t" + snp.getHaplotypeB() + "\t" + snp.getPS();
-			countSum = 0;
+//			countSum = 0;
 			for (int j = 0; j < counts.length; j++) {
 				countText = countText + "\t" + counts[j];
-				countSum += counts[j];
+//				countSum += counts[j];
 			}
-			if (countSum > 0) {
+//			if (countSum > 0) {
 				fm.writeLine(countText);
-			}
+//			}
 		}
 		
 		FileMaker fmPhasedBlocks = new FileMaker(fm.getDir(), fm.getFileName() + ".blocks.bed");
@@ -252,7 +265,13 @@ public class PhasedReadsToSnpBlock extends I2Owrapper {
 	public void printHelp() {
 		System.out.println("Usage: java -jar phasingPhasedReadsToSnpBlock.jar <phased.reads> <phased.reads.snp> <out.phased.snp>");
 		System.out.println("\t<phased.reads>, <phased.reads.snp>: generated with SubreadBasedPhasedSNP.jar");
-		System.out.println("\t<out.phased.snp>: CHR POS HAPLOTYPE_A HAPLOTYPE_B PS NOT_SWITCHED_FROM_PREV_A_AND_IS_A NOT_SWITCHED_FROM_PREV_B_AND_IS_B SWITCHED_FROM_PREV_B_TO_A SWITCHED_FROM_PREV_A_TO_B");
+		System.out.println("\t<out.phased.snp>: CHR POS HAPLOTYPE_A HAPLOTYPE_B PS IS_FIRST_A IS_FIRST_B"
+																			+ " NOT_SWITCHED_FROM_PREV_A_AND_IS_A"
+																			+ " NOT_SWITCHED_FROM_PREV_B_AND_IS_B"
+																			+ " SWITCHED_FROM_PREV_B_TO_A"
+																			+ " SWITCHED_FROM_PREV_A_TO_B"
+																			+ " SINGLE_A SINGLE_B"
+																			+ " IS_UNDETERMINABLE_HOMO");
 		System.out.println("\t\tHomozygote SNPs are determined if previous or next heterozygote snp is available, and is set along with it's haplotype.");
 		System.out.println("Arang Rhie, 2015-07-24. arrhie@gmail.com");
 	}

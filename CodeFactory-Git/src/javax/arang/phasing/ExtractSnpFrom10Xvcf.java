@@ -10,7 +10,7 @@ import javax.arang.IO.basic.RegExp;
 import javax.arang.genome.util.Util;
 import javax.arang.vcf.VCF;
 
-public class ExtractPhasedSnp extends IOwrapper {
+public class ExtractSnpFrom10Xvcf extends IOwrapper {
 
 	@Override
 	public void hooker(FileReader fr, FileMaker fm) {
@@ -104,16 +104,13 @@ public class ExtractPhasedSnp extends IOwrapper {
 		String gtB = gt.substring(gt.indexOf("|") + 1);
 		
 		String out = "na";
-		if (gtA.equals(gtB)) {
-			return out;
-		}
 		
 		if (gtA.equals("0")) {
 			out = ref;
 		} else if (gtA.equals("1")) {
 			out = alt;
 		} else {
-			return out;
+			return "na";
 		}
 		
 		if (gtB.equals("0")) {
@@ -129,7 +126,7 @@ public class ExtractPhasedSnp extends IOwrapper {
 
 	@Override
 	public void printHelp() {
-		System.out.println("Usage: java -jar vcfExtractPhasedSnp.jar <phased.vcf> <out.phased.snp> <out.block.bed>");
+		System.out.println("Usage: java -jar phasingExtractSnpFrom10Xvcf.jar <phased.vcf> <out.phased.snp> <out.block.bed>");
 		System.out.println("\t<phased.vcf>: 10x genomics phased data");
 		System.out.println("\t<out.phased.snp>: Phasing marker SNPs. CHR POS HaplotypeA_allele HaplotypeB_allele");
 		System.out.println("\t<out.block.bed>: phased blocks by PS");
@@ -141,9 +138,9 @@ public class ExtractPhasedSnp extends IOwrapper {
 	public static void main(String[] args) {
 		if (args.length == 3) {
 			blockBed = args[2];
-			new ExtractPhasedSnp().go(args[0], args[1]);
+			new ExtractSnpFrom10Xvcf().go(args[0], args[1]);
 		} else {
-			new ExtractPhasedSnp().printHelp();
+			new ExtractSnpFrom10Xvcf().printHelp();
 		}
 	}
 
