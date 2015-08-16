@@ -47,12 +47,13 @@ public abstract class Phase extends R2wrapper {
 			seqData[SAMUtil.CIGAR] = tokens[Sam.CIGAR];
 			seqData[SAMUtil.SEQ] = tokens[Sam.SEQ];
 			snpsInRead = getPosInRead(seqStart, seqEnd, snpPosList, snpPosToPhasedSNPmap);
+			//System.out.println(readID + " " + seqStart + " - " + seqEnd + " " + snpsInRead.size());
+			haplotypes = new StringBuffer();
+			countA = 0;
+			countB = 0;
+			countO = 0;
+			snpsInReadPosList = new ArrayList<Integer>();
 			if (snpsInRead.size() > 0) {
-				haplotypes = new StringBuffer();
-				countA = 0;
-				countB = 0;
-				countO = 0;
-				snpsInReadPosList = new ArrayList<Integer>();
 				for (int i = 0; i < snpsInRead.size(); i++) {
 					snp = snpsInRead.get(i);
 					pos = snp.getPos();
@@ -84,6 +85,7 @@ public abstract class Phase extends R2wrapper {
 			String haplotypePattern, ArrayList<Integer> snpPosList) {
 		fm.write(readID + "\t" + countA + "\t" + countB + "\t" + countO + "\t"
 			+ seqStart + "\t" + seqEnd + "\t" + (seqEnd - seqStart + 1) + "\t" + haplotypePattern);
+		
 		for (int i = 0; i < snpPosList.size(); i++) {
 			fm.write("\t" + snpPosList.get(i));
 		}
@@ -166,10 +168,11 @@ public abstract class Phase extends R2wrapper {
 		if (snpEndIdx < 0) {
 			snpEndIdx += 2;	// to find 1 pos left to the seqEnd 
 			snpEndIdx *= -1;
-		}
-		if (snpEndIdx == snpPosList.length) {
+		} else if (snpEndIdx == snpPosList.length) {
 			snpEndIdx = snpPosList.length - 1;
 		}
+		
+		if (snpEndIdx < 0)	return snpsInRead;	// smallest SNP is greater than seqEnd
 		
 		for (int idx = snpStartIdx; idx <= snpEndIdx; idx++) {
 			snpsInRead.add(snpPosToPhasedSNPmap.get(snpPosList[idx]));

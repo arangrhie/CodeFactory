@@ -11,17 +11,17 @@ public class ExtractReadsAroundGaps extends I2Owrapper {
 
 	Vector<Integer[]> start_end = new Vector<Integer[]>();
 	private static String chr = "chr20";
-	private static int startPos = 0;
-	private static int endPos = 0;
+	private static int gapStartPos = 0;
+	private static int gapEndPos = 0;
 
 	private static final int START = 0;
 	private static final int END = 1;
 	private static int gapIdx = 0;
 	
 	private void getNextGap() {
-		startPos = start_end.get(gapIdx)[START];
-		endPos = start_end.get(gapIdx)[END];
-		System.out.println("[DEBUG] :: GAP " + chr + ":" + startPos + "-" + endPos);
+		gapStartPos = start_end.get(gapIdx)[START];
+		gapEndPos = start_end.get(gapIdx)[END];
+		System.out.println("[DEBUG] :: GAP " + chr + ":" + gapStartPos + "-" + gapEndPos);
 		gapIdx++;
 	}
 
@@ -40,9 +40,9 @@ public class ExtractReadsAroundGaps extends I2Owrapper {
 			if (line.startsWith("CHR"))	continue;
 			tokens = line.split("\t");
 			chr = tokens[Bed.CHROM];
-			startPos = Integer.parseInt(tokens[Bed.START]);
-			endPos = Integer.parseInt(tokens[Bed.END]);
-			Integer[] position = new Integer[] {startPos, endPos};
+			gapStartPos = Integer.parseInt(tokens[Bed.START]);
+			gapEndPos = Integer.parseInt(tokens[Bed.END]);
+			Integer[] position = new Integer[] {gapStartPos, gapEndPos};
 			start_end.addElement(position);
 		}
 		
@@ -63,7 +63,7 @@ public class ExtractReadsAroundGaps extends I2Owrapper {
 			 *  GAP			|--------|
 			 *  Alignment			  1|---(Sam.POS)--
 			 */
-			if (Integer.parseInt(tokens[Sam.POS]) > endPos + 1) {
+			if (Integer.parseInt(tokens[Sam.POS]) > gapEndPos + 1) {
 				// do the gap alignment here
 				if (hasNextGap()) {
 					getNextGap();
@@ -76,7 +76,7 @@ public class ExtractReadsAroundGaps extends I2Owrapper {
 			 */
 			if ((Integer.parseInt(tokens[Sam.POS])
 					+ Integer.parseInt(tokens[Sam.TLEN])
-					+ Sam.getEndSoftclip(tokens[Sam.CIGAR])) < Math.max(1, startPos - 1)) {
+					+ Sam.getEndSoftclip(tokens[Sam.CIGAR])) < Math.max(1, gapStartPos - 1)) {
 				continue;
 			}
 			
@@ -85,10 +85,12 @@ public class ExtractReadsAroundGaps extends I2Owrapper {
 			 * GAP               |---------|		or
 			 * Alignment   ------|>
 			 */
-			if ((Integer.parseInt(tokens[Sam.POS]) - Sam.getLeftSoftclippedBasesLen(tokens[Sam.CIGAR]) <= endPos + 1)
-					&& (Integer.parseInt(tokens[Sam.POS])
+			if ((Integer.parseInt(tokens[Sam.POS]) - Sam.getLeftSoftclippedBasesLen(tokens[Sam.CIGAR])
+						<= gapEndPos + 1)
+					|| (Integer.parseInt(tokens[Sam.POS])
 							+ Integer.parseInt(tokens[Sam.TLEN])
-							+ Sam.getEndSoftclip(tokens[Sam.CIGAR])) >= Math.max(1, startPos - 1)) {
+							+ Sam.getEndSoftclip(tokens[Sam.CIGAR]))
+							>= Math.max(1, gapStartPos - 1)) {
 				fm.writeLine(line);
 				numReads++;
 			}

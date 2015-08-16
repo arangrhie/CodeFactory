@@ -7,27 +7,33 @@ import java.util.HashMap;
 import javax.arang.IO.basic.FileMaker;
 import javax.arang.IO.basic.FileReader;
 
-public class SeperateSubreadsByPhasedSNPs extends Phase {
+public class SeparateSubreadsByPhasedSNPs extends Phase {
 
 	private static String outPrefix;
+	private static boolean writeSam = true;
 	
 	@Override
 	public void printHelp() {
-		System.out.println("Usage: java -jar phasingSeperateSubreadsByPhasedSNPs.jar <in.sam> <in.phased.snp> <out_prefix>");
+		System.out.println("Usage: java -jar phasingSeperateSubreadsByPhasedSNPs.jar <in.sam> <in.phased.snp> <out_prefix> [write_sam=TRUE]");
 		System.out.println("\t<in.bam>: hg19_subreads.sam");
 		System.out.println("\t<in.phased.snp>: phased SNPs. CHR POS BaseOfHaplotypeA BaseOfHaplotypeB");
 		System.out.println("\t<out_prefix>: <out_prefix>.HaplotypeA.list, <out_prefix>.HaplotypeB.list, <out_prefix>\n"
 				+ "\t\twill be generated containing the Read ID of fasta.");
 		System.out.println("\t\tEach list consists of: <Read_ID> <Total num. phased SNPs in this read> <Num. haplotype A SNPs> <Num. haplotype B SNPs>");
+		System.out.println("\t[write_sam]: TRUE or FALSE. write also the output in .sam format. DEFUALT=TRUE");
 		System.out.println("Arang Rhie, 2015-07-16. arrhie@gmail.com");
 	}
 
 	public static void main(String[] args) {
-		if (args.length == 3) {
+		if (args.length == 4) {
 			outPrefix = args[2];
-			new SeperateSubreadsByPhasedSNPs().go(args[0], args[1]);
+			writeSam = Boolean.parseBoolean(args[3]);
+			new SeparateSubreadsByPhasedSNPs().go(args[0], args[1]);
+		} else if (args.length == 3) {
+			outPrefix = args[2];
+			new SeparateSubreadsByPhasedSNPs().go(args[0], args[1]);
 		} else {
-			new SeperateSubreadsByPhasedSNPs().printHelp();
+			new SeparateSubreadsByPhasedSNPs().printHelp();
 		}
 	}
 
@@ -50,22 +56,26 @@ public class SeperateSubreadsByPhasedSNPs extends Phase {
 		Integer[] snpPosList = snpPosToPhasedSNPmap.keySet().toArray(new Integer[0]);
 		Arrays.sort(snpPosList);
 		System.out.println(snpPosList.length + " SNPs to be processed");
-		fmHaplotypeA = new FileMaker(outPrefix + ".haplotypeA.sam");
-		fmHaplotypeB = new FileMaker(outPrefix + ".haplotypeB.sam");
-		fmHomogenic = new FileMaker(outPrefix + ".haplotypeHomogenic.sam");
-		fmNoSnp = new FileMaker(outPrefix + ".haplotypeNoSNP.sam");
-		fmAmbiguous = new FileMaker(outPrefix + ".haplotypeAmbiguous.sam");
+		if (writeSam) {
+			fmHaplotypeA = new FileMaker(outPrefix + ".haplotypeA.sam");
+			fmHaplotypeB = new FileMaker(outPrefix + ".haplotypeB.sam");
+			fmHomogenic = new FileMaker(outPrefix + ".haplotypeHomogenic.sam");
+			fmNoSnp = new FileMaker(outPrefix + ".haplotypeNoSNP.sam");
+			fmAmbiguous = new FileMaker(outPrefix + ".haplotypeAmbiguous.sam");
+		}
 		fmReadHaplotypeA = new FileMaker(outPrefix + ".readid.haplotypeA");
 		fmReadHaplotypeB = new FileMaker(outPrefix + ".readid.haplotypeB");
 		fmReadHomogenic = new FileMaker(outPrefix + ".readid.haplotypeHomogenic");
 		fmReadNoSNP = new FileMaker(outPrefix + ".readid.haplotypeNoSNP");
 		fmReadAmbiguous = new FileMaker(outPrefix + ".readid.haplotypeAmbiguous");
 		readSamDetermineSNP(frSam, snpPosList, snpPosToPhasedSNPmap);
-		fmHaplotypeA.closeMaker();
-		fmHaplotypeB.closeMaker();
-		fmHomogenic.closeMaker();
-		fmNoSnp.closeMaker();
-		fmAmbiguous.closeMaker();
+		if (writeSam) {
+			fmHaplotypeA.closeMaker();
+			fmHaplotypeB.closeMaker();
+			fmHomogenic.closeMaker();
+			fmNoSnp.closeMaker();
+			fmAmbiguous.closeMaker();
+		}
 		fmReadHaplotypeA.closeMaker();
 		fmReadHaplotypeB.closeMaker();
 		fmReadHomogenic.closeMaker();
@@ -108,13 +118,15 @@ public class SeperateSubreadsByPhasedSNPs extends Phase {
 			int countA, int countB, int countO, int seqStart, int seqEnd,
 			ArrayList<PhasedSNP> snpsInRead, String haplotype,
 			ArrayList<Integer> snpsInReadPosList) {
-		//fmSAM.writeLine(line);
+		if (writeSam) {
+			fmSAM.writeLine(line);
+		}
 		writeOut(fmRead, readID, countA, countB, countO, seqStart, seqEnd, haplotype, snpsInReadPosList);
 	}
 
 	@Override
 	public void readSamHeader(String line) {
-		// TODO Auto-generated method stub
+		if (!writeSam) return;
 		fmHaplotypeA.writeLine(line);
 		fmHaplotypeB.writeLine(line);
 		fmHomogenic.writeLine(line);

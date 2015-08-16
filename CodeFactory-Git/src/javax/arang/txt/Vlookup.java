@@ -72,6 +72,10 @@ public class Vlookup extends I2Owrapper {
 		while (fr1.hasMoreLines()) {
 			line = fr1.readLine();
 			tokens = line.split("\t");
+			if (tokens.length < in1KeyIdx) {
+				fm.writeLine(line + "\t");
+				continue;
+			}
 			if (keyMap.containsKey(tokens[in1KeyIdx])) {
 				fm.writeLine(line + "\t" + keyMap.get(tokens[in1KeyIdx]));
 			} else {

@@ -16,40 +16,33 @@ public class ToFasta extends IOwrapper {
 		String line;
 		String[] tokens;
 		
-		int posToWrite = 1;	// pos to write in fa
 		int written = 1;	// written number of bases
 		
-		fr.readLine();	// Skip header line
-		
-		line = fr.readLine();
-		tokens = line.split(RegExp.TAB);
-		pos = Integer.parseInt(tokens[Base.POS]);
-		posToWrite = pos;
-		
-		int countD = 0;
-		chr = tokens[Base.CHR];
 		fm.writeLine(">" + fr.getFileName());
+		String base;
+		int countD = 0;
 		while (fr.hasMoreLines()) {
-			if (posToWrite < pos) {
-				for (;posToWrite < pos; posToWrite++) {
-					fm.write("N");
-					if (written % 80 == 0)	fm.writeLine();
-					written++;
-				}
-			}
-			String base = maxLikelyBase(tokens[Base.A], tokens[Base.C], tokens[Base.G], tokens[Base.T], tokens[Base.D]);
+			line = fr.readLine();
+			tokens = line.split(RegExp.TAB);
+			chr = tokens[Base.CHR];
+			pos = Integer.parseInt(tokens[Base.POS]);
+//			if (posToWrite < pos) {
+//				for (;posToWrite < pos; posToWrite++) {
+//					fm.write("N");
+//					if (written % 80 == 0)	fm.writeLine();
+//					written++;
+//				}
+//			}
+			base = maxLikelyBase(tokens[Base.A], tokens[Base.C], tokens[Base.G], tokens[Base.T], tokens[Base.D]);
 			if (!base.equals("D")) {
 				fm.write(base);
 				if (written % 80 == 0)	fm.writeLine();
-				posToWrite++;
 				written++;
 			} else {
 				countD++;
 			}
-			line = fr.readLine();
-			tokens = line.split(RegExp.TAB);
-			pos = Integer.parseInt(tokens[Base.POS]);
 		}
+		fm.writeLine();
 		
 		System.out.println("[DEBUG] :: Number of bases deleted = " + countD);
 	}
@@ -62,16 +55,16 @@ public class ToFasta extends IOwrapper {
 		int T = Integer.parseInt(t);
 		int D = Integer.parseInt(d);
 		int max = Math.max(Math.max(A, C), Math.max(G, T));
-		if (max == 0 && D > 0) {
+		if (max < D && D > 0) {
 			return "D";
 		} else {
 			if (max == 0) {
 				return "N";
 			}
 			if (max > 0
-					&& (max == A && (max == C || max == G || max == T)
-					|| max == C && (max == G || max == T)
-					|| max == G && max == T)) {
+					&& ((max == A && (max == C || max == G || max == T))
+					|| (max == C && (max == G || max == T))
+					|| (max == G && max == T))) {
 				System.out.println("[DEBUG] ::\t" + chr + ":" + pos + "\tA=" + A + "\tC=" + C + "\tG=" + G + "\tT=" + T);
 				return "N";
 			}
@@ -95,7 +88,7 @@ public class ToFasta extends IOwrapper {
 		System.out.println("\tBases not covered are inserted as N.");
 		System.out.println("\tDeletions will not be reported when Max(ACGT) = 0.");
 		System.out.println("\tAlleles on SNPs sites will be called with maximum read depth.");
-		System.out.println("Arang Rhie, 2015-06-07. arrhie@gmail.com");
+		System.out.println("Arang Rhie, 2015-08-11. arrhie@gmail.com");
 		System.out.println();
 	}
 

@@ -3,6 +3,7 @@
  */
 package javax.arang.base;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Vector;
 
@@ -51,8 +52,8 @@ public class Coverage extends BinaryIFileOwrapper {
 
 		if (hasBed) {
 			// hasBed = true
-			Vector<Long> starts = null;
-			Vector<Long> ends = null;
+			ArrayList<Integer> starts = null;
+			ArrayList<Integer> ends = null;
 			int bedIdx = 0;
 			boolean isInBedRegion = false;
 			boolean skipChr = false;
@@ -65,6 +66,7 @@ public class Coverage extends BinaryIFileOwrapper {
 					if (isInBedRegion) {
 						writeCoverage(fm, prevChr, starts.get(bedIdx), ends.get(bedIdx), depthSum, coveredBases);
 						isInBedRegion = false;
+						
 					}
 					starts = bed.getStarts(chr);
 					if (starts == null) {

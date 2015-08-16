@@ -207,6 +207,8 @@ public class Sam {
 	 * @return ArrayList<int[]> of positions: int[REF_START_POS, REF_END_POS, ALGN_RANGE_START, ALGN_RANGE_END, CIGAR_TYPE(M/S/D/I)]
 	 * If CIGAR_TYPE is D: no assumptions can be made for ALIGN_RANGE_START and ALIGN_RANGE_END.
 	 * If CIGAR_TYPE is I: no assumptions can be made for REF_START_POS and REF_END_POS.
+	 * posArr[Sam.ALGN_RANGE_START]: 0-based start
+	 * 
 	 */
 	public static ArrayList<int[]> getAllPosition(int position, String cigar){
 		ArrayList<int[]> output = new ArrayList<int[]>();

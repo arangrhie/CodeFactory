@@ -212,7 +212,7 @@ public class SAMUtil {
 	 * @return	sub-sequences from the 'real' startPos to endPos
 	 */
 	public static String getRead(int pos, String[] seqData, int startPos, int endPos) {
-		int seqStartPos = 0;
+		int seqStartPos = 1;
 		int seqEndPos = seqData[SEQ].length() - 1;
 		ArrayList<int[]> cigArr = Sam.getAllPosition(pos, seqData[CIGAR]);
 		boolean isLeftFlanked = false;
@@ -222,10 +222,12 @@ public class SAMUtil {
 			if (posArr[Sam.REF_START_POS] <= startPos && startPos <= posArr[Sam.REF_END_POS]) {
 				isLeftFlanked = true;
 				seqStartPos = posArr[Sam.ALGN_RANGE_START] + (startPos - posArr[Sam.REF_START_POS]);
+				System.out.println("posArr[Sam.ALGN_RANGE_START] " + posArr[Sam.ALGN_RANGE_START]);
 			}
 			if (posArr[Sam.REF_START_POS] <= endPos && endPos <= posArr[Sam.REF_END_POS]) {
 				isRightFlanked = true;
-				seqEndPos = posArr[Sam.ALGN_RANGE_END] - (posArr[Sam.REF_END_POS] - endPos);
+				seqEndPos = posArr[Sam.ALGN_RANGE_END] - ((posArr[Sam.REF_END_POS] - endPos));
+				System.out.println("posArr[Sam.ALGN_RANGE_END] " + posArr[Sam.ALGN_RANGE_END]);
 			}
 		}
 		boolean isSpanning = isLeftFlanked && isRightFlanked;
@@ -239,7 +241,9 @@ public class SAMUtil {
 			return "";
 		}
 		seqData[SEQ] = seqData[SEQ].substring(seqStartPos, seqEndPos + 1);
-		System.out.println("[DEBUG] :: getRead() " + seqData[TYPE] + " (seqStartPos,seqEndPos + 1) : " + seqStartPos + "," + (seqEndPos + 1) + " (" + seqData[SEQ].length() + ") pos: " + pos + " | " + startPos + "-" + endPos + " (" + (endPos - startPos) + " bp)");
+//		System.out.println("[DEBUG] :: getRead() " + seqData[TYPE] + " (seqStartPos - 1,seqEndPos) : "
+//		+ (seqStartPos - 1) + "," + seqEndPos + " (len: " + seqData[SEQ].length() + ")"
+//				+ " pos: " + pos + " | " + startPos + "-" + endPos + " (" + (endPos - startPos + 1) + " bp)");
 		return seqData[SEQ];
 	}
 
@@ -266,13 +270,28 @@ public class SAMUtil {
 		return seqData[SEQ].charAt(seqPos - 1);
 	}
 	
+	public static int getMappedBases(String cigar) {
+		ArrayList<String[]> cigarArr = Sam.parseArr(cigar);
+		int matchs = 0;
+		
+		for (int i = 0; i < cigarArr.size(); i++) { 
+			if (cigarArr.get(i)[Sam.OP] != null) {
+				if (cigarArr.get(i)[Sam.OP].equals("M")) {
+					matchs += Integer.parseInt(cigarArr.get(i)[Sam.COUNT]);
+				}
+			}
+		}
+		
+		return matchs;
+	}
+	
 	public static int getMatchedBases(String cigar) {
 		ArrayList<String[]> cigarArr = Sam.parseArr(cigar);
 		int matchs = 0;
 		
-		for (int i = 0; i < cigarArr.size(); i++) {
+		for (int i = 0; i < cigarArr.size(); i++) { 
 			if (cigarArr.get(i)[Sam.OP] != null) {
-				if (cigarArr.get(i)[Sam.OP].equals("M")) {
+				if (cigarArr.get(i)[Sam.OP].equals("M") || cigarArr.get(i)[Sam.OP].equals("D")) {
 					matchs += Integer.parseInt(cigarArr.get(i)[Sam.COUNT]);
 				}
 			}

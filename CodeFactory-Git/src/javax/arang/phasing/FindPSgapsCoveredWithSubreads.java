@@ -251,7 +251,7 @@ public class FindPSgapsCoveredWithSubreads extends IOwrapper {
 				posAligned = Integer.parseInt(tokens[Sam.POS]);
 				seqData[SAMUtil.SEQ] = tokens[Sam.SEQ];
 				seqData[SAMUtil.CIGAR] = tokens[Sam.CIGAR];
-				matchedLen = SAMUtil.getMatchedBases(seqData[SAMUtil.CIGAR]);
+				matchedLen = SAMUtil.getMappedBases(seqData[SAMUtil.CIGAR]);
 				
 				//System.out.println("[DEBUG] :: chrPosArrOfSnpsAroundGapMap.get(chr).length : " + chrPosArrOfSnpsAroundGapMap.get(chr).length + " chrPosOfSnpListMap.get(chr).size(): " + chrPosOfSnpListMap.get(chr).size());
 				gapsToLookUp = getGapsToLookup(posAligned, posAligned + matchedLen - 1, chrPosArrOfSnpsAroundGapMap.get(chr), chrPosOfSnpListMap.get(chr), phasedSnpToGapsMap);
@@ -283,7 +283,7 @@ public class FindPSgapsCoveredWithSubreads extends IOwrapper {
 				posAligned = record.getPos();
 				seqData[SAMUtil.SEQ] = record.getSeq();
 				seqData[SAMUtil.CIGAR] = record.getCigarString();
-				matchedLen = SAMUtil.getMatchedBases(seqData[SAMUtil.CIGAR]);
+				matchedLen = SAMUtil.getMappedBases(seqData[SAMUtil.CIGAR]);
 				
 				//System.out.println("[DEBUG] :: chrPosArrOfSnpsAroundGapMap.get(chr).length : " + chrPosArrOfSnpsAroundGapMap.get(chr).length + " chrPosOfSnpListMap.get(chr).size(): " + chrPosOfSnpListMap.get(chr).size());
 				gapsToLookUp = getGapsToLookup(posAligned, posAligned + matchedLen - 1, chrPosArrOfSnpsAroundGapMap.get(chr), chrPosOfSnpListMap.get(chr), phasedSnpToGapsMap);

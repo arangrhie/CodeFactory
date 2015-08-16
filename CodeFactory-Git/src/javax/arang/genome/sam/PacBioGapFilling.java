@@ -225,10 +225,11 @@ public class PacBioGapFilling extends IOwrapper {
 	@Override
 	public void printHelp() {
 		System.out.println("Usage: java -jar samPacBioGapFilling.jar <in.sam> <out.txt> <chr> <posFrom> <posTo> <nType>");
-		System.out.println("\tor: java -jar samGlobalRealignment.jar <in.sam> <out.txt> <gaplist.gaps>");
+		System.out.println("\tor: java -jar samPacBioGapFilling.jar <in.sam> <out.txt> <gaplist.gaps>");
 		System.out.println("\tRealigns the skipped reads in the bam file, according to their positions.");
 		System.out.println("\tAssumes the last base is properly aligned.");
 		System.out.println("\t<gaplist.gaps> should be written per chr.");
+		System.out.println("Arang Rhie, 2015-08-14. arrhie@gmail.com");
 	}
 
 	public static void main(String[] args) {

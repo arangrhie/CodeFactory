@@ -69,11 +69,12 @@ public class FilterPhasedSNPs extends IOwrapper {
 				correctedBase = getCorrectedBase(tokens);
 				correctedCount = getCorrectedCount(tokens, correctedBase);
 				if (Math.min(A, B) < correctedCount) {
-					toCorrect++;
 					if (A < B) {
+						toCorrect++;
 						writeSNP(fm, tokens, "Ato" + correctedBase);
 					} else if (B < A) {
 						writeSNP(fm, tokens, "Bto" + correctedBase);
+						toCorrect++;
 					} else {
 						writeSNP(fm, tokens, "HET");
 					}

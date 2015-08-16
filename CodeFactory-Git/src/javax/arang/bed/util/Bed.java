@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.PriorityQueue;
-import java.util.Vector;
 
 import javax.arang.IO.basic.FileReader;
 import javax.arang.genome.Chromosome;
@@ -31,9 +30,9 @@ public class Bed {
 	private boolean isSorted = false;
 	private ArrayList<String> chrStrArray = new ArrayList<String>();
 	private PriorityQueue<Chromosome> chrList = new PriorityQueue<Chromosome>(1, new ChromosomeComparator());
-	private HashMap<String, Vector<Long>> starts = new HashMap<String, Vector<Long>>();
-	private HashMap<String, Vector<Long>> ends = new HashMap<String, Vector<Long>>();
-	private HashMap<String, Vector<String>> notes = new HashMap<String, Vector<String>>();
+	private HashMap<String, ArrayList<Integer>> starts = new HashMap<String, ArrayList<Integer>>();
+	private HashMap<String, ArrayList<Integer>> ends = new HashMap<String, ArrayList<Integer>>();
+	private HashMap<String, ArrayList<String>> notes = new HashMap<String, ArrayList<String>>();
 	
 	public Bed(FileReader fr) {
 		parseBed(fr);
@@ -84,19 +83,19 @@ public class Bed {
 	}
 	
 	private void sortStartEnds() {
-		Vector<Long> sortedStarts = new Vector<Long>();
-		Vector<Long> sortedEnds = new Vector<Long>();
-		Vector<String> sortedNotes = new Vector<String>();
+		ArrayList<Integer> sortedStarts = new ArrayList<Integer>();
+		ArrayList<Integer> sortedEnds = new ArrayList<Integer>();
+		ArrayList<String> sortedNotes = new ArrayList<String>();
 		for (String chr : chrStrArray) {
-			Vector<Long> startRegion = starts.get(chr);
-			Vector<Long> endRegion = ends.get(chr);
-			Vector<String> noteRegion = notes.get(chr);
-			Long[] startRegionArr = new Long[0];
+			ArrayList<Integer> startRegion = starts.get(chr);
+			ArrayList<Integer> endRegion = ends.get(chr);
+			ArrayList<String> noteRegion = notes.get(chr);
+			Integer[] startRegionArr = new Integer[0];
 			startRegionArr = startRegion.toArray(startRegionArr);
 			Arrays.sort(startRegionArr);
-			sortedStarts = new Vector<Long>();
-			sortedEnds = new Vector<Long>();
-			sortedNotes = new Vector<String>();
+			sortedStarts = new ArrayList<Integer>();
+			sortedEnds = new ArrayList<Integer>();
+			sortedNotes = new ArrayList<String>();
 			for (int i = 0; i < startRegionArr.length; i++) {
 				//System.out.println("[DEBUG] :: " + chr + " startRegionArr[i]=" + startRegionArr[i]);
 				sortedStarts.add(startRegionArr[i]);
@@ -128,16 +127,16 @@ public class Bed {
 			end = end.replace(",", "");
 		}
 		if (starts.containsKey(chr)) {
-			Vector<Long> startRegion = starts.get(chr);
-			startRegion.add(Long.parseLong(start));
-			Vector<Long> endRegion = ends.get(chr);
-			endRegion.add(Long.parseLong(end));
+			ArrayList<Integer> startRegion = starts.get(chr);
+			startRegion.add(Integer.parseInt(start));
+			ArrayList<Integer> endRegion = ends.get(chr);
+			endRegion.add(Integer.parseInt(end));
 		} else {
-			Vector<Long> startRegion = new Vector<Long>();
-			startRegion.add(Long.parseLong(start));
+			ArrayList<Integer> startRegion = new ArrayList<Integer>();
+			startRegion.add(Integer.parseInt(start));
 			starts.put(chr, startRegion);
-			Vector<Long> endRegion = new Vector<Long>();
-			endRegion.add(Long.parseLong(end));
+			ArrayList<Integer> endRegion = new ArrayList<Integer>();
+			endRegion.add(Integer.parseInt(end));
 			ends.put(chr, endRegion);
 		}
 	}
@@ -147,7 +146,7 @@ public class Bed {
 		if (notes.containsKey(chr)) {
 			notes.get(chr).add(note);
 		} else {
-			Vector<String> noteRegion = new Vector<String>();
+			ArrayList<String> noteRegion = new ArrayList<String>();
 			noteRegion.add(note);
 			notes.put(chr, noteRegion);
 		}
@@ -162,11 +161,11 @@ public class Bed {
 		return starts.get(chr).size();
 	}
 	
-	public Vector<Long> getStarts(String chr) {
+	public ArrayList<Integer> getStarts(String chr) {
 		return starts.get(chr);
 	}
 	
-	public Vector<Long> getEnds(String chr) {
+	public ArrayList<Integer> getEnds(String chr) {
 		return ends.get(chr);
 	}
 	
@@ -193,7 +192,7 @@ public class Bed {
 	 * @param index
 	 * @return Start of the index's region in chr
 	 */
-	public Long getStart(String chr, int index) {
+	public Integer getStart(String chr, int index) {
 		return starts.get(chr).get(index);
 	}
 	
@@ -203,7 +202,7 @@ public class Bed {
 	 * @param index
 	 * @return End of the index's region in chr
 	 */
-	public Long getEnd(String chr, int index) {
+	public Integer getEnd(String chr, int index) {
 		return ends.get(chr).get(index);
 	}
 
