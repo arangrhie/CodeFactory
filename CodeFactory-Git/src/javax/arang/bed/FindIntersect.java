@@ -27,10 +27,10 @@ public class FindIntersect extends R2wrapper {
 		System.out.println("Arang Rhie, 2014-03-11. arrhie@gmail.com");
 	}
 	
-	Long start1 = 0l;
-	Long start2 = 0l;
-	Long end1 = 0l;
-	Long end2 = 0l;
+	int start1 = 0;
+	int start2 = 0;
+	int end1 = 0;
+	int end2 = 0;
 	int chr1 = 0;
 	int chr2 = 0;
 	String note1 = "";

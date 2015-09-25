@@ -96,10 +96,10 @@ public class PacBioGapFilling extends IOwrapper {
 			line = fr.readLine();
 			if (line.startsWith("@"))	continue;
 			tokens = line.split("\t");
-//			if (!SAMUtil.isMultiple(Integer.parseInt(tokens[Sam.FLAG]))) {
-//				//multiple++;
-//				continue;
-//			}
+			if (!SAMUtil.isMultiple(Integer.parseInt(tokens[Sam.FLAG]))) {
+				//multiple++;
+				continue;
+			}
 			if (!tokens[Sam.RNAME].equals(chr))	continue;
 			if (tokens[Sam.RNAME].equals(chr) && (Integer.parseInt(tokens[Sam.POS]) - Sam.getSoftclippedBasesLen(tokens[Sam.CIGAR])) > endPos + 1) {
 				// do the gap alignment here
@@ -116,11 +116,11 @@ public class PacBioGapFilling extends IOwrapper {
 			}
 			if (tokens[Sam.RNAME].equals(chr) && (Integer.parseInt(tokens[Sam.POS])
 					+ Integer.parseInt(tokens[Sam.TLEN])
-					+ Sam.getEndSoftclip(tokens[Sam.CIGAR])) < Math.max(1, startPos - 1)) {
+					+ Sam.getEndSoftclip(tokens[Sam.CIGAR])) < Math.max(1, startPos)) {
 				continue;
 			}
 			seqData = new String[]{tokens[Sam.CIGAR], tokens[Sam.SEQ], "open"};
-			read = SAMUtil.getRead(Integer.parseInt(tokens[Sam.POS]), seqData, Math.max(1, startPos - 1), endPos + 1);
+			read = SAMUtil.getRead(Integer.parseInt(tokens[Sam.POS]), seqData, Math.max(1, startPos), endPos + 1);
 			if (read.length() == 0)	continue;
 			//System.out.println("[DEBUG] :: doAlignment() " + seqData[Alignment.TYPE] + " " + tokens[Sam.POS] + " " + startPos + "-" + endPos);
 			if (seqData[Alignment.TYPE].equals(Alignment.SPAN)) {
@@ -228,6 +228,8 @@ public class PacBioGapFilling extends IOwrapper {
 		System.out.println("\tor: java -jar samPacBioGapFilling.jar <in.sam> <out.txt> <gaplist.gaps>");
 		System.out.println("\tRealigns the skipped reads in the bam file, according to their positions.");
 		System.out.println("\tAssumes the last base is properly aligned.");
+		System.out.println("\t\t(-1) GAP (+1) will be re-aligned.");
+		System.out.println("\t\t\tSo, from the output, spanned bases contain 1 flanking base of both end of the gap.");
 		System.out.println("\t<gaplist.gaps> should be written per chr.");
 		System.out.println("Arang Rhie, 2015-08-14. arrhie@gmail.com");
 	}

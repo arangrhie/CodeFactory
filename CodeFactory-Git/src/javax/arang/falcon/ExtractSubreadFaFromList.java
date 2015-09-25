@@ -49,8 +49,10 @@ public class ExtractSubreadFaFromList extends R2wrapper {
 			subreadList = subreadDirToReadsMap.get(prefix);
 			if (subreadList == null || subreadList.size() == 0)	continue;
 			FileMaker fm = new FileMaker(outDir, faFileName);
-			faWritten = ExtractScaffoldsFromList.readFaExtractSeq(new FileReader(line), subreadList, fm);
+			FileReader frFa = new FileReader(line);
+			faWritten = ExtractScaffoldsFromList.readFaExtractSeq(frFa, subreadList, fm);
 			fm.closeMaker();
+			frFa.closeReader();
 			System.out.println("[DEBUG] :: " + faWritten.size() + " / " + subreadList.size() + " (" + numSubreads + ") written to " + faFileName);
 			if (faWritten.size() == 0)	continue;
 			numSubreads += faWritten.size();
@@ -81,11 +83,11 @@ public class ExtractSubreadFaFromList extends R2wrapper {
 
 	@Override
 	public void printHelp() {
-		System.out.println("Usage: java -jar falconExtractSubreadsFromList.jar <in.fofn> <in.subreads.list> <out_dir>");
+		System.out.println("Usage: java -jar falconExtractSubreadFaFromList.jar <in.fofn> <in.subreads.list> <out_dir>");
 		System.out.println("\tSelect fa sequences out of in.fofn.");
 		System.out.println("\t<out_dir>: drectory for output fa files. Small files containing subreads in list will be made from original <in.fofn>.");
 		System.out.println("\t\tSo, do cat *.fa > <desired_file.fa> to aggregate.");
-		System.out.println("Arang Rhie, 2015-07-22. arrhie@gmail.com");
+		System.out.println("Arang Rhie, 2015-08-18. arrhie@gmail.com");
 	}
 
 	public static void main(String[] args) {

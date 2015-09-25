@@ -5,12 +5,14 @@ package javax.arang.bed.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.PriorityQueue;
 
 import javax.arang.IO.basic.FileReader;
 import javax.arang.genome.Chromosome;
 import javax.arang.genome.ChromosomeComparator;
+import javax.arang.genome.util.Util;
 
 
 /**
@@ -33,6 +35,17 @@ public class Bed {
 	private HashMap<String, ArrayList<Integer>> starts = new HashMap<String, ArrayList<Integer>>();
 	private HashMap<String, ArrayList<Integer>> ends = new HashMap<String, ArrayList<Integer>>();
 	private HashMap<String, ArrayList<String>> notes = new HashMap<String, ArrayList<String>>();
+	private HashMap<String, ArrayList<Integer>> notes2 = new HashMap<String, ArrayList<Integer>>();
+	
+	public Bed() {
+		isSorted = false;
+		chrStrArray = new ArrayList<String>();
+		chrList = new PriorityQueue<Chromosome>(1, new ChromosomeComparator());
+		starts = new HashMap<String, ArrayList<Integer>>();
+		ends = new HashMap<String, ArrayList<Integer>>();
+		notes = new HashMap<String, ArrayList<String>>();
+		notes2 = new HashMap<String, ArrayList<Integer>>();
+	}
 	
 	public Bed(FileReader fr) {
 		parseBed(fr);
@@ -152,6 +165,134 @@ public class Bed {
 		}
 	}
 	
+	/**
+	 *  Add regions to starts and ends while merging overlaps. notes will be the number of regions merged.
+	 * @param chr
+	 * @param start
+	 * @param end
+	 */
+	public void addMergeRegion(String chr, String start, String end) {
+		isSorted = false;
+		if (start.contains(",")) {
+			start = start.replace(",", "");
+		}
+		if (end.contains(",")) {
+			end = end.replace(",", "");
+		}
+
+		int s = Integer.parseInt(start);
+		int e = Integer.parseInt(end);
+		int len = (e - s);
+		int numMerged = 1;
+		if (chrStrArray.contains(chr)) {
+			
+			ArrayList<Integer> startRegion = starts.get(chr);
+			ArrayList<Integer> endRegion = ends.get(chr);
+			ArrayList<String> noteRegion = notes.get(chr);
+			ArrayList<Integer> note2Region = notes2.get(chr);
+
+
+			int smallerStartIdx = Util.getRegionStartIdxContainingPos(startRegion, s);
+			
+			if (smallerStartIdx == -1 && e <= startRegion.get(0)
+			 || smallerStartIdx > -1 && smallerStartIdx + 1 < endRegion.size() 
+			 	&& s >= endRegion.get(smallerStartIdx) && e <= startRegion.get(smallerStartIdx + 1)
+			 || smallerStartIdx + 1 == startRegion.size() && s >= endRegion.get(smallerStartIdx)) {
+				//       |---|
+				// |---|
+				//  or
+				// |---|       |---|
+				//       |---|
+				//  or
+				// |---|
+				//       |---|
+				startRegion.add(smallerStartIdx + 1, s);
+				endRegion.add(smallerStartIdx + 1, e);
+				noteRegion.add(smallerStartIdx + 1, "1");
+				note2Region.add(smallerStartIdx + 1, len);
+			} else if (smallerStartIdx + 1 < endRegion.size()) {
+				//System.out.println(smallerStartIdx + " " + endRegion.get(smallerStartIdx) + " " + s + " " + startRegion.get(smallerStartIdx + 1));
+				if (e > startRegion.get(smallerStartIdx + 1)) {
+					// ----|      |----
+					//         |-----|
+					// or
+					// ----|  |----
+					//   |-------|
+					if (smallerStartIdx == -1 || s > endRegion.get(smallerStartIdx)) {
+						// No overlap wi smallerStartIdx
+						// ----|      |----
+						//         |-----|
+						startRegion.add(smallerStartIdx + 1, s);
+						endRegion.add(smallerStartIdx + 1, Math.max(e, endRegion.get(smallerStartIdx + 1)));
+						noteRegion.add(smallerStartIdx + 1, numMerged + "");
+						note2Region.add(smallerStartIdx + 1, len);
+						smallerStartIdx++;
+					} else {
+						// Overlap wi smallerStartIdx
+						// ----|  |----
+						//   |-------|
+						startRegion.set(smallerStartIdx, Math.min(startRegion.get(smallerStartIdx), s));
+						endRegion.set(smallerStartIdx, Math.max(e, endRegion.get(smallerStartIdx + 1)));
+						numMerged += Integer.parseInt(noteRegion.get(smallerStartIdx));
+						noteRegion.set(smallerStartIdx, numMerged + "");
+						len += note2Region.get(smallerStartIdx);
+						note2Region.set(smallerStartIdx, len);
+					}
+					while (smallerStartIdx + 1 < endRegion.size() && e > startRegion.get(smallerStartIdx + 1)) {
+						// --| |---|     or  --| |---|   : starts, ends
+						// ------|           ----------| : s, e
+						startRegion.remove(smallerStartIdx + 1);
+						endRegion.set(smallerStartIdx, Math.max(e, endRegion.get(smallerStartIdx + 1)));
+						endRegion.remove(smallerStartIdx + 1);
+						numMerged += Integer.parseInt(noteRegion.get(smallerStartIdx + 1));
+						noteRegion.remove(smallerStartIdx + 1); 
+						noteRegion.set(smallerStartIdx, numMerged + "");
+						len += note2Region.get(smallerStartIdx + 1);
+						note2Region.remove(smallerStartIdx + 1); 
+						note2Region.set(smallerStartIdx, len);
+					}
+				} else if (smallerStartIdx > -1) {
+					// |----|    |---   or   |------|  |---
+					//    |----|               |--|
+					endRegion.set(smallerStartIdx, Math.max(e, endRegion.get(smallerStartIdx)));
+					numMerged += Integer.parseInt(noteRegion.get(smallerStartIdx));
+					noteRegion.set(smallerStartIdx, numMerged + "" );
+					len += note2Region.get(smallerStartIdx);
+					note2Region.set(smallerStartIdx, len);
+				}
+			} else if (smallerStartIdx + 1 == endRegion.size()){
+				endRegion.set(smallerStartIdx, Math.max(e, endRegion.get(smallerStartIdx)));
+				numMerged += Integer.parseInt(noteRegion.get(smallerStartIdx));
+				noteRegion.set(smallerStartIdx, numMerged + "" );
+				len += note2Region.get(smallerStartIdx);
+				note2Region.set(smallerStartIdx, len);
+			} else {
+				System.out.println("[DEBUG] :: ?? " + s + " " + e);
+			}
+			
+//			System.out.println("[DEBUG] :: " + s + " " + e + "  " + smallerStartIdx + " " + startRegion.size() + " " + endRegion.size() + " " + numMerged);
+//			for (int i = 0; i < startRegion.size(); i++) {
+//				System.out.print("\t" + startRegion.get(i) + "-" + endRegion.get(i) + "(" + noteRegion.get(i) + ")");
+//			}
+//			System.out.println();
+		} else {
+			chrStrArray.add(chr);
+			ArrayList<Integer> startRegion = new ArrayList<Integer>();
+			startRegion.add(Integer.parseInt(start));
+			starts.put(chr, startRegion);
+			ArrayList<Integer> endRegion = new ArrayList<Integer>();
+			endRegion.add(Integer.parseInt(end));
+			ends.put(chr, endRegion);
+			ArrayList<String> noteRegion = new ArrayList<String>();
+			noteRegion.add("1");
+			notes.put(chr, noteRegion);
+			ArrayList<Integer> note2Region = new ArrayList<Integer>();
+			note2Region.add(len);
+			notes2.put(chr, note2Region);
+			//System.out.println("[DEBUG] :: " + start + " " + end + "  init " + startRegion.size() + " " + endRegion.size());
+		}
+	}
+	
 	/***
 	 * Get number of regions contained in specified chr.
 	 * @param chr
@@ -167,6 +308,10 @@ public class Bed {
 	
 	public ArrayList<Integer> getEnds(String chr) {
 		return ends.get(chr);
+	}
+	
+	public ArrayList<String> getNotes(String chr) {
+		return notes.get(chr);
 	}
 	
 	/***
@@ -224,19 +369,19 @@ public class Bed {
 		return Chromosome.getChromIntVal(bedLine[CHROM]);
 	}
 	
-	public static long getStart(String[] bedLine) {
-		return Long.parseLong(bedLine[START]);
+	public static int getStart(String[] bedLine) {
+		return Integer.parseInt(bedLine[START]);
 	}
 	
-	public static long getEnd(String[] bedLine) {
-		return Long.parseLong(bedLine[END]);
+	public static int getEnd(String[] bedLine) {
+		return Integer.parseInt(bedLine[END]);
 	}
 
 	/**
 	 * @return
 	 */
 	public int getChromosomes() {
-		return starts.keySet().size();
+		return chrStrArray.size();
 	}
 	
 	
@@ -283,6 +428,14 @@ public class Bed {
 	
 	public boolean hasChromosome(String chr) {
 		return chrList.contains(chr);
+	}
+
+	public void sortChr() {
+		Collections.sort(chrStrArray);
+	}
+
+	public ArrayList<Integer> getNotes2(String chr) {
+		return notes2.get(chr);
 	}
 
 }

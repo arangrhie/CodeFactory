@@ -1,4 +1,4 @@
-package javax.arang.phasing;
+package javax.arang.phasing.util;
 
 public class PhasedRead {
 	public static final int READ_ID = 0;

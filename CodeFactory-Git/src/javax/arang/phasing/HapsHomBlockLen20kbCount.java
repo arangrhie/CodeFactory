@@ -7,6 +7,9 @@ import javax.arang.IO.IOwrapper;
 import javax.arang.IO.basic.FileMaker;
 import javax.arang.IO.basic.FileReader;
 import javax.arang.IO.basic.RegExp;
+import javax.arang.phasing.util.Hap;
+import javax.arang.phasing.util.Haps;
+import javax.arang.phasing.util.PhasedBlock;
 import javax.arang.snp.SNP;
 
 public class HapsHomBlockLen20kbCount extends IOwrapper {

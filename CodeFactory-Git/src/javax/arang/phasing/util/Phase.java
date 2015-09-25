@@ -1,4 +1,4 @@
-package javax.arang.phasing;
+package javax.arang.phasing.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,6 +8,7 @@ import javax.arang.IO.R2wrapper;
 import javax.arang.IO.basic.FileMaker;
 import javax.arang.IO.basic.FileReader;
 import javax.arang.IO.basic.RegExp;
+import javax.arang.base.Base;
 import javax.arang.genome.sam.SAMUtil;
 import javax.arang.genome.sam.Sam;
 
@@ -15,6 +16,63 @@ public abstract class Phase extends R2wrapper {
 	
 	protected static String outPrefix = "";
 	protected static int NUM_SNPS_WITHIN_READ = 0;
+	
+	public void readBaseDetermineSNP(FileReader frBase, HashMap<Integer, PhasedSNP> snpPosToPhasedSNPmap) {
+		String line;
+		String[] tokens;
+		String readID = frBase.getFileName();
+		ArrayList<PhasedSNP> snpsInRead = new ArrayList<PhasedSNP>();
+		
+		boolean isStart = true;
+		int seqStart = 0;
+		int seqEnd = 1;
+		char baseInRead;
+		StringBuffer haplotypes = new StringBuffer();
+		int countA = 0;
+		int countB = 0;
+		int countO = 0;
+		int pos;
+		PhasedSNP snp;
+		ArrayList<Integer> snpsInReadPosList = new ArrayList<Integer>();
+		while (frBase.hasMoreLines()) {
+			line = frBase.readLine();
+			if (line.startsWith("#")){
+				continue;
+			}
+			tokens = line.split(RegExp.TAB);
+			pos = Integer.parseInt(tokens[Base.POS]);
+			if (isStart) {
+				seqStart = pos;
+				seqEnd = pos;
+				isStart = false;
+			} else {
+				seqEnd = pos;
+			}
+			if (snpPosToPhasedSNPmap.containsKey(pos)) {
+				snp = snpPosToPhasedSNPmap.get(pos);
+				baseInRead = Base.maxLikelyBase(tokens[Base.CHR], pos,
+						tokens[Base.A], tokens[Base.C], tokens[Base.G], tokens[Base.T], tokens[Base.D]).charAt(0);
+				if (snp.isHom()) {
+					haplotypes.append("H");
+				} else if (baseInRead == snp.getHaplotypeA().charAt(0)) {
+					countA++;
+					haplotypes.append("A");
+				} else if (baseInRead == snp.getHaplotypeB().charAt(0)) {
+					countB++;
+					haplotypes.append("B");
+				} else if (baseInRead == 'D') {
+					countO++;
+					haplotypes.append("D");
+				} else {
+					countO++;
+					haplotypes.append(Character.toLowerCase(baseInRead));
+				}
+				snpsInReadPosList.add(pos);
+				snpsInRead.add(snp);
+			}
+		}
+		determineRead(readID, readID, countA, countB, countO, seqStart, seqEnd, snpsInRead, haplotypes.toString(), snpsInReadPosList);
+	}
 	
 	public void readSamDetermineSNP(FileReader frSam, Integer[] snpPosList, HashMap<Integer, PhasedSNP> snpPosToPhasedSNPmap) {
 		String readID;
@@ -92,7 +150,7 @@ public abstract class Phase extends R2wrapper {
 		fm.writeLine();
 	}
 	public abstract void readSamHeader(String line);
-	public abstract void determineRead(String line, String readID, int countA, int countO, int countB, int seqStart, int seqEnd, ArrayList<PhasedSNP> snpsInRead, String haplotype, ArrayList<Integer> snpsInReadPosList);
+	public abstract void determineRead(String line, String readID, int countA, int countB, int countO, int seqStart, int seqEnd, ArrayList<PhasedSNP> snpsInRead, String haplotype, ArrayList<Integer> snpsInReadPosList);
 	public abstract void writePhasedSNP(String chr, int pos, String haplotypeA, String haplotypeB);
 	
 	public HashMap<Integer, PhasedSNP> readSNPsStoreSNPs(FileReader frSNPs) {

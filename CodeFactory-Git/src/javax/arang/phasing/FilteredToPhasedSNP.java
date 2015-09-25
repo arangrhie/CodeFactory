@@ -8,7 +8,8 @@ import javax.arang.IO.basic.FileMaker;
 import javax.arang.IO.basic.FileReader;
 import javax.arang.IO.basic.RegExp;
 import javax.arang.bed.util.Bed;
-import javax.arang.genome.util.Util;
+import javax.arang.phasing.util.PhasedBlock;
+import javax.arang.phasing.util.PhasedSNPBase;
 
 public class FilteredToPhasedSNP extends I2Owrapper {
 
@@ -39,8 +40,8 @@ public class FilteredToPhasedSNP extends I2Owrapper {
 			if (line.startsWith("#"))	continue;
 			tokens = line.split(RegExp.TAB);
 			pos = Integer.parseInt(tokens[PhasedSNPBase.POS]);
-			ps = getPS(pos, startList, startToEnd, startToPS);
-			if (tokens[PhasedSNPBase.PS].equals("ToRemove")) {
+			ps = PhasedBlock.getPS(pos, startList, startToEnd, startToPS);
+			if (tokens[PhasedSNPBase.PS].startsWith("ToRemove")) {
 				continue;
 			}
 			fm.write(tokens[PhasedSNPBase.CHR] + "\t" + tokens[PhasedSNPBase.POS]);
@@ -67,15 +68,7 @@ public class FilteredToPhasedSNP extends I2Owrapper {
 		}
 	}
 
-	private String getPS(int pos, ArrayList<Integer> startList, HashMap<Integer, Integer> startToEnd, HashMap<Integer, String> startToPS) {
-		int closestStart = Util.getRegionStartContainingPos(startList, pos);
-		if (closestStart < 0)	return "Unphased";
-		if (pos <= startToEnd.get(closestStart)) {
-			return startToPS.get(closestStart);
-		} else {
-			return "Unphased";
-		}
-	}
+
 
 	@Override
 	public void printHelp() {
@@ -83,7 +76,7 @@ public class FilteredToPhasedSNP extends I2Owrapper {
 		System.out.println("\t<in.filt.snp>: generated with phasingPhasedReadsToSnpBaseCount.jar");
 		System.out.println("\t<in.phased.bed>: generated with phasingPhasedReadsToPhasedBlocks.jar");
 		System.out.println("\t<out.phased.snp>: phased snp file format. CHR POS HAPLOTYPE_A HAPLOTYPE_B PS");
-		System.out.println("Arang Rhie, 2015-08-07. arrhie@gmail.com");
+		System.out.println("Arang Rhie, 2015-09-11. arrhie@gmail.com");
 	}
 
 	public static void main(String[] args) {

@@ -4,6 +4,7 @@ import javax.arang.IO.IOwrapper;
 import javax.arang.IO.basic.FileMaker;
 import javax.arang.IO.basic.FileReader;
 import javax.arang.IO.basic.RegExp;
+import javax.arang.phasing.util.PhasedSNPBase;
 
 public class MarkHaplotypeSwitch extends IOwrapper {
 

@@ -6,8 +6,10 @@ import java.util.HashMap;
 
 import javax.arang.IO.basic.FileMaker;
 import javax.arang.IO.basic.FileReader;
+import javax.arang.phasing.util.Phase;
+import javax.arang.phasing.util.PhasedSNP;
 
-public class SubreadBasedPhasedSNP extends Phase {
+public class SubreadBasedPhasing extends Phase {
 	
 	private static FileMaker fmSNP;
 	private static FileMaker fmRead;
@@ -59,7 +61,7 @@ public class SubreadBasedPhasedSNP extends Phase {
 
 	@Override
 	public void printHelp() {
-		System.out.println("Usage: phasingSubreadBasedPhasedSNP.jar <in.sam> <snp_by_shapeit.haps/10X_noindel.snp> <phased.reads> [NUM_SNPS_WITHIN_READ]");
+		System.out.println("Usage: phasingSubreadBasedPhasing.jar <in.sam> <snp_by_shapeit.haps/10X_noindel.snp> <phased.reads> [NUM_SNPS_WITHIN_READ]");
 		System.out.println("\t<in.sam>: Subreads aligned to reference (hg19)");
 		System.out.println("\t<snp_by_shapeit.haps>: .haps file generated with shapeit");
 		System.out.println("\t\tCHR\tRS_ID\tPOS\tAlleleOfA\tAlleleOfB\tHaplotypeA\tHaplotypeB");
@@ -73,13 +75,13 @@ public class SubreadBasedPhasedSNP extends Phase {
 	public static void main(String[] args) {
 		if (args.length == 3) {
 			outPrefix = args[2];
-			new SubreadBasedPhasedSNP().go(args[0], args[1]);
+			new SubreadBasedPhasing().go(args[0], args[1]);
 		} else if (args.length == 4) {
 			outPrefix = args[2];
 			NUM_SNPS_WITHIN_READ = Integer.parseInt(args[3]);
-			new SubreadBasedPhasedSNP().go(args[0], args[1]);
+			new SubreadBasedPhasing().go(args[0], args[1]);
 		} else {
-			new SubreadBasedPhasedSNP().printHelp();
+			new SubreadBasedPhasing().printHelp();
 		}
 	}
 

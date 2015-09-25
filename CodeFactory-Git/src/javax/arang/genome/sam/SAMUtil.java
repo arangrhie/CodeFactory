@@ -212,22 +212,36 @@ public class SAMUtil {
 	 * @return	sub-sequences from the 'real' startPos to endPos
 	 */
 	public static String getRead(int pos, String[] seqData, int startPos, int endPos) {
-		int seqStartPos = 1;
+		int seqStartPos = 0;
 		int seqEndPos = seqData[SEQ].length() - 1;
 		ArrayList<int[]> cigArr = Sam.getAllPosition(pos, seqData[CIGAR]);
 		boolean isLeftFlanked = false;
 		boolean isRightFlanked = false;
 		for (int[] posArr : cigArr) {
-			//System.out.println("[DEBUG] :: " + posArr[Sam.REF_START_POS] + "," + posArr[Sam.REF_END_POS]);
+//			System.out.println("[DEBUG] :: "
+//					+ posArr[Sam.REF_START_POS] + "," + posArr[Sam.REF_END_POS] + " | "
+//					+ posArr[Sam.ALGN_RANGE_START] + "," + posArr[Sam.ALGN_RANGE_END] + " | " + posArr[Sam.CIGAR_TYPE]);
 			if (posArr[Sam.REF_START_POS] <= startPos && startPos <= posArr[Sam.REF_END_POS]) {
 				isLeftFlanked = true;
-				seqStartPos = posArr[Sam.ALGN_RANGE_START] + (startPos - posArr[Sam.REF_START_POS]);
-				System.out.println("posArr[Sam.ALGN_RANGE_START] " + posArr[Sam.ALGN_RANGE_START]);
+				if (posArr[Sam.CIGAR_TYPE] == Sam.D) {
+					seqStartPos = posArr[Sam.ALGN_RANGE_START];
+				} else {
+					seqStartPos = posArr[Sam.ALGN_RANGE_START] + (startPos - posArr[Sam.REF_START_POS]);
+				}
+				seqEndPos = seqStartPos;
+				//System.out.println(seqStartPos + " " + seqEndPos);
 			}
 			if (posArr[Sam.REF_START_POS] <= endPos && endPos <= posArr[Sam.REF_END_POS]) {
 				isRightFlanked = true;
-				seqEndPos = posArr[Sam.ALGN_RANGE_END] - ((posArr[Sam.REF_END_POS] - endPos));
-				System.out.println("posArr[Sam.ALGN_RANGE_END] " + posArr[Sam.ALGN_RANGE_END]);
+				if (posArr[Sam.CIGAR_TYPE] == Sam.D) {
+					seqEndPos = posArr[Sam.ALGN_RANGE_END];	// ALGN_RANGE_END is the last matched base's align-range-end
+				} else {
+					seqEndPos = posArr[Sam.ALGN_RANGE_END] - ((posArr[Sam.REF_END_POS] - endPos));
+				}
+				//System.out.println(seqStartPos + " " + seqEndPos);
+			}
+			if (posArr[Sam.CIGAR_TYPE] != Sam.D && endPos > posArr[Sam.REF_END_POS]) {
+				seqEndPos = posArr[Sam.ALGN_RANGE_END];
 			}
 		}
 		boolean isSpanning = isLeftFlanked && isRightFlanked;
@@ -241,9 +255,9 @@ public class SAMUtil {
 			return "";
 		}
 		seqData[SEQ] = seqData[SEQ].substring(seqStartPos, seqEndPos + 1);
-//		System.out.println("[DEBUG] :: getRead() " + seqData[TYPE] + " (seqStartPos - 1,seqEndPos) : "
-//		+ (seqStartPos - 1) + "," + seqEndPos + " (len: " + seqData[SEQ].length() + ")"
-//				+ " pos: " + pos + " | " + startPos + "-" + endPos + " (" + (endPos - startPos + 1) + " bp)");
+		System.out.println("[DEBUG] :: getRead() " + seqData[TYPE] + " (seqStartPos, seqEndPos) : ( "
+		+ seqStartPos + ", " + (seqEndPos) + " ) (len: " + seqData[SEQ].length() + ")"
+				+ " pos: " + pos + " | " + startPos + "-" + endPos + " (" + (endPos - startPos + 1) + " bp)");
 		return seqData[SEQ];
 	}
 

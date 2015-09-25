@@ -23,11 +23,11 @@ public class Util {
 	 * Get the closest, smaller START position of startList containing pos
 	 * @param startList
 	 * @param pos
-	 * @return -1 if pos is greater than the greatest START
+	 * @return -1 if pos is smaller than the smallest START
 	 */
 	public static int getRegionStartContainingPos(ArrayList<Integer> startList, int pos) {
 		int posInStartIdx = Collections.binarySearch(startList, pos);
-		// snpStartIdx will be the closest, min SNP equals or smaller than the seqStart
+		// posInStartIdx will be the closest, min SNP equals or smaller than the pos
 		if (posInStartIdx < 0) {
 			posInStartIdx *= -1;
 			posInStartIdx -= 2;
@@ -39,6 +39,25 @@ public class Util {
 		return startList.get(posInStartIdx);
 	}
 	
+	/***
+	 * Get the closest, smaller START position of startList containing pos
+	 * @param startList
+	 * @param pos
+	 * @return -1 if pos is smaller than the smallest START
+	 */
+	public static int getRegionStartIdxContainingPos(ArrayList<Integer> startList, int pos) {
+		int posInStartIdx = Collections.binarySearch(startList, pos);
+		// posInStartIdx will be the closest, min SNP equals or smaller than the pos
+		if (posInStartIdx < 0) {
+			posInStartIdx *= -1;
+			posInStartIdx -= 2;
+		}
+		// all STARTs are smaller than pos
+		if (posInStartIdx < 0 || posInStartIdx == startList.size()) {
+			return -1;
+		}
+		return posInStartIdx;
+	}
 	
 	/***
 	 * 

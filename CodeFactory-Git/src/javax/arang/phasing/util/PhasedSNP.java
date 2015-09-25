@@ -1,4 +1,4 @@
-package javax.arang.phasing;
+package javax.arang.phasing.util;
 
 import java.util.HashMap;
 

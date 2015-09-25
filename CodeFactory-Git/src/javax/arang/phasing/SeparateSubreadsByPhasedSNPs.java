@@ -6,6 +6,8 @@ import java.util.HashMap;
 
 import javax.arang.IO.basic.FileMaker;
 import javax.arang.IO.basic.FileReader;
+import javax.arang.phasing.util.Phase;
+import javax.arang.phasing.util.PhasedSNP;
 
 public class SeparateSubreadsByPhasedSNPs extends Phase {
 

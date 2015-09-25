@@ -8,27 +8,28 @@ import javax.arang.IO.basic.FileMaker;
 import javax.arang.IO.basic.FileReader;
 import javax.arang.IO.basic.RegExp;
 import javax.arang.genome.util.Util;
+import javax.arang.phasing.util.PhasedRead;
+import javax.arang.phasing.util.PhasedSNP;
+import javax.arang.phasing.util.PhasedSNPBase;
 
 public class PhasedReadsToSnpBaseCount extends I2Owrapper {
+	
+	private static int MIN_COV = 0;
 
 	@Override
 	public void hooker(FileReader frRead, FileReader frSNP, FileMaker fm) {
 		String line;
 		String[] tokens;
-		fm.writeLine("#CHR\tPOS\tHapA\tHapB\tPS\tH\tA\tB\tO\t|\ta\tc\tg\tt\tD\t"
-				+ "|\tFIRST_A\tFIRST_B\tHH\tAA\tBB\t"
-				+ "BA\tAB\tHAorAH\tOAorAO\t"
-				+ "HBorBH\tOBorBO\t"
-				+ "OHorHO\tOO\tSINGLE");
+		fm.writeLine(PhasedSNPBase.header);
 		HashMap<Integer, PhasedSNP> posToSNPmap = PhasedSNP.readSNPsStoreSNPs(frSNP, false);
 		Integer[] posList = posToSNPmap.keySet().toArray(new Integer[0]);
 		Arrays.sort(posList);
 		int numSNPs = posList.length;
-		System.out.println("SNPs: " + numSNPs);
+		System.out.println(numSNPs + "\tInitial SNPs");
 		
 		HashMap<Integer, Integer[]> posToBaseCountMap = new HashMap<Integer, Integer[]>();
 		for (int i = 0; i < numSNPs; i++) {
-			posToBaseCountMap.put(posList[i], Util.initArr(23));
+			posToBaseCountMap.put(posList[i], Util.initArr(PhasedSNPBase.SIZE));
 		}
 		
 		String haplotype;
@@ -82,30 +83,38 @@ public class PhasedReadsToSnpBaseCount extends I2Owrapper {
 		}
 		
 		PhasedSNP snp;
-		for (int pos : posList) {
+		int pos;
+		int countCoveredSNP = 0;
+		for (int i = 0; i < posList.length; i++) {
+			pos = posList[i];
 			snp = posToSNPmap.get(pos);
 			counts = posToBaseCountMap.get(pos);
-			fm.write(snp.getChr() + "\t" + pos + "\t"
-					+ snp.getHaplotypeA() + "\t" + snp.getHaplotypeB() + "\t"
-					+ snp.getPS() + "\t"
-					+ counts[PhasedSNPBase.H] + "\t"
-					+ counts[PhasedSNPBase.A] + "\t"
-					+ counts[PhasedSNPBase.B] + "\t"
-					+ (counts[PhasedSNPBase.D]
-					+ counts[PhasedSNPBase.a]
-					+ counts[PhasedSNPBase.c]
-					+ counts[PhasedSNPBase.g]
-					+ counts[PhasedSNPBase.t]) + "\t|\t"
-					+ counts[PhasedSNPBase.a] + "\t"
-					+ counts[PhasedSNPBase.c] + "\t"
-					+ counts[PhasedSNPBase.g] + "\t"
-					+ counts[PhasedSNPBase.t] + "\t"
-					+ counts[PhasedSNPBase.D] + "\t|");
-			for (int i = PhasedSNPBase.FIRST_A; i < counts.length; i++) {
-				fm.write("\t" + counts[i]);
+			counts[PhasedSNPBase.O] =
+					counts[PhasedSNPBase.a] + counts[PhasedSNPBase.c]
+							+ counts[PhasedSNPBase.g] + counts[PhasedSNPBase.t]
+									+ counts[PhasedSNPBase.n] + counts[PhasedSNPBase.D];
+			if (counts[PhasedSNPBase.H] + counts[PhasedSNPBase.A] + counts[PhasedSNPBase.B] + counts[PhasedSNPBase.O] > MIN_COV) {
+				countCoveredSNP++;
+				fm.write(snp.getChr() + "\t" + pos + "\t"
+						+ snp.getHaplotypeA() + "\t" + snp.getHaplotypeB() + "\t"
+						+ snp.getPS() + "\t"
+						+ counts[PhasedSNPBase.H] + "\t"
+						+ counts[PhasedSNPBase.A] + "\t"
+						+ counts[PhasedSNPBase.B] + "\t"
+						+ counts[PhasedSNPBase.O] + "\t|\t"
+						+ counts[PhasedSNPBase.a] + "\t"
+						+ counts[PhasedSNPBase.c] + "\t"
+						+ counts[PhasedSNPBase.g] + "\t"
+						+ counts[PhasedSNPBase.t] + "\t"
+						+ counts[PhasedSNPBase.n] + "\t"
+						+ counts[PhasedSNPBase.D] + "\t|");
+				for (int j = PhasedSNPBase.FIRST_A; j < counts.length; j++) {
+					fm.write("\t" + counts[j]);
+				}
+				fm.writeLine();
 			}
-			fm.writeLine();
 		}
+		System.out.println(countCoveredSNP + "\tCovered num. SNPs");
 	}
 
 	private int getBasePattern(int prevBasePattern, int basePattern) {
@@ -156,10 +165,12 @@ public class PhasedReadsToSnpBaseCount extends I2Owrapper {
 		case 'H': return PhasedSNPBase.H;
 		case 'A': return PhasedSNPBase.A;
 		case 'B': return PhasedSNPBase.B;
+		
 		case 'a': return PhasedSNPBase.a;
 		case 'c': return PhasedSNPBase.c;
 		case 'g': return PhasedSNPBase.g;
 		case 't': return PhasedSNPBase.t;
+		case 'n': return PhasedSNPBase.n;
 		case 'D': return PhasedSNPBase.D;
 		}
 		return -1;
@@ -176,19 +187,23 @@ public class PhasedReadsToSnpBaseCount extends I2Owrapper {
 
 	@Override
 	public void printHelp() {
-		System.out.println("Usage: java -jar phasingPhasedReadsToSnpBaseCount.jar <in.read> <in.snp> <out.snp>");
-		System.out.println("\t<in.read> and <in.snp>: generated with phasingSubreadBasedPhasedSNP_v5.jar");
+		System.out.println("Usage: java -jar phasingPhasedReadsToSnpBaseCount.jar <in.read> <in.snp> <out.snp> [MIN_COV]");
+		System.out.println("\t<in.read> and <in.snp>: generated with phasingSubreadBasedPhasedSNP.jar");
 		System.out.println("\t<out.snp>: CHR\tPOS\tHapA\tHapB\tPS\tH\tA\tB\tO\t"
-				+ "|\ta\tc\tg\tt\tD\t"
+				+ "|\ta\tc\tg\tt\tn\tD\t"
 				+ "|\tFIRST_A\tFIRST_B\tHH\tAA\tBB\t"
 				+ "BA\tAB\tHAorAH\tOAorAO\t"
 				+ "HBorBH\tOBorBO\t"
 				+ "OHorHO\tOO\tSINGLE");
-		System.out.println("Arang Rhie, 2015-08-06. arrhie@gmail.com");
+		System.out.println("[MIN_COV]: Minimum coverage to report. DEFAULT = 0");
+		System.out.println("Arang Rhie, 2015-09-11. arrhie@gmail.com");
 	}
 
 	public static void main(String[] args) {
 		if (args.length == 3) {
+			new PhasedReadsToSnpBaseCount().go(args[0], args[1], args[2]);
+		} else if (args.length == 4) {
+			MIN_COV = Integer.parseInt(args[3]);
 			new PhasedReadsToSnpBaseCount().go(args[0], args[1], args[2]);
 		} else {
 			new PhasedReadsToSnpBaseCount().printHelp();

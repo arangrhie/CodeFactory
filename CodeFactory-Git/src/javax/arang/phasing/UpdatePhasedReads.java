@@ -8,6 +8,8 @@ import javax.arang.IO.I2Owrapper;
 import javax.arang.IO.basic.FileMaker;
 import javax.arang.IO.basic.FileReader;
 import javax.arang.IO.basic.RegExp;
+import javax.arang.phasing.util.PhasedRead;
+import javax.arang.phasing.util.PhasedSNP;
 
 public class UpdatePhasedReads extends I2Owrapper {
 
@@ -85,7 +87,8 @@ public class UpdatePhasedReads extends I2Owrapper {
 						newHaplotype.append(base);
 						countO++;
 					}
-				} else if (!note.equals("ToRemove")) {	// Do nothing for "ToRemove"
+				} else if (!note.startsWith("ToRemove")) {
+					// Do nothing for "ToRemove"
 					posListInRead.add(pos);
 					newHaplotype.append(base);
 					if (base == 'A') {
@@ -113,7 +116,12 @@ public class UpdatePhasedReads extends I2Owrapper {
 
 	@Override
 	public void printHelp() {
-		System.out.println("Usage: java -jar phasingUpdatePhasedReads.jar <in.read> <in.filt.snp> <out.read>");
+		System.out.println("Usage: java -jar phasingUpdatePhasedReads.jar <in.read> <in.base.filt> <out.read>");
+		System.out.println("\tUpdate .read file: Remove those marked as \"ToRemove:\", change A|A and B|B to H");
+		System.out.println("\t<in.read>: File generated with phasingSubreadBasedPhasing.jar or phasingBaseCallPhasing.jar");
+		System.out.println("\t<in.base.filt>: .filt file generated with FilterPhasedSNPs.jar or FilterPhasedSNPsUsingBACs.jar");
+		System.out.println("Arang Rhie, 2015-09-11. arrhie@gmail.com");
+		
 	}
 
 	public static void main(String[] args) {

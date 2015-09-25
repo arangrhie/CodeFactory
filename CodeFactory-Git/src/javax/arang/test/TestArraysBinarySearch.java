@@ -44,6 +44,15 @@ public class TestArraysBinarySearch {
 		searchForLessOrEqual(200, listArr);
 		searchForLessOrEqual(205, listArr);
 		System.out.println();
+		
+		System.out.println("Less or Equal");
+		searchFor(2, list);
+		searchFor(10, list);
+		searchFor(100, list);
+		searchFor(190, list);
+		searchFor(200, list);
+		searchFor(205, list);
+		System.out.println();
 	}
 
 	private static void searchForEqualOrGreater(int key, Integer[] listArr) {
@@ -76,7 +85,7 @@ public class TestArraysBinarySearch {
 		System.out.println(" search for " + key + " : " + idx);
 	}
 	
-	private static void searchFor(ArrayList<Integer> list, int pos) {
+	private static void searchFor(int pos, ArrayList<Integer> list) {
 		int closestStart = Util.getRegionStartContainingPos(list, pos);
 		System.out.println(" Search for " + pos + " : " + closestStart + " " + Collections.binarySearch(list, pos));
 	}

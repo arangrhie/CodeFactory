@@ -4,12 +4,15 @@ import javax.arang.IO.IOwrapper;
 import javax.arang.IO.basic.FileMaker;
 import javax.arang.IO.basic.FileReader;
 import javax.arang.IO.basic.RegExp;
+import javax.arang.phasing.util.PhasedSNP;
+import javax.arang.phasing.util.PhasedSNPBase;
 
 public class FilterPhasedSNPs extends IOwrapper {
 
 	private static final short IS_A = 0;
 	private static final short IS_B = 1;
-
+	private static int MIN_DEPTH_FOR_OTHER = 30;
+	private static int MIN_FRAC_FOR_ERROR = 15;	// % will be removed for HET>HOM
 
 	@Override
 	public void hooker(FileReader fr, FileMaker fm) {
@@ -57,7 +60,7 @@ public class FilterPhasedSNPs extends IOwrapper {
 				continue;
 			}
 
-			if (Math.min(A, B) < D  && D > 30 || (H + A + B) < removeCov) {
+			if (Math.min(A, B) < D  && D > MIN_DEPTH_FOR_OTHER || (H + A + B) < removeCov) {
 				toRemove++;
 				writeSNP(fm, tokens, "ToRemove");
 				continue;
@@ -65,7 +68,7 @@ public class FilterPhasedSNPs extends IOwrapper {
 
 			// Switch one haplotype to another base
 			O = Integer.parseInt(tokens[PhasedSNPBase.OFFSET + PhasedSNPBase.O]);
-			if (Math.min(A, B) < (O - D) && (O - D) > 30) {
+			if (Math.min(A, B) < (O - D) && (O - D) > MIN_DEPTH_FOR_OTHER) {
 				correctedBase = getCorrectedBase(tokens);
 				correctedCount = getCorrectedCount(tokens, correctedBase);
 				if (Math.min(A, B) < correctedCount) {
@@ -83,7 +86,7 @@ public class FilterPhasedSNPs extends IOwrapper {
 			}
 
 			// Switch to Homo
-			if (Math.min(A, B) < 15 && (Math.min(A, B) * 100 / (A + B)) < 16 && fr.hasMoreLines()) {
+			if (Math.min(A, B) < MIN_FRAC_FOR_ERROR && (Math.min(A, B) * 100 / (A + B)) <= MIN_FRAC_FOR_ERROR && fr.hasMoreLines()) {
 				nextLine = fr.readLine();
 				nextTokens = nextLine.split(RegExp.TAB);
 				if (nextTokens[PhasedSNPBase.HAPLOTYPE_A].equals(nextTokens[PhasedSNPBase.HAPLOTYPE_B])) {
@@ -209,20 +212,39 @@ public class FilterPhasedSNPs extends IOwrapper {
 
 	@Override
 	public void printHelp() {
-		System.out.println("Useage: java -jar phasingFilterPhasedSNPs.jar <in.base> <out.snp> [removeCov]");
+		System.out.println("Useage: java -jar phasingFilterPhasedSNPs.jar <in.base> <out.snp> [removeCov] [MODE]");
 		System.out.println("\t<in.phased.snp>: generated with phasingPhaedReadsToSnpBaseCount.jar");
 		System.out.println("\t<out.phased_filt.snp>: filter homozygotes snps and set both haplotype A and B to one allele.");
 		System.out.println("\t\tHomozygote SNPs will NOT BE REMOVED. Just the haplotypes are re-set.");
 		System.out.println("\t[removeCov]: SNPs with coverage <= [removeCov] will BE REMOVED.");
+		System.out.println("\t[MODE]: DEFUALT=PacBio. Set to BAC for low coverage, high confident reads.");
+		System.out.println("\t\t** BAC mode not tested **");
+		System.out.println("Arang Rhie, 2015-09-01. arrhie@gmail.com");
 	}
 
 	private static int removeCov = 0;
 	public static void main(String[] args) {
 		if (args.length == 2) {
+			System.out.println("Coverage threashold for removing SNPs with cov less than: " + removeCov);
 			new FilterPhasedSNPs().go(args[0], args[1]);
 		} else if (args.length == 3) {
+			if (args[2].equals("PacBio")) {
+			} else if (args[2].equals("BAC")) {
+				MIN_DEPTH_FOR_OTHER = 2;
+				MIN_FRAC_FOR_ERROR = 15;
+			} else {
+				removeCov = Integer.parseInt(args[2]);
+			}
+			System.out.println("Coverage threashold for removing SNPs with cov less than: " + removeCov);
+			new FilterPhasedSNPs().go(args[0], args[1]);
+		} else if (args.length == 4) {
 			removeCov = Integer.parseInt(args[2]);
 			System.out.println("Coverage threashold for removing SNPs with cov less than: " + removeCov);
+			if (args[3].equals("PacBio")) {
+			} else if (args[3].equals("BAC")) {
+				MIN_DEPTH_FOR_OTHER = 2;
+				MIN_FRAC_FOR_ERROR = 15;
+			}
 			new FilterPhasedSNPs().go(args[0], args[1]);
 		} else {
 			new FilterPhasedSNPs().printHelp();

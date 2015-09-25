@@ -9,6 +9,7 @@ import javax.arang.IO.basic.FileMaker;
 import javax.arang.IO.basic.FileReader;
 import javax.arang.IO.basic.RegExp;
 import javax.arang.genome.util.Util;
+import javax.arang.phasing.util.PhasedSNP;
 
 public class MergePSwithSubreads extends R2wrapper {
 

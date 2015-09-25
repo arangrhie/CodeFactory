@@ -19,6 +19,7 @@ public class AsciiConvert {
 		System.out.println((char) '#' + " " + (int)'#');
 		System.out.println((char) '>' + " " + (int)'>');
 		System.out.println((char) '@' + " " + (int)'@');
+		System.out.println((char) '"' + " " + (int)'"');
 		
 //		if (args.length == 1) {
 //			char z = (char)args[0].charAt(0);

@@ -11,7 +11,7 @@ import javax.arang.IO.basic.FileReader;
  * @author Arang Rhie
  *
  */
-public class VCFtoSNPtable extends IOwrapper {
+public class ToSNPtable extends IOwrapper {
 
 	@Override
 	public void hooker(FileReader fr, FileMaker fm) {
@@ -68,7 +68,7 @@ public class VCFtoSNPtable extends IOwrapper {
 				// filter indel
 				if (tokens[VCF.REF].length() > 1 || tokens[VCF.ALT].length() > 1
 						// filter out SNPs where VT=SNP
-						|| tokens[VCF.INFO].contains("VT") && !VCF.parseINFO(tokens[VCF.INFO], "VT").equals("SNP")) {
+						|| tokens[VCF.INFO].contains(";VT=") && !VCF.parseINFO(tokens[VCF.INFO], "VT").equals("SNP")) {
 					isSnp = false;
 				}
 				
@@ -111,9 +111,9 @@ public class VCFtoSNPtable extends IOwrapper {
 	 */
 	public static void main(String[] args) {
 		if (args.length == 1) {
-			new VCFtoSNPtable().go(args[0], args[0].replace(".vcf", ".snp"));
+			new ToSNPtable().go(args[0], args[0].replace(".vcf", ".snp"));
 		} else {
-			new VCFtoSNPtable().printHelp();
+			new ToSNPtable().printHelp();
 		}
 	}
 

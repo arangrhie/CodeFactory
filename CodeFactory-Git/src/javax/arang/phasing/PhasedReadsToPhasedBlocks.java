@@ -8,6 +8,8 @@ import javax.arang.IO.basic.FileMaker;
 import javax.arang.IO.basic.FileReader;
 import javax.arang.IO.basic.RegExp;
 import javax.arang.genome.util.Util;
+import javax.arang.phasing.util.PhasedBlock;
+import javax.arang.phasing.util.PhasedRead;
 
 public class PhasedReadsToPhasedBlocks extends IOwrapper {
 
@@ -19,37 +21,60 @@ public class PhasedReadsToPhasedBlocks extends IOwrapper {
 		// Read frPhasedReads
 		int seqStart;
 		int seqEnd;
+		int endHetPos = -1;
 		ArrayList<PhasedBlock> phasedBlocks = new ArrayList<PhasedBlock>();
 		PhasedBlock block = null;
 		boolean isFirst = true;
 		int countA;
 		int countB;
-		int countO;
+		String haplotype;
 		while (fr.hasMoreLines()) {
 			line = fr.readLine();
 			tokens = line.split(RegExp.TAB);
-			seqStart = Integer.parseInt(tokens[PhasedRead.START]);
-			seqEnd = Integer.parseInt(tokens[PhasedRead.END]);
+			
 			countA = Integer.parseInt(tokens[PhasedRead.NUM_A]);
 			countB = Integer.parseInt(tokens[PhasedRead.NUM_B]);
-			countO = Integer.parseInt(tokens[PhasedRead.NUM_O]);
 			
 			// SNPs are homo or else : undeterminable
-			if (countA == 0 && countB == 0 && countO >= 0) {
+			if (countA == 0 && countB == 0) {
+				continue;
+			}
+
+			endHetPos = -1;
+			haplotype = tokens[PhasedRead.HAPLOTYPE];
+			for (int i = 0; i < haplotype.length(); i++) {
+				if (haplotype.charAt(i) == 'A' || haplotype.charAt(i) == 'B') {
+					endHetPos = Integer.parseInt(tokens[PhasedRead.SNP_POS_LIST + i]);
+				}
+			}
+			
+			// no het snp
+			if (endHetPos == -1) {
 				continue;
 			}
 			
+			seqStart = Integer.parseInt(tokens[PhasedRead.START]);
+			seqEnd =  Integer.parseInt(tokens[PhasedRead.END]);
+			
 			// phased block extension
-			if (isFirst || block.getEnd() < seqStart) {
-				block = new PhasedBlock(chr, seqStart, seqEnd, tokens[PhasedRead.START]);
+			if (isFirst || block.getLastHetMarker() < seqStart) {
+				if (!isFirst && block.getEnd() > seqStart) {
+					block.setBlockEnd(seqStart - 1);
+				}
+				block = new PhasedBlock(chr, seqStart, endHetPos, seqEnd, tokens[PhasedRead.START]);
 				phasedBlocks.add(block);
 				isFirst = false;
-			} else if (block.getEnd() < seqEnd) {
+			} else if (block.getLastHetMarker() < endHetPos) {
+				block.setLastHetMarker(endHetPos);
+			}
+			
+			if (block.getEnd() < seqEnd) {
 				block.setBlockEnd(seqEnd);
 			}
 		}
 		
 		ArrayList<Integer> blockArr = new ArrayList<Integer>();
+		System.out.println("Total num. of phased blocks: " + phasedBlocks.size());
 		double lenSum = 0;
 		int len;
 		for (int i = 0; i < phasedBlocks.size(); i++) {
@@ -63,7 +88,6 @@ public class PhasedReadsToPhasedBlocks extends IOwrapper {
 		Collections.sort(blockArr);
 		int n50 = Util.getN50(blockArr, lenSum);
 		System.out.println("Phased block coverage: " + String.format("%,.0f", lenSum));
-		System.out.println("Total num. of phased blocks: " + phasedBlocks.size());
 		System.out.println("N50: " + String.format("%,d", n50));
 		System.out.println("For simplicity; order is longest block size, block N50, num. blocks, genome covered bases:");
 		System.out.println(blockArr.get(blockArr.size() - 1));
@@ -77,9 +101,11 @@ public class PhasedReadsToPhasedBlocks extends IOwrapper {
 	@Override
 	public void printHelp() {
 		System.out.println("Usage: java -jar phasingPhasedReadsToPhasedBlocks.jar <in.read> <out.bed> <chr>");
-		System.out.println("\t<in.read>: generated with phasingSubreadBasedPhasedSNP_v5.jar");
+		System.out.println("\t<in.read>: generated with phasingSubreadBasedPhasedSNP.jar");
 		System.out.println("\t<out.bed>: phased block bed");
-		System.out.println("Arang Rhie, 2015-08-07. arrhie@gmail.com");
+		System.out.println("\t\tBlock Start: Seq start with no heterozygous SNP overlapping with previous block");
+		System.out.println("\t\tBlock End: Last overlapped heterozygous SNP position");
+		System.out.println("Arang Rhie, 2015-09-17. arrhie@gmail.com");
 	}
 
 	public static void main(String[] args) {

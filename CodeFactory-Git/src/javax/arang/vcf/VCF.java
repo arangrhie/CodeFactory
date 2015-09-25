@@ -15,10 +15,11 @@ public class VCF {
 	public static final int SAMPLE = 9;
 	
 	public static String parseINFO(String info, String fieldToRetrieve) {
-		String value = null;
+		String value = "";
 		String[] infoFields = info.split(";");
+		fieldToRetrieve = fieldToRetrieve + "=";
 		for (String field : infoFields) {
-			if (field.startsWith(fieldToRetrieve + "=")) {
+			if (field.startsWith(fieldToRetrieve)) {
 				value = field.substring(field.indexOf("=") + 1);
 				break;
 			}

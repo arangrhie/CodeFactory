@@ -45,6 +45,45 @@ public class FileMaker {
 		}
 	}
 	
+	/***
+	 * Override a file with the directory name and file name
+	 * @param directory
+	 * @param filename
+	 * @param append If true; append. False; ask to override if the file already exists.
+	 */
+	public FileMaker(String directory, String filename, boolean append){
+		try{
+			dir = directory;
+			fileName = filename;
+			File newfile = new File(dir);
+			newfile.mkdirs();
+			newfile = new File(dir+"/"+fileName);
+			if (!append && newfile.exists()) {
+				System.out.println("File " + newfile.getName() + " already exists.");
+				System.out.println("Do you wish to override? Y,N");
+				Character in = (char) System.in.read();
+				while (in > 0) {
+					in = Character.toLowerCase(in);
+					if (in == 'n') {
+						System.exit(-9);
+					} else if (in == 'y') {
+						break;
+					} else {
+						in = (char) System.in.read();
+					}
+				}
+				
+			}
+			bw = new BufferedWriter(new FileWriter(newfile, append));
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	public FileMaker(String filename, boolean append) {
+		this(IOUtil.retrieveDirectory(filename), IOUtil.retrieveFileName(filename), append);
+	}
+	
 	public FileMaker(String filename) {
 		this(IOUtil.retrieveDirectory(filename), IOUtil.retrieveFileName(filename));
 	}

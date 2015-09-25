@@ -23,6 +23,7 @@ public class ToFasta extends IOwrapper {
 		int countD = 0;
 		while (fr.hasMoreLines()) {
 			line = fr.readLine();
+			if (line.startsWith("#"))	continue;
 			tokens = line.split(RegExp.TAB);
 			chr = tokens[Base.CHR];
 			pos = Integer.parseInt(tokens[Base.POS]);
@@ -33,7 +34,7 @@ public class ToFasta extends IOwrapper {
 //					written++;
 //				}
 //			}
-			base = maxLikelyBase(tokens[Base.A], tokens[Base.C], tokens[Base.G], tokens[Base.T], tokens[Base.D]);
+			base = Base.maxLikelyBase(chr, pos, tokens[Base.A], tokens[Base.C], tokens[Base.G], tokens[Base.T], tokens[Base.D]);
 			if (!base.equals("D")) {
 				fm.write(base);
 				if (written % 80 == 0)	fm.writeLine();
@@ -47,40 +48,7 @@ public class ToFasta extends IOwrapper {
 		System.out.println("[DEBUG] :: Number of bases deleted = " + countD);
 	}
 
-	private String maxLikelyBase(String a, String c, String g,
-			String t, String d) {
-		int A = Integer.parseInt(a);
-		int C = Integer.parseInt(c);
-		int G = Integer.parseInt(g);
-		int T = Integer.parseInt(t);
-		int D = Integer.parseInt(d);
-		int max = Math.max(Math.max(A, C), Math.max(G, T));
-		if (max < D && D > 0) {
-			return "D";
-		} else {
-			if (max == 0) {
-				return "N";
-			}
-			if (max > 0
-					&& ((max == A && (max == C || max == G || max == T))
-					|| (max == C && (max == G || max == T))
-					|| (max == G && max == T))) {
-				System.out.println("[DEBUG] ::\t" + chr + ":" + pos + "\tA=" + A + "\tC=" + C + "\tG=" + G + "\tT=" + T);
-				return "N";
-			}
-			if (A == max) {
-				return "A";
-			} else if (C == max) {
-				return "C";
-			} else if (G == max) {
-				return "G";
-			} else if (T == max) {
-				return "T";
-			}
-		}
-		return "N";
-	}
-
+	
 	@Override
 	public void printHelp() {
 		System.out.println("Usage: java -jar baseToFasta.jar <in.base> <out.fa>");
