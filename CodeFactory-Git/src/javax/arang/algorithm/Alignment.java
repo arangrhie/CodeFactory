@@ -1,5 +1,6 @@
 package javax.arang.algorithm;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Vector;
 
@@ -7,7 +8,7 @@ public class Alignment {
 	
 	public int[][] score;
 	public int[][] marking;
-	public Vector<Integer> depthCov = new Vector<Integer>();
+	public ArrayList<Integer> depthCov = new ArrayList<Integer>();
 	
 	public static final int MATCH_SCORE = 5;
 	public static final int MISMATCH_SCORE = -3;
@@ -26,13 +27,13 @@ public class Alignment {
 	
 
 	public void initAlignment() {
-		this.depthCov = new Vector<Integer>();
+		this.depthCov = new ArrayList<Integer>();
 		score = null;
 		marking = null;
 	}
 	
-	public Vector<Integer> reverseDepthCov() {
-		Vector<Integer> newDepthCov =  new Vector<Integer>();
+	public ArrayList<Integer> reverseDepthCov() {
+		ArrayList<Integer> newDepthCov =  new ArrayList<Integer>();
 		for (int i = depthCov.size() - 1; i >= 0 ; i--) {
 			newDepthCov.add(depthCov.get(i));
 		}
@@ -72,7 +73,7 @@ public class Alignment {
 				}
 			}
 		
-			cell = new Cell(new Vector<Integer>(), score[readToAlign.length()][readToCompare.length()], readToAlign.length(), readToCompare.length());
+			cell = new Cell(new ArrayList<Integer>(), score[readToAlign.length()][readToCompare.length()], readToAlign.length(), readToCompare.length());
 //		} else {
 //			for (int i = toAlignLen; i >=0; i--) {
 //				score[i][0] = gapPanelty;
@@ -179,7 +180,7 @@ public class Alignment {
 	
 	public Cell backTrack(int cumScore, int i, int j) {
 		Cell cell = new Cell();
-		cell.path = new Vector<Integer>();
+		cell.path = new ArrayList<Integer>();
 		cell.score = cumScore;
 		cell.toAlignIdx = i;
 		cell.toCompareIdx = j;

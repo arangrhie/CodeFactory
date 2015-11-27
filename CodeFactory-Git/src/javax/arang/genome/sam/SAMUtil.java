@@ -244,7 +244,7 @@ public class SAMUtil {
 				seqEndPos = posArr[Sam.ALGN_RANGE_END];
 			}
 		}
-		boolean isSpanning = isLeftFlanked && isRightFlanked;
+		boolean isSpanning = isLeftFlanked && isRightFlanked && true;
 		if (isSpanning) {
 			seqData[TYPE] = Alignment.SPAN;
 		} else if (isLeftFlanked) {

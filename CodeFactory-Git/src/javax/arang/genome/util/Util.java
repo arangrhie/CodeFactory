@@ -59,6 +59,23 @@ public class Util {
 		return posInStartIdx;
 	}
 	
+	
+	public static int getRegionEndIdxContainingPos(ArrayList<Integer> endList, int pos) {
+		int posInEndIdx = Collections.binarySearch(endList, pos);
+		// posInEndIdx will be the closest, equals to or larger than the pos
+		if (posInEndIdx < 0) {
+			posInEndIdx += 1;
+			posInEndIdx *= -1;
+		}
+		
+		// all ENDs are smaller than pos
+		if (posInEndIdx == endList.size()) {
+			return -1;
+		}
+		
+		return posInEndIdx;
+	}
+	
 	/***
 	 * 
 	 * @param sortedContigLenArr	ArrayList of contig length. Use Collection.sort(sortedContigLenArr) before running this method

@@ -55,9 +55,11 @@ public class VCF {
 					value = "NA";	// NA
 				} else {
 					if (value.contains("/")) {
-						value = Integer.parseInt(value.substring(0, value.indexOf("/"))) + 1 + "";
+						value = Integer.parseInt(value.substring(0, value.indexOf("/")))
+								+ Integer.parseInt(value.substring(value.indexOf("/") + 1)) + "";
 					} else if (value.contains("|")) {
-						value = Integer.parseInt(value.substring(0, value.indexOf("|"))) + 1 + "";
+						value = Integer.parseInt(value.substring(0, value.indexOf("|")))
+								+ Integer.parseInt(value.substring(value.indexOf("/") + 1)) + "";
 					}
 				}
 			}

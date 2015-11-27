@@ -24,12 +24,12 @@ public abstract class INOwrapper extends Wrapper {
 		}
 		
 		String outFile = files[files.length - 1];
-		System.out.println("Processing file");
+		System.err.println("Processing file");
 		ArrayList<FileReader> fileReaders = new ArrayList<FileReader>();
 		for (int i = 0; i < inFiles.length; i++) {
 			FileReader fr = new FileReader(inFiles[i]);
 			fileReaders.add(fr);
-			System.out.println("\t" + fr.getFileName());
+			System.err.println("\t" + fr.getFileName());
 		}
 		FileMaker fm = new FileMaker(outFile);
 //		if (outFile.lastIndexOf("/") < 0) {
@@ -37,7 +37,7 @@ public abstract class INOwrapper extends Wrapper {
 //		} else {
 //			fm = new FileMaker(getPath(outFile), outFile.substring(outFile.lastIndexOf("/")));
 //		}
-		System.out.println("Into " + fm.getFileName());
+		System.err.println("Into " + fm.getFileName());
 		
 		hooker(fileReaders, fm);
 		

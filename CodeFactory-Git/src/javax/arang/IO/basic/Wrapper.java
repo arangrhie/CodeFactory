@@ -17,8 +17,8 @@ public abstract class Wrapper {
 		m -= h*60;
 		long sec = runningTime%60;
 		
-		System.out.println(MessageFormat.format("Running time : {0} h {1} m {2} sec", h, m, sec));
-		System.out.println();
+		System.err.println(MessageFormat.format("Running time : {0} h {1} m {2} sec", h, m, sec));
+		System.err.println();
 	}
 
 	public abstract void printHelp();

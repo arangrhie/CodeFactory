@@ -19,11 +19,11 @@ public class SeparateSubreadsByPhasedSNPs extends Phase {
 		System.out.println("Usage: java -jar phasingSeperateSubreadsByPhasedSNPs.jar <in.sam> <in.phased.snp> <out_prefix> [write_sam=TRUE]");
 		System.out.println("\t<in.bam>: hg19_subreads.sam");
 		System.out.println("\t<in.phased.snp>: phased SNPs. CHR POS BaseOfHaplotypeA BaseOfHaplotypeB");
-		System.out.println("\t<out_prefix>: <out_prefix>.HaplotypeA.list, <out_prefix>.HaplotypeB.list, <out_prefix>\n"
+		System.out.println("\t<out_prefix>: <out_prefix>.readid.haplotypeA, <out_prefix>.readid.haplotypeB, <out_prefix>.readid.haplotypeHomogenic, <out_prefix>.readid.haplotypeAmbiguous\n"
 				+ "\t\twill be generated containing the Read ID of fasta.");
 		System.out.println("\t\tEach list consists of: <Read_ID> <Total num. phased SNPs in this read> <Num. haplotype A SNPs> <Num. haplotype B SNPs>");
-		System.out.println("\t[write_sam]: TRUE or FALSE. write also the output in .sam format. DEFUALT=TRUE");
-		System.out.println("Arang Rhie, 2015-07-16. arrhie@gmail.com");
+		System.out.println("\t[write_sam]: TRUE or FALSE. write output as well as in .sam format only. DEFUALT=TRUE");
+		System.out.println("Arang Rhie, 2015-11-23. arrhie@gmail.com");
 	}
 
 	public static void main(String[] args) {
@@ -42,12 +42,10 @@ public class SeparateSubreadsByPhasedSNPs extends Phase {
 	private FileMaker fmHaplotypeA;
 	private FileMaker fmHaplotypeB;
 	private FileMaker fmHomogenic;
-	private FileMaker fmNoSnp;
 	private FileMaker fmAmbiguous;
 	private FileMaker fmReadHaplotypeA;
 	private FileMaker fmReadHaplotypeB;
 	private FileMaker fmReadHomogenic;
-	private FileMaker fmReadNoSNP;
 	private FileMaker fmReadAmbiguous;
 	
 	
@@ -62,26 +60,22 @@ public class SeparateSubreadsByPhasedSNPs extends Phase {
 			fmHaplotypeA = new FileMaker(outPrefix + ".haplotypeA.sam");
 			fmHaplotypeB = new FileMaker(outPrefix + ".haplotypeB.sam");
 			fmHomogenic = new FileMaker(outPrefix + ".haplotypeHomogenic.sam");
-			fmNoSnp = new FileMaker(outPrefix + ".haplotypeNoSNP.sam");
 			fmAmbiguous = new FileMaker(outPrefix + ".haplotypeAmbiguous.sam");
 		}
 		fmReadHaplotypeA = new FileMaker(outPrefix + ".readid.haplotypeA");
 		fmReadHaplotypeB = new FileMaker(outPrefix + ".readid.haplotypeB");
 		fmReadHomogenic = new FileMaker(outPrefix + ".readid.haplotypeHomogenic");
-		fmReadNoSNP = new FileMaker(outPrefix + ".readid.haplotypeNoSNP");
 		fmReadAmbiguous = new FileMaker(outPrefix + ".readid.haplotypeAmbiguous");
 		readSamDetermineSNP(frSam, snpPosList, snpPosToPhasedSNPmap);
 		if (writeSam) {
 			fmHaplotypeA.closeMaker();
 			fmHaplotypeB.closeMaker();
 			fmHomogenic.closeMaker();
-			fmNoSnp.closeMaker();
 			fmAmbiguous.closeMaker();
 		}
 		fmReadHaplotypeA.closeMaker();
 		fmReadHaplotypeB.closeMaker();
 		fmReadHomogenic.closeMaker();
-		fmReadNoSNP.closeMaker();
 		fmReadAmbiguous.closeMaker();
 	}
 	
@@ -100,15 +94,15 @@ public class SeparateSubreadsByPhasedSNPs extends Phase {
 			writeHaplotype(fmReadHaplotypeB, fmHaplotypeB, line, readID,
 					countA, countB, countO, seqStart, seqEnd, snpsInRead, haplotype, snpsInReadPosList);
 		} else if (countA == 0 && countB == 0) {
-			if (haplotype.length() > 0) {
-				// HOM
+//			if (haplotype.length() > 0) {
+				// HOM or no snps available
 				writeHaplotype(fmReadHomogenic, fmHomogenic, line, readID,
 						countA, countB, countO, seqStart, seqEnd, snpsInRead, haplotype, snpsInReadPosList);
-			} else if (haplotype.length() == 0) {
-				// no snps available
-				writeHaplotype(fmReadNoSNP, fmNoSnp, line, readID,
-						countA, countB, countO, seqStart, seqEnd, snpsInRead, haplotype, snpsInReadPosList);
-			} 
+//			} else if (haplotype.length() == 0) {
+//				// no snps available
+//				writeHaplotype(fmReadNoSNP, fmNoSnp, line, readID,
+//						countA, countB, countO, seqStart, seqEnd, snpsInRead, haplotype, snpsInReadPosList);
+//			} 
 		} else {
 			// Ambiguous read
 			writeHaplotype(fmReadAmbiguous, fmAmbiguous, line, readID,
@@ -132,10 +126,7 @@ public class SeparateSubreadsByPhasedSNPs extends Phase {
 		fmHaplotypeA.writeLine(line);
 		fmHaplotypeB.writeLine(line);
 		fmHomogenic.writeLine(line);
-		fmNoSnp.writeLine(line);
 		fmAmbiguous.writeLine(line);
-		
-		
 	}
 
 	@Override

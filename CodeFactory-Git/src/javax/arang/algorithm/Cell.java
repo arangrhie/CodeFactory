@@ -1,14 +1,14 @@
 package javax.arang.algorithm;
 
-import java.util.Vector;
+import java.util.ArrayList;
 
 public class Cell {
-	public Vector<Integer> path = new Vector<Integer>();
+	public ArrayList<Integer> path = new ArrayList<Integer>();
 	int score;
 	int toAlignIdx;
 	int toCompareIdx;
 	
-	public Cell(Vector<Integer> path, int cumScore, int toAlignIdx,
+	public Cell(ArrayList<Integer> path, int cumScore, int toAlignIdx,
 			int toCompareIdx) {
 		this.path = path;
 		this.score = cumScore;

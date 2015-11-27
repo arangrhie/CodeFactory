@@ -177,7 +177,7 @@ public class FileReader {
 			for (int i = 0; i < n; i++) {
 				String nextLine = br.readLine();
 				if (nextLine == null) {
-					System.out.println("Reached end of reference.");
+					System.err.println("Reached end of reference.");
 					break;
 				}
 				line = line + nextLine.trim();

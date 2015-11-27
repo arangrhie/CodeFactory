@@ -17,12 +17,12 @@ public abstract class INwrapper extends Wrapper{
 			inFiles[i] = files[i];
 		}
 		
-		System.out.println("Processing file");
+		System.err.println("Processing file");
 		ArrayList<FileReader> fileReaders = new ArrayList<FileReader>();
 		for (int i = 0; i < inFiles.length; i++) {
 			FileReader fr = new FileReader(inFiles[i]);
 			fileReaders.add(fr);
-			System.out.println("\t" + fr.getFileName());
+			System.err.println("\t" + fr.getFileName());
 		}
 		
 		hooker(fileReaders);

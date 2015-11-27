@@ -10,6 +10,17 @@ public class TestArraysBinarySearch {
 
 	public static void main(String[] args) {
 		ArrayList<Integer> list = new ArrayList<Integer>();
+		
+		for (int i = 1; i <= 5; i++) {
+			list.add(i*2);
+			System.out.print(" " + i*2);
+		}
+		System.out.println();
+		System.out.println("Key 1: " + Collections.binarySearch(list, 1));
+		System.out.println("Key 3: " + Collections.binarySearch(list, 3));
+		System.out.println("Key 13: " + Collections.binarySearch(list, 13));
+		System.out.println();
+		
 		for (int i = 1; i < 50; i+=3) {
 			list.add(i * 4);
 			System.out.print(" " + i*4);
