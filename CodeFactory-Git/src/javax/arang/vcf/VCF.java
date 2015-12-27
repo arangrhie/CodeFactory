@@ -27,6 +27,20 @@ public class VCF {
 		return value;
 	}
 	
+	public static String parseSAMPLE(String format, String fieldToRetrieve, String sample) {
+		String[] formatFields = format.split(":");
+		String[] sampleFields = sample.split(":");
+		int idxToRetrieve = 0;
+		String field;
+		for (idxToRetrieve = 0; idxToRetrieve < formatFields.length; idxToRetrieve++) {
+			field = formatFields[idxToRetrieve];
+			if (field.equals(fieldToRetrieve)) {
+				return sampleFields[idxToRetrieve];
+			}
+		}
+		return "NA:NoField";
+	}
+	
 	public static Boolean isTransition(String ref, String alt) {
 		if (ref.equals("A") && alt.equals("G")
 				|| ref.equals("G") && alt.equals("A")

@@ -161,7 +161,7 @@ public class FishersExact extends IOwrapper {
 		}
 	}
 	
-	private double fisher(int a, int b, int c, int d) {
+	public double fisher(int a, int b, int c, int d) {
 		// (a+b)!*(c+d)!*(a+c)!*(b+d)! / n!*a!*b!*c!*d!
 //		System.out.println(a + " " + b + " " + c + " " + d);
 		double numerator = getFactNum(a+b) * getFactNum(c+d) * getFactNum(a+c) * getFactNum(b+d);

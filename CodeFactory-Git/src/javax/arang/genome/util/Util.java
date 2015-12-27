@@ -73,6 +73,10 @@ public class Util {
 			return -1;
 		}
 		
+		if (pos > endList.get(posInEndIdx)) {
+			return -1;
+		}
+		
 		return posInEndIdx;
 	}
 	
@@ -86,7 +90,7 @@ public class Util {
 		double n50comp = contigLenSum / 2;
 		int n50 = 0;
 		double lenSum = 0;
-		System.out.println("Longest block (contig) size: " + Format.numbersToDecimal(sortedContigLenArr.get(sortedContigLenArr.size() - 1)) + " bp");
+		System.out.println("Longest block (contig) size:\t" + Format.numbersToDecimal(sortedContigLenArr.get(sortedContigLenArr.size() - 1)));
 		for (int i = sortedContigLenArr.size() - 1; i >= 0; i--) {
 			lenSum += sortedContigLenArr.get(i);
 			if (lenSum > n50comp) {

@@ -75,6 +75,12 @@ public class PhasedReadsToPhasedBlocks extends IOwrapper {
 		
 		ArrayList<Integer> blockArr = new ArrayList<Integer>();
 		System.out.println("Total num. of phased blocks: " + phasedBlocks.size());
+		
+		if (phasedBlocks.size() == 0) {
+			System.err.println("No phased blocks available.");
+			fmPhasedBlocks.closeMaker();
+			System.exit(-1);
+		}
 		double lenSum = 0;
 		int len;
 		for (int i = 0; i < phasedBlocks.size(); i++) {
@@ -105,7 +111,7 @@ public class PhasedReadsToPhasedBlocks extends IOwrapper {
 		System.out.println("\t<out.bed>: phased block bed");
 		System.out.println("\t\tBlock Start: Seq start with no heterozygous SNP overlapping with previous block");
 		System.out.println("\t\tBlock End: Last overlapped heterozygous SNP position");
-		System.out.println("Arang Rhie, 2015-09-17. arrhie@gmail.com");
+		System.out.println("Arang Rhie, 2015-12-12. arrhie@gmail.com");
 	}
 
 	public static void main(String[] args) {

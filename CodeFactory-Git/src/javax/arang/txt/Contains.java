@@ -31,9 +31,12 @@ public class Contains extends I2Owrapper {
 		String[] tokens;
 		int count = 0;
 		
-		fm.writeLine(fr1.readLine());
 		while (fr1.hasMoreLines()) {
 			line = fr1.readLine();
+			if (line.startsWith("#"))	{
+				fm.writeLine(line);
+				continue;
+			}
 			tokens = line.split("\t");
 			if (lookups.contains(tokens[colIdx])) {
 				fm.writeLine(line);
@@ -53,10 +56,11 @@ public class Contains extends I2Owrapper {
 		System.out.println("\tLooks up for <in2.txt> if <col_num_of_in1.txt> in <in1.txt> contains it");
 		System.out.println("\t and returns the line into [out.txt]");
 		System.out.println("\t<in1.txt>: any tab-delemited file");
+		System.out.println("\t\tLines starting with # will be copied into [out.txt].");
 		System.out.println("\t<in2.txt>: values to look up. 1-value 1-line.");
-		System.out.println("\t<col_num_of_in1.txt>: INTEGER, 0-based column number to look up. DEFAULT=1");
+		System.out.println("\t<col_num_of_in1.txt>: INTEGER, 1-based column number to look up. DEFAULT=1");
 		System.out.println("\t[out.txt]: OPTIONAL. DEFAULT=<in1.txt>_in_<in2.txt>");
-		System.out.println("\t2013-07-26");
+		System.out.println("\t2015-12-02");
 	}
 	
 	private static int colIdx = 0;
@@ -66,10 +70,10 @@ public class Contains extends I2Owrapper {
 	 */
 	public static void main(String[] args) {
 		if (args.length == 3) {
-			colIdx = Integer.parseInt(args[2]);
+			colIdx = Integer.parseInt(args[2]) - 1;
 			new Contains().go(args[0], args[1], args[0] + "_in_" + args[1]);
 		} else if (args.length == 4) {
-			colIdx = Integer.parseInt(args[2]);
+			colIdx = Integer.parseInt(args[2]) - 1;
 			new Contains().go(args[0], args[1], args[3]);
 		} else {
 			new Contains().printHelp();

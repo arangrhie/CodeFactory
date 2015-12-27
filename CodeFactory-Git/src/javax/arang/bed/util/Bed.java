@@ -51,6 +51,17 @@ public class Bed {
 		parseBed(fr);
 	}
 	
+	public boolean isInRegion(String chr, int pos) {
+		ArrayList<Integer> start = starts.get(chr);
+		ArrayList<Integer> end = ends.get(chr);
+		int closestStart = Util.getRegionStartContainingPos(start, pos);
+		if (closestStart < 0)	return false;
+		if (pos < end.get(start.indexOf(closestStart))) {
+			return true;
+		}
+		return false;
+	}
+	
 	/***
 	 * Parse bed formatted file.
 	 * Line starting with \'#\' are ignored.
@@ -388,10 +399,10 @@ public class Bed {
 	private void sortChrList() {
 		Chromosome[] chrArray = null;
 		chrArray = new Chromosome[0];
-		System.out.println("[DEBUG] :: chrList.size() = " + chrList.size());
+		System.err.println("[DEBUG] :: chrList.size() = " + chrList.size());
 		chrArray = chrList.toArray(chrArray);
 		Arrays.sort(chrArray);
-		System.out.println("[DEBUG] :: chrArray.length = " + chrArray.length);
+		System.err.println("[DEBUG] :: chrArray.length = " + chrArray.length);
 		chrList.clear();
 		chrStrArray.clear();
 		for (int i = 0; i < chrArray.length; i++) {
@@ -436,6 +447,33 @@ public class Bed {
 
 	public ArrayList<Integer> getNotes2(String chr) {
 		return notes2.get(chr);
+	}
+
+	public int getBasesInRegion(String contig, int start, int end) {
+		int bases = 0;
+		for (int pos = start + 1; pos <= end; pos++) {
+			if (isInRegion(contig, pos)) {
+				bases++;
+			}
+		}
+		
+		int closestStart = Util.getRegionStartContainingPos(starts.get(contig), start);
+		int closestEnd;
+		if (closestStart > 0) {
+			closestEnd = ends.get(contig).get(starts.get(contig).indexOf(closestStart));
+			if (start < closestEnd) {
+				bases += (start - closestStart);
+			}
+		}
+		
+		closestStart = Util.getRegionStartContainingPos(starts.get(contig), end);
+		if (closestStart > 0) {
+			closestEnd = ends.get(contig).get(starts.get(contig).indexOf(closestStart));
+			if (end < closestEnd) {
+				bases += (closestEnd - end);
+			}
+		}
+		return bases;
 	}
 
 }

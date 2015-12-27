@@ -5,6 +5,7 @@ import java.util.Collections;
 
 import javax.arang.IO.Rwrapper;
 import javax.arang.IO.basic.FileReader;
+import javax.arang.IO.basic.Format;
 import javax.arang.IO.basic.RegExp;
 import javax.arang.bed.util.Bed;
 import javax.arang.genome.util.Util;
@@ -32,10 +33,17 @@ public class CalcN50 extends Rwrapper {
 		}
 		
 		Collections.sort(lenArr);
-		System.out.println("Num. blocks:\t" + String.format("%,d", lenArr.size()));
+		System.err.println("Num. blocks:\t" + String.format("%,d", lenArr.size()));
 		int n50 = Util.getN50(lenArr, lenSum);
-		System.out.println("N50:\t" + String.format("%,d", n50));
-		System.out.println("Genome covered bases:\t" + String.format("%,.0f", lenSum));
+		System.err.println("N50:\t" + String.format("%,d", n50));
+		System.err.println("Avg. block size:\t" + String.format("%,.1f", ((float)lenSum / lenArr.size())));
+		System.err.println("Genome covered bases:\t" + String.format("%,.0f", lenSum));
+		System.err.println("Num. Blocks\tBlock Size N50\tAvg. Block Size\tLongest Block Size\tGenome Covered (bp)");
+		System.out.println(String.format("%,d", lenArr.size())
+				+ "\t" + String.format("%,d", n50)
+				+ "\t" + String.format("%,.1f", ((float)lenSum / lenArr.size()))
+				+ "\t" + Format.numbersToDecimal(lenArr.get(lenArr.size() - 1))
+				+ "\t" + String.format("%,.0f", lenSum));
 	}
 
 	@Override

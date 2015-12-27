@@ -4,6 +4,7 @@ import javax.arang.IO.IOwrapper;
 import javax.arang.IO.basic.FileMaker;
 import javax.arang.IO.basic.FileReader;
 import javax.arang.IO.basic.RegExp;
+import javax.arang.base.util.Base;
 
 public class ToFasta extends IOwrapper {
 
@@ -36,9 +37,16 @@ public class ToFasta extends IOwrapper {
 //			}
 			base = Base.maxLikelyBase(chr, pos, tokens[Base.A], tokens[Base.C], tokens[Base.G], tokens[Base.T], tokens[Base.D]);
 			if (!base.equals("D")) {
-				fm.write(base);
-				if (written % 80 == 0)	fm.writeLine();
-				written++;
+				if (base.length() == 1) {
+					fm.write(base);
+					if (written % 80 == 0)	fm.writeLine();
+					written++;
+				} else {
+					System.err.println("[DEBUG] :: multiple bases with same depth: " + base + "\t" + line);
+					fm.write(base.charAt(0));
+					if (written % 80 == 0)	fm.writeLine();
+					written++;
+				}
 			} else {
 				countD++;
 			}

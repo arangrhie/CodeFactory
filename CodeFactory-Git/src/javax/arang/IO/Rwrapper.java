@@ -9,7 +9,7 @@ public abstract class Rwrapper extends Wrapper{
 		startTiming();
 		
 		FileReader fr = new FileReader(inFile);
-		System.out.println("Processing file " + fr.getFileName());
+		System.err.println("Processing file " + fr.getFileName());
 		
 		hooker(fr);
 		

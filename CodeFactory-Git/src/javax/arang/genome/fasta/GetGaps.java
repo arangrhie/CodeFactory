@@ -16,6 +16,7 @@ public class GetGaps extends IOwrapper {
 		int refNbaseLen = 0;
 		boolean wasN = false;
 		int numGaps = 0;
+		int totalNumGaps = 0;
 		while (fr.hasMoreLines()) {
 			line = fr.readLine().trim();
 			if (line.startsWith(">"))	{
@@ -27,6 +28,7 @@ public class GetGaps extends IOwrapper {
 				chr = line.replace(">", "");
 				basePos = 0;
 				numGaps = 0;
+				totalNumGaps += numGaps;
 				continue;
 			}
 			len = line.length();
@@ -37,7 +39,7 @@ public class GetGaps extends IOwrapper {
 					if (!wasN) {
 						wasN = true;
 						type = line.charAt(i);
-						fm.write(chr + "\t" + basePos);
+						fm.write(chr + "\t" + (basePos - 1));
 						numGaps++;
 						//System.out.println("[DEBUG] :: " + line);
 					}
@@ -54,7 +56,8 @@ public class GetGaps extends IOwrapper {
 		if (wasN) {
 			writeLine(fm, basePos, refNbaseLen, type, chr, numGaps);
 		}
-		System.out.println("Total number of gaps: " + numGaps);
+		totalNumGaps += numGaps;
+		System.out.println("Total number of gaps: " + totalNumGaps);
 	}
 	
 	private void writeLine(FileMaker fm, long basePos, int refNbaseLen, char type, String chr, int numGaps) {
@@ -64,7 +67,8 @@ public class GetGaps extends IOwrapper {
 	@Override
 	public void printHelp() {
 		System.out.println("Usage: java -jar fastaGetGaps.java <in.fasta> <gap.bed>");
-		System.out.println("\tRetrieve the gap positions in a 1-based bed format");
+		System.out.println("\tRetrieve the gap positions in a bed format");
+		System.out.println("Arang Rhie, 2015-12-18. arrhie@gmail.com");
 	}
 
 	public static void main(String[] args) {

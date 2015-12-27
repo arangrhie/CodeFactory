@@ -4,7 +4,7 @@ import javax.arang.IO.bam.BamRwrapper;
 import javax.arang.IO.bambasic.BamReader;
 import javax.arang.IO.basic.FileMaker;
 import javax.arang.bam.util.BamRecord;
-import javax.arang.genome.sam.SAMUtil;
+import javax.arang.sam.SAMUtil;
 
 public class FlagStat extends BamRwrapper {
 

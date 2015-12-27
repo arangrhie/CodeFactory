@@ -12,10 +12,10 @@ import javax.arang.IO.basic.IOUtil;
 import javax.arang.IO.basic.RegExp;
 import javax.arang.bam.util.BamRecord;
 import javax.arang.bam.util.RefInfo;
-import javax.arang.genome.sam.SAMUtil;
-import javax.arang.genome.sam.Sam;
 import javax.arang.phasing.util.PhasedBlock;
 import javax.arang.phasing.util.PhasedSNP;
+import javax.arang.sam.SAMUtil;
+import javax.arang.sam.Sam;
 
 public class FindPSgapsCoveredWithSubreads extends IOwrapper {
 	

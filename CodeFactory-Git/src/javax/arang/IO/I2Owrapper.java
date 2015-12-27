@@ -14,8 +14,8 @@ public abstract class I2Owrapper extends Wrapper {
 		FileReader fr2 = new FileReader(inFile2);
 		FileMaker fm = new FileMaker(outFile);
 		
-		System.out.println("Processing file : " + fr1.getFileName() + ", " + fr2.getFileName());
-		System.out.println("Into : " + fm.getFileName());
+		System.err.println("Processing file : " + fr1.getFileName() + ", " + fr2.getFileName());
+		System.err.println("Into : " + fm.getFileName());
 		hooker(fr1, fr2, fm);
 		
 		fr1.closeReader();

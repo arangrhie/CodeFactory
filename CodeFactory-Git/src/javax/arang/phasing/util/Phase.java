@@ -8,9 +8,9 @@ import javax.arang.IO.R2wrapper;
 import javax.arang.IO.basic.FileMaker;
 import javax.arang.IO.basic.FileReader;
 import javax.arang.IO.basic.RegExp;
-import javax.arang.base.Base;
-import javax.arang.genome.sam.SAMUtil;
-import javax.arang.genome.sam.Sam;
+import javax.arang.base.util.Base;
+import javax.arang.sam.SAMUtil;
+import javax.arang.sam.Sam;
 
 public abstract class Phase extends R2wrapper {
 	

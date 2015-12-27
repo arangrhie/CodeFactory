@@ -2,7 +2,7 @@ package javax.arang.test;
 
 import java.util.ArrayList;
 
-import javax.arang.genome.sam.Sam;
+import javax.arang.sam.Sam;
 
 public class SamCigarTest {
 
@@ -14,8 +14,8 @@ public class SamCigarTest {
 		ArrayList<int[]> cigarArr = Sam.getAllPosition(10, cigar);
 		
 		for (int[] posArr : cigarArr) {
-			System.out.print(posArr[Sam.ALGN_RANGE_START] + " " + posArr[Sam.ALGN_RANGE_END] + "\t" + seq.substring(posArr[Sam.ALGN_RANGE_START], posArr[Sam.ALGN_RANGE_END] + 1));
-			System.out.println("\t" + posArr[Sam.REF_START_POS] + " " + posArr[Sam.REF_END_POS] + " " + Sam.getCigarType(posArr[Sam.CIGAR_TYPE]));
+			System.out.print(posArr[Sam.CIGAR_POS_ALGN_RANGE_START] + " " + posArr[Sam.CIGAR_POS_ALGN_RANGE_END] + "\t" + seq.substring(posArr[Sam.CIGAR_POS_ALGN_RANGE_START], posArr[Sam.CIGAR_POS_ALGN_RANGE_END] + 1));
+			System.out.println("\t" + posArr[Sam.CIGAR_POS_REF_START] + " " + posArr[Sam.CIGAR_POS_REF_END] + " " + Sam.getCigarType(posArr[Sam.CIGAR_POS_TYPE]));
 		}
 		
 		System.out.println("Sam.getEndSoftclip(): " + Sam.getEndSoftclip(cigar));

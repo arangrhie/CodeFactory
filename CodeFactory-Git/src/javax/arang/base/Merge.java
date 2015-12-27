@@ -4,6 +4,7 @@ import javax.arang.IO.I2Owrapper;
 import javax.arang.IO.basic.FileMaker;
 import javax.arang.IO.basic.FileReader;
 import javax.arang.IO.basic.RegExp;
+import javax.arang.base.util.Base;
 
 public class Merge extends I2Owrapper {
 
@@ -11,11 +12,17 @@ public class Merge extends I2Owrapper {
 	public void hooker(FileReader fr1, FileReader fr2, FileMaker fm) {
 
 		String line1 = fr1.readLine();
+		if (line1.startsWith("#") || line1.startsWith("Chromosome")) {
+			line1 = fr1.readLine();
+		}
 		String[] tokens1 = line1.split(RegExp.TAB);
 		String chr1 = tokens1[Base.CHR];
 		int pos1 = Integer.parseInt(tokens1[Base.POS]);
 		
 		String line2 = fr2.readLine();
+		if (line2.startsWith("#") || line2.startsWith("Chromosome")) {
+			line2 = fr2.readLine();
+		}
 		String[] tokens2 = line2.split(RegExp.TAB);
 		String chr2 = tokens2[Base.CHR];
 		int pos2 = Integer.parseInt(tokens2[Base.POS]);
@@ -87,7 +94,7 @@ public class Merge extends I2Owrapper {
 		System.out.println("\t<in1.base> and <in2.base>: Output of bamBaseDepth.jar");
 		System.out.println("\t\t*Assumes to be in same chromosome. RUN ONLY PER CHROMOSOMES!!");
 		System.out.println("\t<out.base>: merged <in1.base> and <in2.base>.");
-		System.out.println("Arang Rhie, 2015-09-09. arrhie@gmail.com");
+		System.out.println("Arang Rhie, 2015-12-12. arrhie@gmail.com");
 	}
 	
 	public static void main(String[] args) {
