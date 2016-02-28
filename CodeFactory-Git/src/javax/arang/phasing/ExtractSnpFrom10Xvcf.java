@@ -70,10 +70,23 @@ public class ExtractSnpFrom10Xvcf extends IOwrapper {
 				phasedEnd = pos;
 			}
 			if (gt.contains("|")) {
-				gt = getGenotype(gt, ref, alt);
-				// skip phased but uncertain variations: Exclude form marker
-				if (!gt.equals("na")) {
-					fm.writeLine(chr + "\t" + pos + "\t" + gt + "\t" + ps);
+				if (ref.length() < alt.length()) {	// ins
+					continue;
+				} else if (ref.length() > alt.length()) {	// del
+					int delLen = ref.length() - 1;
+					String tmpgt;
+					for (int i = pos+1; i < pos + delLen; i++) {
+						 tmpgt = getGenotype(gt, ref.charAt(i - pos) + "", "D");
+						if (!tmpgt.equals("na")) {
+							fm.writeLine(chr + "\t" + pos + "\t" + tmpgt + "\t" + ps);
+						}
+					}
+				} else {
+					// skip phased but uncertain variations: Exclude form marker
+					gt = getGenotype(gt, ref, alt);
+					if (!gt.equals("na")) {
+						fm.writeLine(chr + "\t" + pos + "\t" + gt + "\t" + ps);
+					}
 				}
 			}
 			prevPs = ps;
@@ -131,7 +144,7 @@ public class ExtractSnpFrom10Xvcf extends IOwrapper {
 		System.out.println("\t<out.phased.snp>: Phasing marker SNPs. CHR POS HaplotypeA_allele HaplotypeB_allele");
 		System.out.println("\t<out.block.bed>: phased blocks by PS");
 		System.out.println("\t\tEach phased block are based on continues phased snps. If non-phased genotype occurs,");
-		System.out.println("Arang Rhie, 2015-07-15. arrhie@gmail.com");
+		System.out.println("Arang Rhie, 2016-01-06. arrhie@gmail.com");
 	}
 
 	private static String blockBed = "";

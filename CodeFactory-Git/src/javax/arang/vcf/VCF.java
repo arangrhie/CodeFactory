@@ -27,6 +27,13 @@ public class VCF {
 		return value;
 	}
 	
+	/***
+	 * Retrieve the desired field (fieldToRetrieve) out of sample
+	 * @param format
+	 * @param fieldToRetrieve
+	 * @param sample
+	 * @return
+	 */
 	public static String parseSAMPLE(String format, String fieldToRetrieve, String sample) {
 		String[] formatFields = format.split(":");
 		String[] sampleFields = sample.split(":");
@@ -73,7 +80,7 @@ public class VCF {
 								+ Integer.parseInt(value.substring(value.indexOf("/") + 1)) + "";
 					} else if (value.contains("|")) {
 						value = Integer.parseInt(value.substring(0, value.indexOf("|")))
-								+ Integer.parseInt(value.substring(value.indexOf("/") + 1)) + "";
+								+ Integer.parseInt(value.substring(value.indexOf("|") + 1)) + "";
 					}
 				}
 			}

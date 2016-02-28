@@ -20,7 +20,7 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IOUtils;
 
 public class ExomeTableHandler {
-	private static final String FILE_PATH = "MetaData/exomeTable.obj";
+	//private static final String FILE_PATH = "MetaData/exomeTable.obj";
 	static HashMap<String, Exome> table;
 	
 	public static void main (String[] args) {
@@ -46,6 +46,7 @@ public class ExomeTableHandler {
 //		printExomes("NM_001025159");
 	}
 	
+	@SuppressWarnings("unused")
 	private static void printExomes(String geneName) {
 		Exome exome = table.get(geneName);
 		System.out.println(exome.getChrom());
@@ -90,6 +91,7 @@ public class ExomeTableHandler {
 			ObjectOutput objOut = new ObjectOutputStream(new FileOutputStream("exomeTable.obj"));
 			objOut.writeObject(table);
 			objOut.flush();
+			objOut.close();
 		} catch (IOException e) {
 			System.out.println("IO Exception occurred...!!");
 			e.printStackTrace();
@@ -101,6 +103,7 @@ public class ExomeTableHandler {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	public HashMap<String, Exome> reconstructSerializedObj(String path) {
 		HashMap<String, Exome> table = null;
 		try {
@@ -109,6 +112,7 @@ public class ExomeTableHandler {
 			table = (HashMap<String, Exome>) objIn.readObject();
 			long runningTime = (System.currentTimeMillis() - startTime) / 1000;
 			System.out.println("Re-construction running time : " + (runningTime/60) + "m " + (runningTime%60) + "sec");
+			objIn.close();
 		} catch(IOException e) {
 			System.out.println("IO Exception occure while reading...");
 			e.printStackTrace();

@@ -10,7 +10,6 @@ import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -127,6 +126,7 @@ public class UniXonTableHandler {
 			}
 			out.close();
 			hdfs.close();
+			objIn.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -177,7 +177,7 @@ public class UniXonTableHandler {
 		return table;
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "unused" })
 	private HashMap<Integer, Vector<Long>> reconstructSerializedObj(String file) {
 		HashMap<Integer, Vector<Long>> table = null;
 		try {
@@ -186,6 +186,7 @@ public class UniXonTableHandler {
 			table = (HashMap<Integer, Vector<Long>>) objIn.readObject();
 			long runningTime = (System.currentTimeMillis() - startTime) / 1000;
 			System.out.println("Re-construction running time : " + (runningTime/60) + "m " + (runningTime%60) + "sec");
+			objIn.close();
 		} catch(IOException e) {
 			System.out.println("IO Exception occure while reading...");
 			e.printStackTrace();
@@ -198,7 +199,7 @@ public class UniXonTableHandler {
 		return table;
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "unused" })
 	private HashMap<Long, Vector<String>> reconstructSerializedUniXonObj(String file) {
 		HashMap<Long, Vector<String>> table = null;
 		try {
@@ -207,6 +208,7 @@ public class UniXonTableHandler {
 			table = (HashMap<Long, Vector<String>>) objIn.readObject();
 			long runningTime = (System.currentTimeMillis() - startTime) / 1000;
 			System.out.println("Re-construction running time : " + (runningTime/60) + "m " + (runningTime%60) + "sec");
+			objIn.close();
 		} catch(IOException e) {
 			System.out.println("IO Exception occure while reading...");
 			e.printStackTrace();
@@ -220,12 +222,14 @@ public class UniXonTableHandler {
 	}
 	
 
+	@SuppressWarnings("unused")
 	private void makeSeirializedUniXonObj(HashMap<Long, Vector<String>> map, String path) {
 		long startTime = System.currentTimeMillis();
 		try {
 			ObjectOutput objOut = new ObjectOutputStream(new FileOutputStream(path));
 			objOut.writeObject(map);
 			objOut.flush();
+			objOut.close();
 		} catch (IOException e) {
 			System.out.println("IO Exception occurred...!!");
 			e.printStackTrace();
@@ -236,12 +240,14 @@ public class UniXonTableHandler {
 		System.out.println("Serialization running time : " + (runningTime/60) + "m " + (runningTime%60) + "sec");
 	}
 	
+	@SuppressWarnings("unused")
 	private void makeSeirializedUnixonObj(HashMap<Long, Integer[]> map, String path) {
 		long startTime = System.currentTimeMillis();
 		try {
 			ObjectOutput objOut = new ObjectOutputStream(new FileOutputStream(path));
 			objOut.writeObject(map);
 			objOut.flush();
+			objOut.close();
 		} catch (IOException e) {
 			System.out.println("IO Exception occurred...!!");
 			e.printStackTrace();
@@ -252,12 +258,14 @@ public class UniXonTableHandler {
 		System.out.println("Serialization running time : " + (runningTime/60) + "m " + (runningTime%60) + "sec");
 	}
 	
+	@SuppressWarnings("unused")
 	private void makeSeirializedObj(HashMap<Integer, Vector<Long>> map, String path) {
 		long startTime = System.currentTimeMillis();
 		try {
 			ObjectOutput objOut = new ObjectOutputStream(new FileOutputStream(path));
 			objOut.writeObject(map);
 			objOut.flush();
+			objOut.close();
 		} catch (IOException e) {
 			System.out.println("IO Exception occurred...!!");
 			e.printStackTrace();
@@ -295,6 +303,7 @@ public class UniXonTableHandler {
 	 * 1,000002584			<generated long number>
 	 * 1,000004121			<generated long number>
 	 */
+	@SuppressWarnings("unused")
 	private void loadFromFile(String file) {
 //		HashMap<String, String> exonMap = new HashMap<String, String>();
 		BufferedReader in = null;

@@ -331,18 +331,18 @@ public class SAMUtil {
 	 * @return the base retrieved from record
 	 */
 	public static Character getBaseAtPos(int pos, int posAligned, String[] seqData) {
-		ArrayList<int[]> cigArr = Sam.getPosition(posAligned, seqData[CIGAR]);
+		ArrayList<int[]> cigArr = Sam.getAllPosition(posAligned, seqData[CIGAR]);
 		int seqPos = -1;
 		for (int[] posArr : cigArr) {
 			//System.out.println("[DEBUG] :: " + posArr[Sam.REF_START_POS] + "," + posArr[Sam.REF_END_POS]);
-			if (posArr[Sam.CIGAR_POS_REF_START] <= pos && pos <= posArr[Sam.CIGAR_POS_REF_END]) {
+			if (posArr[Sam.CIGAR_POS_TYPE] == Sam.M && posArr[Sam.CIGAR_POS_REF_START] <= pos && pos <= posArr[Sam.CIGAR_POS_REF_END]) {
 				seqPos = posArr[Sam.CIGAR_POS_ALGN_RANGE_START] + (pos - posArr[Sam.CIGAR_POS_REF_START]);
+				return seqData[SEQ].charAt(seqPos - 1);
+			} else if (posArr[Sam.CIGAR_POS_TYPE] == Sam.D && posArr[Sam.CIGAR_POS_REF_START] <= pos && pos <= posArr[Sam.CIGAR_POS_REF_END]) {
+				return 'D';
 			}
 		}
-		if (seqPos == -1) {
-			return 'D';
-		}
-		return seqData[SEQ].charAt(seqPos - 1);
+		return 'N';
 	}
 	
 	public static int getMappedBases(String cigar) {
@@ -361,7 +361,7 @@ public class SAMUtil {
 	}
 	
 	/***
-	 * M + D
+	 * M + D + N
 	 * @param cigar
 	 * @return bases matched + deleted
 	 */
@@ -371,7 +371,7 @@ public class SAMUtil {
 		
 		for (int i = 0; i < cigarArr.size(); i++) { 
 			if (cigarArr.get(i)[Sam.OP] != null) {
-				if (cigarArr.get(i)[Sam.OP].equals("M") || cigarArr.get(i)[Sam.OP].equals("D")) {
+				if (cigarArr.get(i)[Sam.OP].equals("M") || cigarArr.get(i)[Sam.OP].equals("D") || cigarArr.get(i)[Sam.OP].equals("N")) {
 					matchs += Integer.parseInt(cigarArr.get(i)[Sam.COUNT]);
 				}
 			}

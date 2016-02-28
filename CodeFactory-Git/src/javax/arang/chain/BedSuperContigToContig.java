@@ -79,44 +79,44 @@ public class BedSuperContigToContig extends I2Owrapper {
 			line = frChainBed.readLine();
 			tokens = line.split(RegExp.TAB);
 
-			if (superScaffolds.containsKey(tokens[ChainBed.CONTIG])) {
-				start = Integer.parseInt(tokens[ChainBed.CONTIG_START]);
-				end = Integer.parseInt(tokens[ChainBed.CONTIG_END]);
-				size = Integer.parseInt(tokens[ChainBed.CONTIG_SIZE]);
-				if (tokens[ChainBed.CONTIG_STRAND].equals("-")) {
+			if (superScaffolds.containsKey(tokens[ChainBed.QUERY])) {
+				start = Integer.parseInt(tokens[ChainBed.QUERY_START]);
+				end = Integer.parseInt(tokens[ChainBed.QUERY_END]);
+				size = Integer.parseInt(tokens[ChainBed.QUERY_SIZE]);
+				if (tokens[ChainBed.QUERY_STRAND].equals("-")) {
 					tmp1 = size - end;
 					tmp2 = size - start;
 					start = tmp1;
 					end = tmp2;
 					// For debugging
-					if (tokens[ChainBed.CONTIG].equals("Super-Scaffold_2")) {
+					if (tokens[ChainBed.QUERY].equals("Super-Scaffold_2")) {
 						System.out.println("[DEBUG] :: Super-Scaffold_2 " + start + " " + end);
 					}
 				}
-				superScaffoldContigInfo = superScaffolds.get(tokens[ChainBed.CONTIG]).getComponent(start, end);
+				superScaffoldContigInfo = superScaffolds.get(tokens[ChainBed.QUERY]).getComponent(start, end);
 				contig = superScaffoldContigInfo[SuperScaffold.COMPONENT_CONTIG];
 				start = Integer.parseInt(superScaffoldContigInfo[SuperScaffold.COMPONENT_START]);
 				end = Integer.parseInt(superScaffoldContigInfo[SuperScaffold.COMPONENT_END]);
 				size = Integer.parseInt(superScaffoldContigInfo[SuperScaffold.COMPONENT_SIZE]);
 				
 				if (superScaffoldContigInfo[SuperScaffold.COMPONENT_ORIENTATION].equals("-")
-						|| tokens[ChainBed.CONTIG_STRAND].equals("-") && superScaffoldContigInfo[SuperScaffold.COMPONENT_ORIENTATION].equals("+")) {
+						|| tokens[ChainBed.QUERY_STRAND].equals("-") && superScaffoldContigInfo[SuperScaffold.COMPONENT_ORIENTATION].equals("+")) {
 					tmp1 = size - end;
 					tmp2 = size - start;
 					start = tmp1;
 					end = tmp2;
 				}
-				if (!tokens[ChainBed.CONTIG_STRAND].equals(superScaffoldContigInfo[SuperScaffold.COMPONENT_ORIENTATION])) {
+				if (!tokens[ChainBed.QUERY_STRAND].equals(superScaffoldContigInfo[SuperScaffold.COMPONENT_ORIENTATION])) {
 					orientation = "-";
 				} else {
 					orientation = "+";
 				}
-				for (int i = 0; i < ChainBed.CONTIG; i++) {
+				for (int i = 0; i < ChainBed.QUERY; i++) {
 					fm.write(tokens[i] + "\t");
 				}
-				fm.writeLine(contig + "\t" + start + "\t" + end + "\t" + orientation + "\t" + size + "\t" + tokens[ChainBed.CONTIG_BLOCK]);
+				fm.writeLine(contig + "\t" + start + "\t" + end + "\t" + orientation + "\t" + size + "\t" + tokens[ChainBed.ALIGNMENT_BLOCK]);
 				// For debugging
-				if (tokens[ChainBed.CONTIG].equals("Super-Scaffold_2")) {
+				if (tokens[ChainBed.QUERY].equals("Super-Scaffold_2")) {
 					System.out.println("[DEBUG] :: contig " + contig + " " + start + " " + end);
 				}
 			} else {

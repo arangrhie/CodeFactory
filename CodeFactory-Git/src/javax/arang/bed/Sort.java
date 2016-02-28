@@ -44,6 +44,10 @@ public class Sort extends IOwrapper {
 			tokens = line.split(RegExp.TAB);
 			
 			chr = tokens[Bed.CHROM];
+			if (chr.equalsIgnoreCase("chr")) {
+				fm.writeLine(line);
+				continue;
+			}
 			start = Integer.parseInt(tokens[Bed.START]);
 			end = Integer.parseInt(tokens[Bed.END]);
 			note = "";
@@ -128,7 +132,8 @@ public class Sort extends IOwrapper {
 	public void printHelp() {
 		System.out.println("Usage: java -jar bedSort.jar <in.bed> <out.bed>");
 		System.out.println("\t<out.bed>: Sorted bed file according to chr start position");
-		System.out.println("Arang Rhie, 2015-05-21. arrhie@gmail.com");
+		System.out.println("\t\tLine stating with chr or # will be treated as header line.");
+		System.out.println("Arang Rhie, 2016-02-11. arrhie@gmail.com");
 
 	}
 

@@ -4,7 +4,7 @@ import javax.arang.IO.IOwrapper;
 import javax.arang.IO.basic.FileMaker;
 import javax.arang.IO.basic.FileReader;
 
-public class FormatFasta extends IOwrapper {
+public class Format extends IOwrapper {
 
 	@Override
 	public void hooker(FileReader fr, FileMaker fm) {
@@ -41,7 +41,7 @@ public class FormatFasta extends IOwrapper {
 
 	@Override
 	public void printHelp() {
-		System.out.println("Usage: java -jar formatFasta <inFile> <outFile>");
+		System.out.println("Usage: java -jar fastaFormat.jar <inFile> <outFile>");
 		System.out.println("\t<inFile>: fasta file with some line length difference");
 		System.out.println("\t<outFile>: fasta file with sequence length fit to 70 bp");
 	}
@@ -51,9 +51,9 @@ public class FormatFasta extends IOwrapper {
 	 */
 	public static void main(String[] args) {
 		if (args.length == 2) {
-			new FormatFasta().go(args[0], args[1]);
+			new Format().go(args[0], args[1]);
 		} else {
-			new FormatFasta().printHelp();
+			new Format().printHelp();
 		}
 	}
 

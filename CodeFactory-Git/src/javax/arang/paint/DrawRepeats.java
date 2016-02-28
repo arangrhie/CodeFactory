@@ -5,7 +5,6 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Set;
 
 import javax.arang.IO.Rwrapper;
 import javax.arang.IO.basic.FileReader;
@@ -15,6 +14,7 @@ import javax.swing.JFrame;
 public class DrawRepeats extends Rwrapper {
 
 	static final int WINDOW_SIZE = 1020;
+	
 	@Override
 	public void hooker(FileReader fr) {
 		

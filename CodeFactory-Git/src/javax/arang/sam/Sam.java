@@ -123,6 +123,7 @@ public class Sam {
 	public static final int S = 1;
 	public static final int D = 2;
 	public static final int I = 3;
+	public static final int N = 4;
 	
 			
 	
@@ -198,6 +199,7 @@ public class Sam {
 		case S: return "S";
 		case D: return "D";
 		case I: return "I";
+		case N: return "N";
 		}
 		return "Cigar type unknown?? " + cigarType;
 	}
@@ -269,8 +271,8 @@ public class Sam {
 				refStartPos += offset;
 			}
 			
-			// splice site - treat it as a Deletion
-			else if( cigarOp[OP].equals("N") || cigarOp[OP].equals("D") ){
+			// Deletion
+			else if( cigarOp[OP].equals("D") ){
 				try {
 					offset = Integer.parseInt(cigarOp[COUNT]);
 					refEndPos += offset;
@@ -281,6 +283,29 @@ public class Sam {
 					tmp[CIGAR_POS_ALGN_RANGE_START] = alignRangeStart;
 					tmp[CIGAR_POS_ALGN_RANGE_END] = alignRangeEnd;
 					tmp[CIGAR_POS_TYPE] = D;
+					output.add(tmp);
+
+					refStartPos += offset;
+					
+				} catch (RuntimeException e) {
+					System.out.println(":: DEBUG :: no deletion base detected");
+					System.out.println(":: DEBUG :: " + cigar);
+					throw e;
+				}
+			}
+			
+			// splice site - treat it as N
+			else if( cigarOp[OP].equals("N") || cigarOp[OP].equals("D") ){
+				try {
+					offset = Integer.parseInt(cigarOp[COUNT]);
+					refEndPos += offset;
+					
+					int[] tmp = new int[5];
+					tmp[CIGAR_POS_REF_START] = refStartPos;
+					tmp[CIGAR_POS_REF_END] = refEndPos;
+					tmp[CIGAR_POS_ALGN_RANGE_START] = alignRangeStart;
+					tmp[CIGAR_POS_ALGN_RANGE_END] = alignRangeEnd;
+					tmp[CIGAR_POS_TYPE] = N;
 					output.add(tmp);
 
 					refStartPos += offset;

@@ -47,8 +47,8 @@ public class ColumnSummary extends INwrapper {
 			}
 		}
 		
-		System.out.println();
-		System.out.println("[DEBUG] :: Number of empty strings\t" + numEmptyCells);
+		System.err.println();
+		System.err.println("[DEBUG] :: Number of empty strings\t" + numEmptyCells);
 		String[] keyArray = new String[categoryMap.size()];
 		keyArray = categoryMap.keySet().toArray(keyArray);
 		Arrays.sort(keyArray);

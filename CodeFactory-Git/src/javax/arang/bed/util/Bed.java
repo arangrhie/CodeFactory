@@ -475,5 +475,22 @@ public class Bed {
 		}
 		return bases;
 	}
+	
+	/***
+	 * Get the specificed idx line of chr
+	 * @param chr
+	 * @param idx
+	 * @return
+	 */
+	public String getLine(String chr, int idx) {
+		String line = "";
+		if (chrStrArray.contains(chr)) {
+			line = chr + "\t" + starts.get(chr).get(idx) + "\t" + ends.get(chr).get(idx) + "\t" + notes.get(chr).get(idx);
+		} else {
+			System.err.println("No chromosome (contig) named " + chr + " exists. exiting.");
+			System.exit(-1);
+		}
+		return line;
+	}
 
 }

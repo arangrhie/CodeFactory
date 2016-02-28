@@ -27,7 +27,7 @@ public class SeparateSubreadsByPhasedSNPs extends Phase {
 		System.out.println("\t<error_rate>: estimated error rate to allow. *PacBio error rate for each base is 0.2 (80% accuracy).  <error_rate> must be < 0.5.");
 		System.out.println("\t\tReads with min(<No.HapAsnp>,<No.HapBsnp>)/(<No.HapAsnp>+<No.HapBsnp>) < <error_rate> will be classified on hapA or hapB.");
 		System.out.println("\t[write_sam]: TRUE or FALSE. write output as well as in .sam format only. DEFUALT=TRUE");
-		System.out.println("Arang Rhie, 2015-11-23. arrhie@gmail.com");
+		System.out.println("Arang Rhie, 2016-01-06. arrhie@gmail.com");
 	}
 
 	public static void main(String[] args) {
