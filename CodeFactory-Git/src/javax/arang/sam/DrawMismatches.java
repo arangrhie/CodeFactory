@@ -19,13 +19,13 @@ import javax.swing.JFrame;
 public class DrawMismatches extends R2wrapper {
 
 	protected static final int Y_REF = 0;
-	protected static final int BASE_LEN = 20;
-	protected static final int BASE_HEIGHT = 1000;
+	protected static final int BASE_LEN = 2;
+	protected static final int BASE_HEIGHT = 50;
 	protected static final int DEL_HEIGHT = (int) (BASE_HEIGHT * 0.8);	// 80% of base height
 	protected static final int Y_READ = BASE_HEIGHT * 2;
 	protected static final int WINDOW_WIDTH = 800;
 	protected static final int CANVAS_HEIGHT = BASE_HEIGHT + Y_READ;
-	// protected static final int CANVAS_HEIGHT = Y_READ * 2
+	//protected static final int CANVAS_HEIGHT = Y_READ * 2;
 	
 	@Override
 	public void hooker(FileReader frRef, FileReader frSam) {

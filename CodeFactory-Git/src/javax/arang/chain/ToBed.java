@@ -57,15 +57,15 @@ public class ToBed extends IOwrapper {
 				qStart = Integer.parseInt(tokens[Chain.Q_START]);
 				qStrand = tokens[Chain.Q_STRAND].charAt(0);
 				qSize = tokens[Chain.Q_SIZE];
-				if (outChain) {
+				if (!outBlock) {
 					tEnd = Integer.parseInt(tokens[Chain.T_END]);
 					qEnd = Integer.parseInt(tokens[Chain.Q_END]);
-					blockSize = (qEnd - qStart + 1);
+					blockSize = qEnd - qStart;
 					fm.writeLine(tName + "\t" + tStart + "\t" + tEnd + "\t" + tStrand + "\t" + tSize + "\t" +
 							 qName + "\t" + qStart + "\t" + qEnd + "\t" + qStrand + "\t" + qSize + "\t" + blockSize + "\t" + as);
 				}
 			} else {
-				if (!outChain) {
+				if (outBlock) {
 					blockSize = Integer.parseInt(tokens[Chain.BLOCK_SIZE]);
 					tEnd = tStart + blockSize;
 					qEnd = qStart + blockSize;
@@ -84,23 +84,23 @@ public class ToBed extends IOwrapper {
 
 	@Override
 	public void printHelp() {
-		System.out.println("Usage: java -jar chainToBed.jar <in.chain> <out.bed> [-chain]");
-		System.out.println("\tConvert a chain file to a bed file, containing all alignment blocks precisely.");
+		System.out.println("Usage: java -jar chainToBed.jar <in.chain> <out.bed> [-block]");
+		System.out.println("\tConvert a chain file to a bed file, containing alignment block headers.");
 		System.out.println("\t<in.chain>: chain or overchain. If more than 2 - are recognized, parse the start as the string before last -.");
 		System.out.println("\t<out.bed>: converted bed containing alignment blocks");
-		System.out.println("\t\t<out.bed> format: tName\ttStart\ttEnd\ttStrand\tqName\tqStart\tqEnd\tqStrand\tqSize\tblockSize");
-		System.out.println("\t\t[-chain]: If given, output bed file will be for chain block (only parsing chain header)");
-		System.out.println("Arang Rhie, 2016-02-03. arrhie@gmail.com");
+		System.out.println("\t\t<out.bed> format: tName\ttStart(0-base)\ttEnd(1-base)\ttStrand\tqName\tqStart(0-base)\tqEnd(1-base)\tqStrand\tqSize\tblockSize");
+		System.out.println("\t\t[-block]: If given, output bed file will be for each block");
+		System.out.println("Arang Rhie, 2016-03-19. arrhie@gmail.com");
 	}
 
-	private static boolean outChain = false;
+	private static boolean outBlock = false;
 	
 	public static void main(String[] args) {
 		if (args.length == 2) {
 			new ToBed().go(args[0], args[1]);
 		} else if (args.length == 3) {
-			if (args[2].equalsIgnoreCase("-chain")) {
-				outChain = true;
+			if (args[2].equalsIgnoreCase("-block")) {
+				outBlock = true;
 			}
 			new ToBed().go(args[0], args[1]);
 		} else {
