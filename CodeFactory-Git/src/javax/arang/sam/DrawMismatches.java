@@ -19,8 +19,8 @@ import javax.swing.JFrame;
 public class DrawMismatches extends R2wrapper {
 
 	protected static final int Y_REF = 0;
-	protected static final int BASE_LEN = 2;
-	protected static final int BASE_HEIGHT = 50;
+	protected static final int BASE_LEN = 1;
+	protected static final int BASE_HEIGHT = 100;
 	protected static final int DEL_HEIGHT = (int) (BASE_HEIGHT * 0.8);	// 80% of base height
 	protected static final int Y_READ = BASE_HEIGHT * 2;
 	protected static final int WINDOW_WIDTH = 800;

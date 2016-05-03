@@ -1,6 +1,7 @@
 package javax.arang.sv;
 
 public class SV {
+	public static final String svHeader = "CHR\tSTART\tEND\tHaplotig\tHaplotig_START\tHaplotig_END\tType\tLength\tDT\tDQ\tPhase";
 	public static final int CHR = 0;
 	public static final int START = 1;
 	public static final int END = 2;
