@@ -24,7 +24,7 @@ public class ToAlleleCount extends IOwrapper {
 		int het = 0;
 		int hom = 0;
 		while (fr.hasMoreLines()) {
-			line = fr.readLine();
+			line = fr.readLine(); 
 			if (line.startsWith("#"))	continue;
 			tokens = line.split(RegExp.TAB);
 			info = tokens[VCF.CHROM] + "\t" + tokens[VCF.POS]
