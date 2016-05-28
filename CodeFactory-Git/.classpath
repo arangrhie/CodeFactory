@@ -58,6 +58,7 @@
 	<classpathentry kind="lib" path="ext-lib/commonsPOOL/commons-pool-1.5.5-sources.jar"/>
 	<classpathentry kind="lib" path="ext-lib/commonsDBCP/commons-dbcp-1.4.jar"/>
 	<classpathentry kind="lib" path="ext-lib/commonsPOOL/commons-pool-1.5.5.jar"/>
+	<classpathentry kind="lib" path="ext-lib/jsc.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

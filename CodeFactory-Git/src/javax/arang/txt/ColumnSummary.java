@@ -16,6 +16,7 @@ public class ColumnSummary extends INwrapper {
 		System.out.println("\t<col_idx>: 1-based, column index to look up");
 		System.out.println("\tstdout the result as: category:\tnumCounts");
 		System.out.println("\tcategory will be any String, including empty string");
+		System.out.println("Arang Rhie, 2016-05-11. arrhie@gmail.com");
 	}
 
 	@Override

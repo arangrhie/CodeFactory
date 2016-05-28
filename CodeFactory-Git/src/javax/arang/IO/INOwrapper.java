@@ -57,9 +57,9 @@ public abstract class INOwrapper extends Wrapper {
 		System.out.println("Processing file");
 		ArrayList<FileReader> fileReaders = new ArrayList<FileReader>();
 		for (int i = 0; i < inFiles.length; i++) {
+			System.out.println("\t" + inFiles[i]);
 			FileReader fr = new FileReader(inFiles[i]);
 			fileReaders.add(fr);
-			System.out.println("\t" + fr.getFileName());
 		}
 		FileMaker fm = null;
 		if (IOUtil.retrieveDirectory(outFile).equals(".")) {
