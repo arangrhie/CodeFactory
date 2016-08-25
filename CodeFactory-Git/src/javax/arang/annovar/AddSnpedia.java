@@ -9,6 +9,7 @@ import java.util.Vector;
 import javax.arang.IO.R2wrapper;
 import javax.arang.IO.basic.FileMaker;
 import javax.arang.IO.basic.FileReader;
+import javax.arang.annovar.util.ANNOVAR;
 import javax.arang.snpedia.SNPEDIA;
 
 /**

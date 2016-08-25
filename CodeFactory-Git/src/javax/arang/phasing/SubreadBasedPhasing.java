@@ -34,7 +34,7 @@ public class SubreadBasedPhasing extends Phase {
 		Arrays.sort(snpPosList);
 		
 		// Read alignment file frSam, determine each snps in record
-		System.out.println("Num of SNPs to be counted in reads (0: All) : " + NUM_SNPS_WITHIN_READ);
+		System.out.println("Minimum no. of SNPs to be counted in reads (0: All) : " + NUM_SNPS_WITHIN_READ);
 		fmRead = new FileMaker(outPrefix + ".read");
 		readSamDetermineSNP(frSam, snpPosList, snpPosToPhasedSNPmap);
 		fmRead.closeMaker();
@@ -62,13 +62,13 @@ public class SubreadBasedPhasing extends Phase {
 	@Override
 	public void printHelp() {
 		System.out.println("Usage: phasingSubreadBasedPhasing.jar <in.sam> <snp_by_shapeit.haps/10X_noindel.snp> <phased.reads> [NUM_SNPS_WITHIN_READ]");
-		System.out.println("\t<in.sam>: Subreads aligned to reference (hg19)");
+		System.out.println("\t<in.sam>: Subreads aligned to reference");
 		System.out.println("\t<snp_by_shapeit.haps>: .haps file generated with shapeit");
 		System.out.println("\t\tCHR\tRS_ID\tPOS\tAlleleOfA\tAlleleOfB\tHaplotypeA\tHaplotypeB");
 		System.out.println("\t<phased.reads>: READ_ID\tCOUNT_A\tCOUNT_B\tCOUNT_O\tREAD_START_POS\tREAD_END_POS\tREAD_LEN\tHAPLOTYPE_PATTERN\tSNP_POS");
 		System.out.println("\t[NUM_SNPS_WITHIN_READ]: Read info with at least [NUM_SNPS_WITHIN_READ] will be printed. DEFUALT=0");
 		System.out.println("\tRun this code on each chr seperately.");
-		System.out.println("Arang Rhie, 2015-08-09. arrhie@gmail.com");
+		System.out.println("Arang Rhie, 2016-07-22. arrhie@gmail.com");
 	}
 
 

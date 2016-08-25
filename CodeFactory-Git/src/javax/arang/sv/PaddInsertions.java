@@ -32,7 +32,7 @@ public class PaddInsertions extends IOwrapper {
 				start = Math.max(0, start - half_len);
 				end = end + half_len;
 				fm.write(tokens[SV.CHR] + "\t" + start + "\t" + end);
-				for (int i = SV.CONTIG; i <= SV.SOURCE; i++) {
+				for (int i = SV.CONTIG; i < tokens.length; i++) {
 					fm.write("\t" + tokens[i]);
 				}
 				fm.writeLine();
@@ -49,7 +49,7 @@ public class PaddInsertions extends IOwrapper {
 		System.out.println("\t\tFormat: CHR\tSTART\tEND\tCONTIG\tSTART\tEND\tTYPE\tLEN\tDT\tDQ\tSOURCE");
 		System.out.println("\t<out.sv.txt>: for insertions, coordinates for START and END will be replaced to:");
 		System.out.println("\t\tSTART=START-LEN/2 and END=END+LEN/2");
-		System.out.println("Arang Rhie, 2016-03-17. arrhie@gmail.com");
+		System.out.println("Arang Rhie, 2016-06-23. arrhie@gmail.com");
 	}
 
 }

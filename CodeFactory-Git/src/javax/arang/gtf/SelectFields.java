@@ -6,6 +6,7 @@ import javax.arang.IO.IOwrapper;
 import javax.arang.IO.basic.FileMaker;
 import javax.arang.IO.basic.FileReader;
 import javax.arang.IO.basic.RegExp;
+import javax.arang.gff.GFF;
 
 public class SelectFields extends IOwrapper {
 
@@ -30,19 +31,25 @@ public class SelectFields extends IOwrapper {
 		while (fr.hasMoreLines()) {
 			line = fr.readLine();
 			if (line.startsWith("#"))	continue;
-			tokens = line.split(RegExp.WHITESPACE);
+			tokens = line.split(RegExp.TAB);
 			numLines++;
 			for (int i = 0; i < fieldsAndAttrisToSelect.size(); i++) {
 				col = GTF.getColumn(fieldsAndAttrisToSelect.get(i));
 				if (col != GTF.UNKNOWN) {
 					fm.write(tokens[col]);
 				} else {
-					ATTRIBUTE_LOOP : for (int j = GTF.ATTRIBUTE; j < tokens.length; j+=2) {
-						if (fieldsAndAttrisToSelect.get(i).equals(tokens[j])) {
-							tokens[j+1] = tokens[j+1].replace("\"", "");
-							tokens[j+1] = tokens[j+1].replace(";", "");
-							fm.write(tokens[j+1]);
+					ATTRIBUTE_LOOP : for (int j = GTF.ATTRIBUTE; j < tokens.length; j++) {
+						if (tokens[j].contains("=")) {
+							fm.write(GFF.parseField(tokens[GTF.ATTRIBUTE], fieldsAndAttrisToSelect.get(i)));
 							break ATTRIBUTE_LOOP;
+						} else {
+							if (fieldsAndAttrisToSelect.get(i).equals(tokens[j])) {
+								tokens[j+1] = tokens[j+1].replace("\"", "");
+								tokens[j+1] = tokens[j+1].replace(";", "");
+								fm.write(tokens[j+1]);
+								break ATTRIBUTE_LOOP;
+							}
+							j++;
 						}
 					}
 				}
@@ -61,7 +68,8 @@ public class SelectFields extends IOwrapper {
 		System.out.println("\tSelect <field_or_attri_name> value(s) from <in.gtf> and write to <out.txt> as a tab-delimited file.");
 		System.out.println("\t<field_or_attri_name> could be one of: seqname or chr, source, feature, start, end, score, strand, frame,\n"
 				+ "\t\tattribute, gene_id, transcript_id, ...");
-		System.out.println("Arang Rhie, 2015-03-19. arrhie@gmail.com");
+		System.out.println("\t\tTakes both GFF and GTF format.");
+		System.out.println("Arang Rhie, 2016-06-24. arrhie@gmail.com");
 	}
 
 	static ArrayList<String> fieldsAndAttrisToSelect =  new ArrayList<String>();

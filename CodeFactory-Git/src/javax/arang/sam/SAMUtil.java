@@ -337,7 +337,7 @@ public class SAMUtil {
 			//System.out.println("[DEBUG] :: " + posArr[Sam.REF_START_POS] + "," + posArr[Sam.REF_END_POS]);
 			if (posArr[Sam.CIGAR_POS_TYPE] == Sam.M && posArr[Sam.CIGAR_POS_REF_START] <= pos && pos <= posArr[Sam.CIGAR_POS_REF_END]) {
 				seqPos = posArr[Sam.CIGAR_POS_ALGN_RANGE_START] + (pos - posArr[Sam.CIGAR_POS_REF_START]);
-				return seqData[SEQ].charAt(seqPos - 1);
+				return seqData[SEQ].charAt(seqPos);
 			} else if (posArr[Sam.CIGAR_POS_TYPE] == Sam.D && posArr[Sam.CIGAR_POS_REF_START] <= pos && pos <= posArr[Sam.CIGAR_POS_REF_END]) {
 				return 'D';
 			}

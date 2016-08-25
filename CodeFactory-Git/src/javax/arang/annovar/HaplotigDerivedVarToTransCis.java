@@ -53,8 +53,8 @@ public class HaplotigDerivedVarToTransCis extends IOwrapper {
 			countB = 0;
 			
 			if (hethom.equalsIgnoreCase("HOM")) {
-				countA = 1;
-				countB = 1;
+//				countA = 1;
+//				countB = 1;
 			} else {
 				if (hap.startsWith("A")) {
 					countA = 1;
@@ -72,16 +72,20 @@ public class HaplotigDerivedVarToTransCis extends IOwrapper {
 		Integer[] counts;
 		for (String geneItem : geneToCountMap.keySet()) {
 			counts = geneToCountMap.get(geneItem);
-			if (counts[2] * counts[3] > 0) {
-				fm.writeLine(geneItem + "\t" + counts[0] + "\t" + counts[1] + "\t" + counts[2] + "\t" + counts[3] + "\tTRANS");
-			} else if (counts[2] == counts[3]) {
-				fm.writeLine(geneItem + "\t" + counts[0] + "\t" + counts[1] + "\t" + counts[2] + "\t" + counts[3] + "\tNoAA.Change");
+			if (counts[COUNT_AA_A] * counts[COUNT_AA_B] > 0) {
+				fm.writeLine(geneItem + "\t" + counts[COUNT_A] + "\t" + counts[COUNT_B] + "\t" + counts[COUNT_AA_A] + "\t" + counts[COUNT_AA_B] + "\tTRANS");
+			} else if (counts[COUNT_AA_A] == counts[COUNT_AA_B]) {
+				fm.writeLine(geneItem + "\t" + counts[COUNT_A] + "\t" + counts[COUNT_B] + "\t" + counts[COUNT_AA_A] + "\t" + counts[COUNT_AA_B] + "\tNoAA.Change");
 			} else {
-				fm.writeLine(geneItem + "\t" + counts[0] + "\t" + counts[1] + "\t" + counts[2] + "\t" + counts[3] + "\tCIS");
+				fm.writeLine(geneItem + "\t" + counts[COUNT_A] + "\t" + counts[COUNT_B] + "\t" + counts[COUNT_AA_A] + "\t" + counts[COUNT_AA_B] + "\tCIS");
 			}
 		}
-		
 	}
+	
+	private static int COUNT_A = 0;
+	private static int COUNT_B = 1;
+	private static int COUNT_AA_A = 2;
+	private static int COUNT_AA_B = 3;
 	
 	private void addToMap(String gene, String exonic, int countA, int countB) {
 		int countFuncA;
@@ -115,12 +119,12 @@ public class HaplotigDerivedVarToTransCis extends IOwrapper {
 		System.out.println("\t<gene_idx>: gene name column. sep=\",\" 1-based index, <=0 when starting from the end");
 		System.out.println("\t<hap_idx>: Column containing A(AH) or B. 1-based index, <=0 when starting from the end");
 		System.out.println("\t<het_hom_idx>: Column containing HET/HOM. 1-based index, <=0 when starting from the end");
-		System.out.println("Arang Rhie, 2016-02-12. arrhie@gmail.com");
+		System.out.println("Arang Rhie, 2016-06-01. arrhie@gmail.com");
 	}
 
-	private static int gene_idx = 0;
-	private static int hap_idx = 0;
-	private static int het_hom_idx = 0;
+	private static int gene_idx = 0;	// Column idx containing gene name
+	private static int hap_idx = 0;		// Column idx containing haplotype AH or B
+	private static int het_hom_idx = 0;	// Column idx containing Het/Hom
 	
 	public static void main(String[] args) {
 		if (args.length == 5) {

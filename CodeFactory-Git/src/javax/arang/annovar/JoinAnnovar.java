@@ -6,6 +6,7 @@ package javax.arang.annovar;
 import javax.arang.IO.I2Owrapper;
 import javax.arang.IO.basic.FileMaker;
 import javax.arang.IO.basic.FileReader;
+import javax.arang.annovar.util.ANNOVAR;
 
 /**
  * @author Arang Rhie

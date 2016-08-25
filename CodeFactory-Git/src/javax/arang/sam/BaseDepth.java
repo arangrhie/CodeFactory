@@ -33,15 +33,14 @@ public class BaseDepth extends IOwrapper {
 			if (line.startsWith("@"))	continue;
 			record = line.split(RegExp.TAB);
 			this.chr = record[Sam.RNAME];
-			if (!prevChr.equals(chr)) {
-				System.out.println("..Running " + chr);
+			if (chr.equals("*"))	break;
+			if (prevChr.equals("")) {
+				prevChr = chr;
+			} else if (!prevChr.equals(chr)) {
+				System.out.println(".. Write " + chr);
 				writeBaseCoverage(fm, -1);
 				prevChr = chr;
 			}
-			if (prevChr.equals("")) {
-				prevChr = chr;
-			}
-			if (chr.equals("*"))	break;
 			getBaseCoverage(record, fm);
 		}
 		writeBaseCoverage(fm, -1);

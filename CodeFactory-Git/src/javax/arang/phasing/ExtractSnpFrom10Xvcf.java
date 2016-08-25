@@ -57,7 +57,7 @@ public class ExtractSnpFrom10Xvcf extends IOwrapper {
 			
 			// New phase block
 			if (!ps.equals(prevPs)) {
-				if ((phasedEnd - phasedStart + 1) > 5) {
+				if ((phasedEnd - phasedStart + 1) > 1) {
 					len = (phasedEnd - phasedStart + 1);
 					phasedBed.writeLine(prevChr + "\t" + (phasedStart - 1) + "\t" + phasedEnd  + "\t" + prevPs + "\t" + len);	// 0-base, 1-base
 					phasedBlockLenSum += len;
@@ -73,12 +73,12 @@ public class ExtractSnpFrom10Xvcf extends IOwrapper {
 				if (ref.length() < alt.length()) {	// ins
 					continue;
 				} else if (ref.length() > alt.length()) {	// del
-					int delLen = ref.length() - 1;
+					int delLen = ref.length();
 					String tmpgt;
-					for (int i = pos+1; i < pos + delLen; i++) {
-						 tmpgt = getGenotype(gt, ref.charAt(i - pos) + "", "D");
+					for (int i = 1; i < delLen; i++) {
+						 tmpgt = getGenotype(gt, ref.charAt(i) + "", "D");
 						if (!tmpgt.equals("na")) {
-							fm.writeLine(chr + "\t" + pos + "\t" + tmpgt + "\t" + ps);
+							fm.writeLine(chr + "\t" + (pos + i) + "\t" + tmpgt + "\t" + ps);
 						}
 					}
 				} else {
@@ -93,7 +93,8 @@ public class ExtractSnpFrom10Xvcf extends IOwrapper {
 			prevChr = chr;
 		}
 		
-		if ((phasedEnd - phasedStart + 1) > 5) {
+		// Write the last ps
+		if ((phasedEnd - phasedStart + 1) > 1) {
 			len = (phasedEnd - phasedStart + 1);
 			phasedBed.writeLine(prevChr + "\t" + (phasedStart - 1) + "\t" + phasedEnd  + "\t" + prevPs + "\t" + len);	// 0-base, 1-base
 			phasedBlockLenSum += len;
@@ -141,10 +142,10 @@ public class ExtractSnpFrom10Xvcf extends IOwrapper {
 	public void printHelp() {
 		System.out.println("Usage: java -jar phasingExtractSnpFrom10Xvcf.jar <phased.vcf> <out.phased.snp> <out.block.bed>");
 		System.out.println("\t<phased.vcf>: 10x genomics phased data");
-		System.out.println("\t<out.phased.snp>: Phasing marker SNPs. CHR POS HaplotypeA_allele HaplotypeB_allele");
+		System.out.println("\t<out.phased.snp>: Phasing marker SNPs. Del included. CHR POS HaplotypeA_allele HaplotypeB_allele");
 		System.out.println("\t<out.block.bed>: phased blocks by PS");
 		System.out.println("\t\tEach phased block are based on continues phased snps. If non-phased genotype occurs,");
-		System.out.println("Arang Rhie, 2016-01-06. arrhie@gmail.com");
+		System.out.println("Arang Rhie, 2016-07-21. arrhie@gmail.com");
 	}
 
 	private static String blockBed = "";

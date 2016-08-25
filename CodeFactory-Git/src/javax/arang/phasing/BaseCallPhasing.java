@@ -46,7 +46,7 @@ public class BaseCallPhasing extends Phase {
 		}
 
 		// Read alignment file frSam, determine each snps in record
-		System.out.println("Num of SNPs to be counted in reads (0: All) : " + NUM_SNPS_WITHIN_READ);
+		System.out.println("Minimum no. of SNPs to be counted in reads (0: All) : " + NUM_SNPS_WITHIN_READ);
 		fmRead = new FileMaker(outPrefix + ".read", true);
 		readBaseDetermineSNP(frBase, snpPosToPhasedSNPmap);
 		fmRead.closeMaker();
@@ -54,17 +54,22 @@ public class BaseCallPhasing extends Phase {
 
 	@Override
 	public void printHelp() {
-		System.out.println("Usage: java -jar phasingBaseCallPhasing.jar <in.base> <in.phased.snp> <out_prefix>");
+		System.out.println("Usage: java -jar phasingBaseCallPhasing.jar <in.base> <in.phased.snp> <out_prefix> [NUM_SNPS_WITHIN_READ]");
 		System.out.println("\t<in.base>: base call generated with bamBaseDepth.jar, for specific target (BACs or fosmid).");
 		System.out.println("\t<in.phased.snp>: any SNPs formatted as CHR\tPOS\tHapAallele\tHapBallele");
 		System.out.println("\t<out_prefix>: <out_prefix>.read will be made (or appended if already exists).");
-		System.out.println("\tRun this code on each chromosome seperately.");
-		System.out.println("Arang Rhie, 2015-09-08. arrhie@gmail.com");
+		System.out.println("\t[NUM_SNPS_WITHIN_READ]: Read info with at least [NUM_SNPS_WITHIN_READ] will be printed. DEFUALT=0");
+		System.out.println("\tRun this code on each chr separately.");
+		System.out.println("Arang Rhie, 2016-07-26. arrhie@gmail.com");
 	}
 
 	public static void main(String[] args) {
 		if (args.length == 3) {
 			outPrefix = args[2];
+			new BaseCallPhasing().go(args[0], args[1]);
+		} else if (args.length == 4) {
+			outPrefix = args[2];
+			NUM_SNPS_WITHIN_READ = Integer.parseInt(args[3]);
 			new BaseCallPhasing().go(args[0], args[1]);
 		} else {
 			new BaseCallPhasing().printHelp();

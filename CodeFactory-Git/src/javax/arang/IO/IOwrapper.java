@@ -13,9 +13,9 @@ public abstract class IOwrapper extends Wrapper {
 		startTiming();
 		
 		FileReader fr = new FileReader(inFile);
-		System.out.println("Processing file " + fr.getFileName());
+		System.err.println("Processing file " + fr.getFileName());
 		FileMaker fm = new FileMaker(outFile);
-		System.out.println("Into " + fm.getFileName());
+		System.err.println("Into " + fm.getFileName());
 		
 		hooker(fr, fm);
 		

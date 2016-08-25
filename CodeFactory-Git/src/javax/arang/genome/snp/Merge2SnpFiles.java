@@ -3,7 +3,7 @@ package javax.arang.genome.snp;
 import javax.arang.IO.I2Owrapper;
 import javax.arang.IO.basic.FileMaker;
 import javax.arang.IO.basic.FileReader;
-import javax.arang.annovar.ANNOVAR;
+import javax.arang.annovar.util.ANNOVAR;
 
 public class Merge2SnpFiles extends I2Owrapper {
 
@@ -106,7 +106,7 @@ public class Merge2SnpFiles extends I2Owrapper {
 					tokens2 = line2.split("\t");
 					pos2 = Integer.parseInt(tokens2[ANNOVAR.POS_FROM]);
 				} else {
-					// snpAllele1 기준으로 먼저 작성
+					// snpAllele1 湲곗��쑝濡� 癒쇱� �옉�꽦
 					writeRaw(fm, tokens1[ANNOVAR.CHR], pos1,
 							tokens1[ANNOVAR.REF], tokens1[ANNOVAR.ALT], tokens1[ANNOVAR.ALT],
 							getSnpType(tokens1[ANNOVAR.NOTE]), NORM);

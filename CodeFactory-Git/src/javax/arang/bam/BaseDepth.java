@@ -42,13 +42,13 @@ public class BaseDepth extends BamBaiIFileOwrapper {
 		Bed bed = new Bed(bedFr);
 		RefInfo refInfo = bamFr.getRefInfo();
 		String chr;
-		fm.writeLine("Chromosome\tPosition\tA\tC\tG\tT\tD");
+		fm.writeLine("#Chromosome\tPosition\tA\tC\tG\tT\tD");
 		ArrayList<String> chrList = bed.getChrStringList();
 		for (int chrIdx = 0; chrIdx < chrList.size(); chrIdx++) {
 			chr = chrList.get(chrIdx);
 			int refId = refInfo.getRefID(chr);
 			this.chr = chr;
-			if (prevChr != "") {
+			if (!prevChr.equals("")) {
 				writeBaseCoverage(fm, -1);
 			}
 			prevChr = chr;
@@ -90,22 +90,22 @@ public class BaseDepth extends BamBaiIFileOwrapper {
 	public void hooker(BamReader bamFr, Bai bai, FileMaker fm) {
 		RefInfo refInfo = bamFr.getRefInfo();
 		BamRecord record = null;
-		fm.writeLine("Chromosome\tPos\tA\tC\tG\tT\tD");
+		fm.writeLine("#Chromosome\tPos\tA\tC\tG\tT\tD");
 		while (bamFr.hasMoreAlignmentRecord()) {
 			record = bamFr.getNextAlignmentRecord();
 //			System.out.println(refInfo.getRefName(record.getRefID()) + " " + record.getPos()
 //					+ "\t" + record.getSeq());
 			//System.out.println("\t\t" + record.getQual());
 			this.chr = refInfo.getRefName(record.getRefID());
-			if (prevChr != chr) {
-				System.out.println("..Running " + chr);
+			if (!prevChr.equals(chr)) {
+				System.out.println(".. Write " + chr);
 				writeBaseCoverage(fm, -1);
 				prevChr = chr;
 			}
-			if (prevChr == "") {
+			if (prevChr.equals("")) {
 				prevChr = chr;
 			}
-			if (chr == "*")	break;
+			if (chr.equals("*"))	break;
 //			if (SAMUtil.isDuplicate(record.getFlag()))	continue;
 //			if (SAMUtil.isSecondaryAlignment(record.getFlag()))	continue;
 //			if (SAMUtil.isUnderQual(record.getFlag()))	continue;

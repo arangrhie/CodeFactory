@@ -36,9 +36,9 @@ public class ToCoverageByRegion extends IOwrapper {
 
 	@Override
 	public void printHelp() {
-		System.out.println("Usage: java -jar baseToCoverageByBed.jar <in.base> <chr:start-end> <out>");
+		System.out.println("Usage: java -jar baseToCoverageByRegion.jar <in.base> <chr:start-end> <out>");
 		System.out.println("\t<in.base>: base by target region");
-		System.out.println("\t<out>: CHR\tSTART\tEND\tBAC_ID(in.base.name)\tBAC_LEN\tCOVERED_BASES\tCOVERAGE\tTOTAL_DEPTH\tAVG.DEPTH_COVERED\tAVG.DEPTH");
+		System.out.println("\t<out>: CHR\tSTART\tEND\tTARGET_ID(in.base.name)\tTARGET_LEN\tCOVERED_BASES\tCOVERAGE\tTOTAL_DEPTH\tAVG.DEPTH_COVERED\tAVG.DEPTH");
 		System.out.println("Arang Rhie, 2015-11-20. arrhie@gmail.com");
 	}
 

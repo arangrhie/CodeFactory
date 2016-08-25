@@ -1,5 +1,6 @@
 package javax.arang.vcf;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class VCF {
@@ -13,6 +14,13 @@ public class VCF {
 	public static final int INFO = 7;
 	public static final int FORMAT = 8;
 	public static final int SAMPLE = 9;
+	
+	public static final short TYPE_SNP = 0;
+	public static final short TYPE_INSERTION = 1;
+	public static final short TYPE_DELETION = 2;
+	public static final short TYPE_SUBSTITUTION = 3;
+	public static final short TYPE_MULTI = 4;
+	
 	
 	public static String parseINFO(String info, String fieldToRetrieve) {
 		String value = "";
@@ -153,5 +161,48 @@ public class VCF {
 	
 	public static String getHeaderString() {
 		return "#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT";
+	}
+	
+	
+	public static short getType(String ref, String alt) {
+		int numAlts = getNumAltAlleles(alt);
+		if (numAlts == 1) {
+			if (ref.length() == 1 && alt.length() == 1) {
+				return TYPE_SNP;
+			} else if (alt.length() == 1 && ref.length() > alt.length()) {
+				return TYPE_DELETION;
+			} else if (ref.length() == 1 && ref.length() < alt.length()){
+				return TYPE_INSERTION;
+			} else {
+				return TYPE_SUBSTITUTION;
+			}
+		} else {
+			return TYPE_MULTI;
+		}
+	}
+	
+	public static ArrayList<Short> getMultiType(String ref, String[] alts) {
+		ArrayList<Short> altTypes = new ArrayList<Short>();
+		for (int i = 0; i < alts.length; i++) {
+			altTypes.add(getType(ref, alts[i]));
+		}
+		return altTypes;
+	}
+	
+	public static boolean isMultiAllele(String alt) {
+		if (alt.contains(",")) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	public static int getNumAltAlleles(String alt) {
+		if (alt.contains(",")) {
+			String[] alts = alt.split(",");
+			return alts.length;
+		} else {
+			return 1;
+		}
 	}
 }

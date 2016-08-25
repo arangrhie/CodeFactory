@@ -6,6 +6,7 @@ import javax.arang.IO.I2Owrapper;
 import javax.arang.IO.basic.FileMaker;
 import javax.arang.IO.basic.FileReader;
 import javax.arang.IO.basic.RegExp;
+import javax.arang.annovar.util.ANNOVAR;
 import javax.arang.vcf.VCF;
 
 public class AddAlleleCount extends I2Owrapper {

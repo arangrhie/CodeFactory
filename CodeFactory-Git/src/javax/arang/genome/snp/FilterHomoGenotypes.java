@@ -3,7 +3,7 @@ package javax.arang.genome.snp;
 import javax.arang.IO.IOwrapper;
 import javax.arang.IO.basic.FileMaker;
 import javax.arang.IO.basic.FileReader;
-import javax.arang.annovar.ANNOVAR;
+import javax.arang.annovar.util.ANNOVAR;
 
 public class FilterHomoGenotypes extends IOwrapper {
 
