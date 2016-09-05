@@ -83,8 +83,8 @@ public class SeparateSnpIndel extends IOwrapper {
 		System.out.println("\tFile will be split into:");
 		System.out.println("\t\t<in.snp.vcf>: vcf containing biallelic SNPs");
 		System.out.println("\t\t<in.indel.vcf>: vcf containing indels");
-		System.out.println("\t\t<in.msnp.vcf>: vcf containing multiallelic SNPs. indels ");
-		System.out.println("\t\t<in.mindel.vcf>: vcf containing multiallelic indels");
+		System.out.println("\t\t<in.msnp.vcf>: vcf containing multiallelic SNPs (no indels included)");
+		System.out.println("\t\t<in.mindel.vcf>: vcf containing multiallelic indels (a snp as other allele may included)");
 		System.out.println("\t\t<in.sv.vcf>: vcf containing SVs");
 		System.out.println("Arang Rhie, 2016-07-12. arrhie@gmail.com");
 	}
