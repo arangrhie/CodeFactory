@@ -14,6 +14,7 @@ public class GetTlen {
 		
 		if (args.length != 0) {
 			cigar = args[0].trim();
+			parseCigar(cigar);
 		} else {
 			while (in.ready()) {
 				cigar = in.readLine();

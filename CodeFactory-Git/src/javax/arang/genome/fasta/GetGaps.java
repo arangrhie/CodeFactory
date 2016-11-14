@@ -27,8 +27,8 @@ public class GetGaps extends IOwrapper {
 				}
 				chr = line.replace(">", "");
 				basePos = 0;
-				numGaps = 0;
 				totalNumGaps += numGaps;
+				numGaps = 0;
 				continue;
 			}
 			len = line.length();
@@ -61,14 +61,15 @@ public class GetGaps extends IOwrapper {
 	}
 	
 	private void writeLine(FileMaker fm, long basePos, int refNbaseLen, char type, String chr, int numGaps) {
-		fm.writeLine("\t" + basePos + "\t" + refNbaseLen + "\t" + type + "\t" + chr + "_gap" + String.format("%03d", numGaps));
+		fm.writeLine("\t" + (basePos-1) + "\t" + refNbaseLen + "\t" + type + "\t" + chr + "_gap" + String.format("%03d", numGaps));
 	}
 
 	@Override
 	public void printHelp() {
 		System.out.println("Usage: java -jar fastaGetGaps.java <in.fasta> <gap.bed>");
 		System.out.println("\tRetrieve the gap positions in a bed format");
-		System.out.println("Arang Rhie, 2015-12-18. arrhie@gmail.com");
+		System.out.println("\t*Fixed the +1 end-position bug");
+		System.out.println("Arang Rhie, 2016-10-26. arrhie@gmail.com");
 	}
 
 	public static void main(String[] args) {
