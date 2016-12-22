@@ -55,8 +55,8 @@ public class ColumnHistogram extends Rwrapper {
 		System.out.println("\t<in.tdf>: input text file");
 		System.out.println("\t<columnIdx>: target column index. 1-based");
 		System.out.println("\t<binWidth>: bin width in the histogram");
-		System.out.println("\tSTDOUT: binStartValue(Starts with 0) \tcount");
-		System.out.println("Arang Rhie, 2016-11-15. arrhie@gmail.com");
+		System.out.println("\tSTDOUT: binStartValue(Starts with 0) \tcount\tValueSum");
+		System.out.println("Arang Rhie, 2016-11-17. arrhie@gmail.com");
 	}
 
 	public static void main(String[] args) {

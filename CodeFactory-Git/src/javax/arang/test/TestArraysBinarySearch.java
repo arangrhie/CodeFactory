@@ -11,19 +11,27 @@ public class TestArraysBinarySearch {
 	public static void main(String[] args) {
 		ArrayList<Integer> list = new ArrayList<Integer>();
 		
+		System.out.print("list:");
 		for (int i = 1; i <= 5; i++) {
 			list.add(i*2);
 			System.out.print(" " + i*2);
 		}
 		System.out.println();
-		System.out.println("Key 1: " + Collections.binarySearch(list, 1));
-		System.out.println("Key 3: " + Collections.binarySearch(list, 3));
-		System.out.println("Key 13: " + Collections.binarySearch(list, 13));
+		System.out.println("Collections.binarySearch(list, 1): " + Collections.binarySearch(list, 1));
+		System.out.println("Collections.binarySearch(list, 2): " + Collections.binarySearch(list, 2));
+		System.out.println("Collections.binarySearch(list, 3): " + Collections.binarySearch(list, 3));
+		System.out.println("Collections.binarySearch(list, 10): " + Collections.binarySearch(list, 10));
+		System.out.println("Collections.binarySearch(list, 13): " + Collections.binarySearch(list, 13));
 		System.out.println();
 		
 		for (int i = 1; i < 50; i+=3) {
 			list.add(i * 4);
-			System.out.print(" " + i*4);
+		}
+		
+		Collections.sort(list);
+		System.out.print("list:");
+		for (int i = 0; i < list.size(); i++) {
+			System.out.print(" " + list.get(i));
 		}
 		System.out.println();
 //		searchFor(list, 2);
@@ -58,6 +66,7 @@ public class TestArraysBinarySearch {
 		
 		System.out.println("Less or Equal");
 		searchFor(2, list);
+		searchFor(4, list);
 		searchFor(10, list);
 		searchFor(100, list);
 		searchFor(190, list);

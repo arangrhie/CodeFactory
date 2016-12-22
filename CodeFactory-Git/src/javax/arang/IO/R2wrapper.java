@@ -18,9 +18,9 @@ public abstract class R2wrapper {
 		fr2.closeReader();
 		
 		long runningTime = (System.currentTimeMillis() - startTime) / 1000;
-		System.out.println(MessageFormat.format("Running time : {0} h {1} m {2} sec", (runningTime/360), (runningTime/60),
+		System.err.println(MessageFormat.format("Running time : {0} h {1} m {2} sec", (runningTime/360), (runningTime/60),
 				(runningTime%60)));
-		System.out.println();
+		System.err.println();
 	}
 	
 	public abstract void hooker(FileReader fr1, FileReader fr2);

@@ -53,8 +53,8 @@ public class BaseDepth extends BamBaiIFileOwrapper {
 			}
 			prevChr = chr;
 			for (int i = 0; i < bed.getNumRegions(chr); i++) {
-				long start = bed.getStart(chr, i);
-				long end = bed.getEnd(chr, i);
+				long start = bed.getStartFromIdx(chr, i);
+				long end = bed.getEndFromIdx(chr, i);
 				Vector<Long[]> chunks = bai.getChunks(refId, start, end);
 				if (chunks == null) {
 					System.out.println("Bam file does not contain " + chr + " " + start + " - " + end);
