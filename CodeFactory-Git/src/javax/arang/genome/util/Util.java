@@ -20,14 +20,16 @@ public class Util {
 	}
 
 	/***
-	 * Get the closest, smaller START position of startList containing pos
+	 * Get the closest, smaller START position of a startList containing pos
 	 * @param startList
 	 * @param pos
 	 * @return -1 if pos is smaller than the smallest START
+	 * 
+	 * *When the startList is 0-based, the pos must be also 0-based.
 	 */
 	public static int getRegionStartContainingPos(ArrayList<Integer> startList, int pos) {
 		int posInStartIdx = Collections.binarySearch(startList, pos);
-		// posInStartIdx will be the closest, min SNP equals or smaller than the pos
+		// posInStartIdx will be the closest index of start position that is equals or smaller than the given pos
 		if (posInStartIdx < 0) {
 			posInStartIdx *= -1;
 			posInStartIdx -= 2;

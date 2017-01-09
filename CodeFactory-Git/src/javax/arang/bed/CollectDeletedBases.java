@@ -22,8 +22,8 @@ public class CollectDeletedBases extends I2Owrapper {
 		for (String contig : frSVbed.getChrStringList()) {
 			svStarts = 	frSVbed.getStarts(contig);
 			for (int idx = 0; idx < svStarts.size(); idx++) {
-				start = frSVbed.getStart(contig, idx);
-				end = frSVbed.getEnd(contig, idx);
+				start = frSVbed.getStartFromIdx(contig, idx);
+				end = frSVbed.getEndFromIdx(contig, idx);
 				svLen = end - start;
 				if (!frDelBed.getChrStringList().contains(contig)) {
 					writeDeletions(frSVbed, fm, contig, start, end, idx, "UNPHASED\tUNPHASED");

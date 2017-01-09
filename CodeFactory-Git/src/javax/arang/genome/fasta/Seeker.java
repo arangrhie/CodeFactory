@@ -83,6 +83,12 @@ public class Seeker {
 		posIdx += basesBuffer.length();
 	}
 	
+	/***
+	 * 
+	 * @param from
+	 * @param len
+	 * @return sequence[from,from+len-1]
+	 */
 	public String getBases(int from, int len) {
 		StringBuffer buffer = new StringBuffer();
 		for (int pos = from; pos < (from + len); pos++) {

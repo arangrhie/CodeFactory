@@ -51,15 +51,32 @@ public class Bed {
 		parseBed(fr);
 	}
 	
+	/***
+	 * Is the given position in the specified region?
+	 * @param chr
+	 * @param pos assuming 1-based
+	 * @return TRUE or FALSE
+	 * Make sure the given bed file is not self-overlapping for the start sites
+	 */
 	public boolean isInRegion(String chr, int pos) {
-		ArrayList<Integer> start = starts.get(chr);
-		ArrayList<Integer> end = ends.get(chr);
-		int closestStart = Util.getRegionStartContainingPos(start, pos);
+		int closestStart = getClosestStart(chr, pos);
 		if (closestStart < 0)	return false;
-		if (pos < end.get(start.indexOf(closestStart))) {
+		if (pos < getEndFromStart(chr, closestStart)) {
 			return true;
 		}
 		return false;
+	}
+	
+	
+	
+	/***
+	 * Get the closest start position in the Bed regions to the given pos
+	 * @param chr
+	 * @param pos assuming 1-based
+	 * @return closest start position from the given region or -1 if the smallest start is greater than given pos.
+	 */
+	public int getClosestStart(String chr, int pos) {
+		return Util.getRegionStartContainingPos(starts.get(chr), pos - 1);
 	}
 	
 	/***
@@ -348,7 +365,7 @@ public class Bed {
 	 * @param index
 	 * @return Start of the index's region in chr
 	 */
-	public Integer getStart(String chr, int index) {
+	public Integer getStartFromIdx(String chr, int index) {
 		return starts.get(chr).get(index);
 	}
 	
@@ -358,8 +375,18 @@ public class Bed {
 	 * @param index
 	 * @return End of the index's region in chr
 	 */
-	public Integer getEnd(String chr, int index) {
+	public Integer getEndFromIdx(String chr, int index) {
 		return ends.get(chr).get(index);
+	}
+	
+	/***
+	 * Get the end position of the region with a specific start positions
+	 * @param chr
+	 * @param start assuming the bed file has unique start positions
+	 * @return end value from the matching given start position
+	 */
+	public Integer getEndFromStart(String chr, int start) {
+		return ends.get(chr).get(starts.get(chr).indexOf(start));
 	}
 
 	
