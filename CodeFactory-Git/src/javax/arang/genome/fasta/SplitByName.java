@@ -16,7 +16,7 @@ public class SplitByName extends Rwrapper {
 		while (fr.hasMoreLines()) {
 			line = fr.readLine();
 			if (line.startsWith(">")) {
-				seqName = line.replace(">", "");
+				seqName = line.substring(1);
 				tokens = seqName.split(RegExp.WHITESPACE);
 				if (tokens.length > 1) {
 					seqName = tokens[0];
@@ -38,7 +38,7 @@ public class SplitByName extends Rwrapper {
 	@Override
 	public void printHelp() {
 		System.out.println("Usage: java -jar fastaSplitByName.jar <in.fasta> <out-dir>");
-		System.out.println("Splits a fasta file by sequence names");
+		System.out.println("Splits a fasta file by sequence names (first token split by a whitespace)");
 		System.out.println("\t<in.fasta>: Any fasta file");
 		System.out.println("\t<out-dir>: <seq_name>.fa files will be made in this directory");
 		System.out.println("Arang Rhie, 2015-10-22. arrhie@gmail.com");

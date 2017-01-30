@@ -18,7 +18,7 @@ public class HolesInPhasedBlock extends IOwrapper {
 		String line;
 		String[] tokens;
 
-		String prevChr = "";
+		//String prevChr = "";
 		String chr;
 		int pos;
 		String gt;
@@ -61,7 +61,7 @@ public class HolesInPhasedBlock extends IOwrapper {
 					start = pos;
 				}
 			}
-			prevChr = chr;
+			//prevChr = chr;
 			prevPS = ps;
 		}
 	}

@@ -9,7 +9,7 @@ import javax.arang.IO.basic.FileReader;
 import javax.arang.phasing.util.Phase;
 import javax.arang.phasing.util.PhasedSNP;
 
-public class SubreadBasedPhasing extends Phase {
+public class ReadBasedPhasing extends Phase {
 	
 	private static FileMaker fmSNP;
 	private static FileMaker fmRead;
@@ -61,27 +61,27 @@ public class SubreadBasedPhasing extends Phase {
 
 	@Override
 	public void printHelp() {
-		System.out.println("Usage: phasingSubreadBasedPhasing.jar <in.sam> <snp_by_shapeit.haps/10X_noindel.snp> <phased.reads> [NUM_SNPS_WITHIN_READ]");
+		System.out.println("Usage: phasingReadBasedPhasing.jar <in.sam> <snp_by_shapeit.haps/10X_noindel.snp> <phased.reads> [NUM_SNPS_WITHIN_READ]");
 		System.out.println("\t<in.sam>: Subreads aligned to reference");
 		System.out.println("\t<snp_by_shapeit.haps>: .haps file generated with shapeit");
 		System.out.println("\t\tCHR\tRS_ID\tPOS\tAlleleOfA\tAlleleOfB\tHaplotypeA\tHaplotypeB");
 		System.out.println("\t<phased.reads>: READ_ID\tCOUNT_A\tCOUNT_B\tCOUNT_O\tREAD_START_POS\tREAD_END_POS\tREAD_LEN\tHAPLOTYPE_PATTERN\tSNP_POS");
 		System.out.println("\t[NUM_SNPS_WITHIN_READ]: Read info with at least [NUM_SNPS_WITHIN_READ] will be printed. DEFUALT=0");
 		System.out.println("\tRun this code on each chr seperately.");
-		System.out.println("Arang Rhie, 2016-07-22. arrhie@gmail.com");
+		System.out.println("Arang Rhie, 2017-01-17. arrhie@gmail.com");
 	}
 
 
 	public static void main(String[] args) {
 		if (args.length == 3) {
 			outPrefix = args[2];
-			new SubreadBasedPhasing().go(args[0], args[1]);
+			new ReadBasedPhasing().go(args[0], args[1]);
 		} else if (args.length == 4) {
 			outPrefix = args[2];
 			NUM_SNPS_WITHIN_READ = Integer.parseInt(args[3]);
-			new SubreadBasedPhasing().go(args[0], args[1]);
+			new ReadBasedPhasing().go(args[0], args[1]);
 		} else {
-			new SubreadBasedPhasing().printHelp();
+			new ReadBasedPhasing().printHelp();
 		}
 	}
 

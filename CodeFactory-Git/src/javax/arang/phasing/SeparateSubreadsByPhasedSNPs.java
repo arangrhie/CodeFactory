@@ -31,7 +31,7 @@ public class SeparateSubreadsByPhasedSNPs extends Phase {
 	}
 
 	public static void main(String[] args) {
-		if (args.length == 6) {
+		if (args.length == 5) {
 			writeSam = Boolean.parseBoolean(args[4]);
 			errorRate = Float.parseFloat(args[3]);
 			outPrefix = args[2];
@@ -39,14 +39,6 @@ public class SeparateSubreadsByPhasedSNPs extends Phase {
 				new SeparateSubreadsByPhasedSNPs().printHelp();
 			} else {
 				outPrefix = args[2];
-				new SeparateSubreadsByPhasedSNPs().go(args[0], args[1]);
-			}
-		} else if (args.length == 5) {
-			errorRate = Float.parseFloat(args[3]);
-			outPrefix = args[2];
-			if (errorRate >= 0.5) {
-				new SeparateSubreadsByPhasedSNPs().printHelp();
-			} else {
 				new SeparateSubreadsByPhasedSNPs().go(args[0], args[1]);
 			}
 		} else if (args.length == 4) {
@@ -132,7 +124,10 @@ public class SeparateSubreadsByPhasedSNPs extends Phase {
 			} else {
 				// Rescue ambiguous read
 				float min = Math.min(countA, countB);
-				if ( (min / (countA + countB)) < errorRate) {
+				if (countA == countB) {
+					writeHaplotype(fmReadAmbiguous, fmAmbiguous, line, readID,
+							countA, countB, countO, seqStart, seqEnd, snpsInRead, haplotype, snpsInReadPosList);
+				} else if ( (min / (countA + countB)) < errorRate) {
 					if (countA == min) {
 						// Haplotype B
 						writeHaplotype(fmReadHaplotypeB, fmHaplotypeB, line, readID,

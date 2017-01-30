@@ -11,7 +11,10 @@ public class FilterPhasedSNPs extends IOwrapper {
 
 	private static final short IS_A = 0;
 	private static final short IS_B = 1;
+	private static int MAX_TOTAL_DEPTH_FOR_PHASING = 120;
+	private static int MIN_TOTAL_DEPTH_REQUIRED = 0;	// H + A + B < MIN_TOTAL_DEPTH_REQUIRED will be marked as ToRemove on the snp list
 	private static int MIN_DEPTH_FOR_OTHER = 30;
+	private static int MIN_DEPTH_FOR_ERROR = 15;
 	private static int MIN_FRAC_FOR_ERROR = 15;	// % will be removed for HET>HOM
 
 	@Override
@@ -54,13 +57,19 @@ public class FilterPhasedSNPs extends IOwrapper {
 			B = Integer.parseInt(tokens[PhasedSNPBase.OFFSET + PhasedSNPBase.B]);
 			D = Integer.parseInt(tokens[PhasedSNPBase.OFFSET + PhasedSNPBase.D + 1]);
 
+			// Coverage > MAX_TOTAL_DEPTH_FOR_PHASING then REMOVE
+			if ((H + A + B) > MAX_TOTAL_DEPTH_FOR_PHASING) {
+				toRemove++;
+				writeSNP(fm, tokens, "ToRemove");
+			}
+			
 			// Coverage == 0
 			if (A + B == 0) {
 				writeSNP(fm, tokens, "HET");
 				continue;
 			}
 
-			if (Math.min(A, B) < D  && D > MIN_DEPTH_FOR_OTHER || (H + A + B) < removeCov) {
+			if (Math.min(A, B) < D  && D > MIN_DEPTH_FOR_OTHER || (H + A + B) < MIN_TOTAL_DEPTH_REQUIRED) {
 				toRemove++;
 				writeSNP(fm, tokens, "ToRemove");
 				continue;
@@ -86,7 +95,7 @@ public class FilterPhasedSNPs extends IOwrapper {
 			}
 
 			// Switch to Homo
-			if (Math.min(A, B) < MIN_FRAC_FOR_ERROR && (Math.min(A, B) * 100 / (A + B)) <= MIN_FRAC_FOR_ERROR && fr.hasMoreLines()) {
+			if (Math.min(A, B) < MIN_DEPTH_FOR_ERROR && (Math.min(A, B) * 100 / (A + B)) <= MIN_FRAC_FOR_ERROR && fr.hasMoreLines()) {
 				nextLine = fr.readLine();
 				nextTokens = nextLine.split(RegExp.TAB);
 				if (nextTokens[PhasedSNPBase.HAPLOTYPE_A].equals(nextTokens[PhasedSNPBase.HAPLOTYPE_B])) {
@@ -212,43 +221,52 @@ public class FilterPhasedSNPs extends IOwrapper {
 
 	@Override
 	public void printHelp() {
-		System.out.println("Useage: java -jar phasingFilterPhasedSNPs.jar <in.base> <out.snp> [removeCov] [MODE]");
+		System.out.println("Useage: java -jar phasingFilterPhasedSNPs.jar <in.base> <out.snp> [MAX_TOTAL_DEPTH_FOR_PHASING] [MIN_TOTAL_DEPTH_REQUIRED] [MIN_DEPTH_FOR_OTHER] [MIN_FRAC_FOR_ERROR]");
 		System.out.println("\t<in.phased.snp>: generated with phasingPhaedReadsToSnpBaseCount.jar");
 		System.out.println("\t<out.phased_filt.snp>: filter homozygotes snps and set both haplotype A and B to one allele.");
 		System.out.println("\t\tHomozygote SNPs will NOT BE REMOVED. Just the haplotypes are re-set.");
-		System.out.println("\t[removeCov]: SNPs with coverage <= [removeCov] will BE REMOVED.");
-		System.out.println("\t[MODE]: DEFUALT=PacBio. Set to BAC for low coverage, high confident reads.");
-		System.out.println("\t\t** BAC mode not tested **");
-		System.out.println("Arang Rhie, 2015-09-01. arrhie@gmail.com");
+		System.out.println("\t[MAX_TOTAL_DEPTH_FOR_PHASING] : SNPs with coverage (H+A+B) > [MAX_TOTAL_DEPTH_FOR_PHASING] will BE REMOVED.");
+		System.out.println("\t[MIN_TOTAL_DEPTH_REQUIRED]: SNPs with coverage (H+A+B) < [MIN_TOTAL_DEPTH_REQUIRED] will BE REMOVED.");
+		System.out.println("\t[MIN_DEPTH_FOR_OTHER]: Math.min(A, B) < D  && D > [MIN_DEPTH_FOR_OTHER] will be REMOVED.");
+		System.out.println("\t\tMath.min(A, B) < (O - D) && (O - D) > [MIN_DEPTH_FOR_OTHER] : Switch to other haplotype.");
+		System.out.println("\t[MIN_FRAC_FOR_ERROR]: unit: %. ex., 15 for 15%.");
+		System.out.println("\tRecommended setting for PacBio subreads (101x):");
+		System.out.println("\t\tMIN_TOTAL_DEPTH_REQUIRED = 0");
+		System.out.println("\t\tMIN_DEPTH_FOR_OTHER = 30");
+		System.out.println("\t\tMIN_DEPTH_FOR_ERROR = 15");
+		System.out.println("\t\tMIN_FRAC_FOR_ERROR = 15");
+		System.out.println("\tRecommended setting for illumina reads for BACs (30x):");
+		System.out.println("\t\tMIN_TOTAL_DEPTH_REQUIRED = 0");
+		System.out.println("\t\tMIN_DEPTH_FOR_OTHER = 2");
+		System.out.println("\t\tMIN_DEPTH_FOR_ERROR = 15");
+		System.out.println("\t\tMIN_FRAC_FOR_ERROR = 15");
+		System.out.println("Arang Rhie, 2017-01-17. arrhie@gmail.com");
 	}
 
-	private static int removeCov = 0;
 	public static void main(String[] args) {
 		if (args.length == 2) {
-			System.out.println("Coverage threashold for removing SNPs with cov less than: " + removeCov);
+			printOptions();
 			new FilterPhasedSNPs().go(args[0], args[1]);
-		} else if (args.length == 3) {
-			if (args[2].equals("PacBio")) {
-			} else if (args[2].equals("BAC")) {
-				MIN_DEPTH_FOR_OTHER = 2;
-				MIN_FRAC_FOR_ERROR = 15;
-			} else {
-				removeCov = Integer.parseInt(args[2]);
-			}
-			System.out.println("Coverage threashold for removing SNPs with cov less than: " + removeCov);
-			new FilterPhasedSNPs().go(args[0], args[1]);
-		} else if (args.length == 4) {
-			removeCov = Integer.parseInt(args[2]);
-			System.out.println("Coverage threashold for removing SNPs with cov less than: " + removeCov);
-			if (args[3].equals("PacBio")) {
-			} else if (args[3].equals("BAC")) {
-				MIN_DEPTH_FOR_OTHER = 2;
-				MIN_FRAC_FOR_ERROR = 15;
-			}
+		} else if (args.length == 7) {
+			MAX_TOTAL_DEPTH_FOR_PHASING = Integer.parseInt(args[2]);
+			MIN_TOTAL_DEPTH_REQUIRED = Integer.parseInt(args[3]);
+			MIN_DEPTH_FOR_OTHER = Integer.parseInt(args[4]);
+			MIN_DEPTH_FOR_ERROR = Integer.parseInt(args[5]);
+			MIN_FRAC_FOR_ERROR = Integer.parseInt(args[6]);
+			printOptions();
 			new FilterPhasedSNPs().go(args[0], args[1]);
 		} else {
 			new FilterPhasedSNPs().printHelp();
 		}
+	}
+	
+	private static void printOptions() {
+		System.out.println("Coverage threashold for removing SNPs with cov less than: " + MIN_TOTAL_DEPTH_REQUIRED);
+		System.out.println("H + A + B > " + MAX_TOTAL_DEPTH_FOR_PHASING + " will be marked as ToRemove");
+		System.out.println("H + A + B < " + MIN_TOTAL_DEPTH_REQUIRED + " will be marked as ToRemove");
+		System.out.println("When min(A, B) < D && " + MIN_DEPTH_FOR_OTHER + " < D will be marked as ToRemove");
+		System.out.println("min(A, B) < (O - D) && (O - D) > " + MIN_DEPTH_FOR_OTHER + " will be marked as AtoO or BtoO.");
+		System.out.println("min(A, B) < " + MIN_DEPTH_FOR_ERROR + " && (min(A, B) * 100 / (A + B)) <= " + MIN_FRAC_FOR_ERROR + " will be marked as Hom instead of Het.");
 	}
 
 }

@@ -8,6 +8,8 @@ import javax.arang.vcf.VCF;
 
 public class VCFtoArtificialPhasedSNP extends IOwrapper {
 
+	private int pos = 0;	// to prevent overlapping variants, this var should be always increased
+	
 	@Override
 	public void hooker(FileReader fr, FileMaker fm) {
 		String line;
@@ -32,6 +34,12 @@ public class VCFtoArtificialPhasedSNP extends IOwrapper {
 			
 			alts = tokens[VCF.ALT].split(RegExp.COMMA);
 			int pos = Integer.parseInt(tokens[VCF.POS]);
+			if (this.pos >= pos) {
+				System.out.println(line + " : position is overlapping");
+				
+				continue;
+			}
+			this.pos = pos;
 			
 			if (gt.contains("/")) {
 				genotypes = gt.split("/");
@@ -55,18 +63,25 @@ public class VCFtoArtificialPhasedSNP extends IOwrapper {
 			hapB = getAllele(Integer.parseInt(genotypes[1]), tokens[VCF.REF], alts);
 			
 			
-			writePhasedVariant(fm, tokens[VCF.CHROM], pos, tokens[VCF.REF], hapA, hapB);
+			writePhasedVariant(fm, tokens[VCF.CHROM], tokens[VCF.REF], hapA, hapB);
 			
 		}
 	}
 
-	private void writePhasedVariant(FileMaker fm, String chr, int pos, String ref, String hapA, String hapB) {
+	private void writePhasedVariant(FileMaker fm, String chr, String ref, String hapA, String hapB) {
 		
 		char refAllele;
 		char hapAallele;
 		char hapBallele;
 		
-		for (int i = 0; i < ref.length(); i++) {
+		// increment interval by incrValBy when the ref.length() >= 10.
+		int incrValBy = 1;
+		if (ref.length() >= 10) {
+			incrValBy = 5;
+		}
+		
+		int i;
+		for (i = 0; i < ref.length(); ) {
 			refAllele = ref.charAt(i);
 					
 			// compare hapA
@@ -80,7 +95,7 @@ public class VCFtoArtificialPhasedSNP extends IOwrapper {
 			
 			// compare hapB
 			if (i <= hapB.length() - 1) {
-				// ref idx i is in bound of hapA
+				// ref idx i is in bound of hapB
 				hapBallele = hapB.charAt(i);
 			} else {
 				// Deletion
@@ -95,6 +110,16 @@ public class VCFtoArtificialPhasedSNP extends IOwrapper {
 				fm.writeLine(chr + "\t" + (pos + i) + "\t" + hapAallele + "\t" + hapBallele + "\t" + pos);
 			}
 			
+			// when reaching ref.length, quit
+			if (i == ref.length() - 1)	break;
+			
+			// increment i by incrValBy within the boundary of ref.length.
+			if (i+incrValBy < ref.length()) {
+				i += incrValBy;
+			} else {
+				// get the boundary position when increment exceeds the boundary.
+				i = ref.length() - 1;
+			}
 		}
 		
 	}
@@ -113,7 +138,7 @@ public class VCFtoArtificialPhasedSNP extends IOwrapper {
 		System.out.println("Usage: java -jar phasingVCFtoArtificialPhasedSNP.jar <in.vcf> <out.phased.snp>");
 		System.out.println("\tConvert <in.vcf> to an artificial <out.phased.snp> containing Substitutions and Deletions.");
 		System.out.println("\tMulti-variant sites or sites that are already haplotypes (chrX, chrY) will be reported in stdout.");
-		System.out.println("Arang Rhie, 2016-07-25. arrhie@gmail.com");
+		System.out.println("Arang Rhie, 2017-01-16. arrhie@gmail.com");
 	}
 
 	public static void main(String[] args) {

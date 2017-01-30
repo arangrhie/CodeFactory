@@ -37,7 +37,7 @@ public class MarkHaplotypeSwitch extends IOwrapper {
 			}
 			
 			// Hetero
-			AtoA = Integer.parseInt(tokens[PhasedSNPBase.OFFSET + PhasedSNPBase.AA + 2]);
+			AtoA = Integer.parseInt(tokens[PhasedSNPBase.OFFSET + PhasedSNPBase.AA + 2]);	// + 2 for the | signs
 			BtoB = Integer.parseInt(tokens[PhasedSNPBase.OFFSET + PhasedSNPBase.BB + 2]);
 			AtoB = Integer.parseInt(tokens[PhasedSNPBase.OFFSET + PhasedSNPBase.AB + 2]);
 			BtoA = Integer.parseInt(tokens[PhasedSNPBase.OFFSET + PhasedSNPBase.BA + 2]);
