@@ -16,7 +16,7 @@ public abstract class BamRwrapper extends Wrapper {
 		startTiming();
 		
 		BamReader fr = new BamReader(inFile);
-		System.out.println("Processing file " + fr.getFileName());
+		System.err.println("Processing file " + fr.getFileName());
 		
 		hooker(fr);
 		

@@ -221,7 +221,8 @@ public class FilterPhasedSNPs extends IOwrapper {
 
 	@Override
 	public void printHelp() {
-		System.out.println("Useage: java -jar phasingFilterPhasedSNPs.jar <in.base> <out.snp> [MAX_TOTAL_DEPTH_FOR_PHASING] [MIN_TOTAL_DEPTH_REQUIRED] [MIN_DEPTH_FOR_OTHER] [MIN_FRAC_FOR_ERROR]");
+		System.out.println("Useage: java -jar phasingFilterPhasedSNPs.jar <in.base> <out.snp>"
+				+ " [MAX_TOTAL_DEPTH_FOR_PHASING] [MIN_TOTAL_DEPTH_REQUIRED] [MIN_DEPTH_FOR_OTHER] [MIN_DEPTH_FOR_ERROR] [MIN_FRAC_FOR_ERROR]");
 		System.out.println("\t<in.phased.snp>: generated with phasingPhaedReadsToSnpBaseCount.jar");
 		System.out.println("\t<out.phased_filt.snp>: filter homozygotes snps and set both haplotype A and B to one allele.");
 		System.out.println("\t\tHomozygote SNPs will NOT BE REMOVED. Just the haplotypes are re-set.");

@@ -30,9 +30,11 @@ public class BamRecord {
 	public int OFFSET_TAGS = -1;
 	
 	private byte[] recordBytes = null;
+	private int blockLen = 0;
 	private int refID = 0;
 	private int pos = 0;
 	private long bin_mq_nl = 0;
+	private int mq = -1;
 	private int l_read_name = 0;
 	private int flag = 0;
 	private int n_cigar_op = 0;
@@ -48,6 +50,8 @@ public class BamRecord {
 	private int refNextID = -1;
 	private int posNext = -1;
 	private int tlen = 0;
+	private byte[] tagByte = null;
+	private String tags = null;
 	
 	
 	public void setRecordBytes(byte[] recordBytes) {
@@ -58,7 +62,10 @@ public class BamRecord {
 		readName = null;
 		seq = null;
 		qual = null;
-		int offset = OFFSET_REF_ID;
+		int offset = OFFSET_BLOCK_SIZE;
+		blockLen = BinaryUtil.toInt32(this.recordBytes[offset], this.recordBytes[offset + 1],
+				this.recordBytes[offset + 2], this.recordBytes[offset + 3]);
+		offset = OFFSET_REF_ID;
 		refID = BinaryUtil.toInt32(this.recordBytes[offset], this.recordBytes[offset + 1],
 				this.recordBytes[offset + 2], this.recordBytes[offset + 3]);
 		offset = OFFSET_POS;
@@ -67,6 +74,7 @@ public class BamRecord {
 		offset = OFFSET_BIN_MQ_NL;
 		bin_mq_nl = BinaryUtil.toUnsignedInt32(this.recordBytes[offset], this.recordBytes[offset + 1],
 				this.recordBytes[offset + 2], this.recordBytes[offset + 3]);
+		
 		l_read_name = (int) (bin_mq_nl & 0x000000ff);
 		OFFSET_CIGAR = OFFSET_READ_NAME + l_read_name;
 
@@ -94,6 +102,8 @@ public class BamRecord {
 		offset = OFFSET_TLEN;
 		tlen = BinaryUtil.toInt32(this.recordBytes[offset], this.recordBytes[offset + 1],
 				this.recordBytes[offset + 2], this.recordBytes[offset + 3]);
+		
+		
 	}
 	
 	public int getBin() {
@@ -128,6 +138,27 @@ public class BamRecord {
 		return dest;
 	}
 	
+	public int getMQ() {
+		mq = (int) (bin_mq_nl << 16);
+		mq = (int) (mq >>> 24);
+		return mq;
+	}
+	
+	private byte[] getTagBytes() {
+		return initBytes(OFFSET_TAGS, tagByte, (blockLen - OFFSET_TAGS));
+	}
+	
+	public String getTags() {
+		if (tags == null) {
+			StringBuffer strBuff = new StringBuffer();
+			byte[] tagBytes = getTagBytes();
+			for (int i = 0; i < (blockLen - OFFSET_TAGS); i++) {
+				strBuff.append((char) tagBytes[i]);
+			}
+			tags = strBuff.toString();
+		}
+		return tags;
+	}
 	
 	
 	public String getReadName() {
@@ -224,7 +255,7 @@ public class BamRecord {
 		line.append(this.getFlag() + "\t");
 		line.append(this.getRefName(ref) + "\t");
 		line.append(this.getPos() + "\t");
-		line.append(this.getQual() + "\t");
+		line.append(this.getMQ() + "\t");
 		line.append(this.getCigarString() + "\t");
 		line.append(this.getRefName(ref, refNextID) + "\t");
 		line.append(this.getNextPos() + "\t");
@@ -234,11 +265,14 @@ public class BamRecord {
 		return line.toString();
 	}
 	
+
+
 	private int getTLen() {
 		return tlen;
 	}
 
-	public String getCigarString() { 
+	public String getCigarString() {
+		getCigar();
 		return Cigar.getCigarString(cigarArray);
 	}
 	

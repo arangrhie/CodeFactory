@@ -47,7 +47,7 @@ public class ConcatinateFastaWiExactNs extends IOwrapper {
 	@Override
 	public void printHelp() {
 		System.out.println("Usage: java -jar fastaConcatinateFastaWiExactNs.jar <out.fa> <in.fa> [<num_Ns> <in.fa> ... ]");
-		System.out.println("\t<out.fa>: 1 fasta file containing all the <in.fa> files and Ns");
+		System.out.println("\t<out.fa>: 1 fasta file starting with >out from <out.fa> containing all the <in.fa> files concatenated with Ns");
 		System.out.println("\t<in.fa>: regular fa file, with 1 fasta in 1 file" );
 		System.out.println("\t<num_Ns>: INTEGER. Number of Ns to put between <in.fa>s.");
 		System.out.println("Arang Rhie, 2016-03-05. arrhie@gmail.com");

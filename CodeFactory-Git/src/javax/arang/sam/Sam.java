@@ -488,6 +488,18 @@ public class Sam {
 		return matchedBases;
 	}
 	
+	public static int getDeletedSplicedBasesLen(String cigarArr) {
+		int deletedBases = 0;
+		ArrayList<String[]> cigarArray = parseArr(cigarArr);
+		for (String[] cigar : cigarArray) {
+			if (cigar[OP].equals("N") || cigar[OP].equals("D")) {
+				deletedBases += Integer.parseInt(cigar[COUNT]);
+			}
+		}
+		return deletedBases;
+		
+	}
+	
 	public static int getSoftclippedBasesLen(String cigarArr) {
 		int skippedBases = 0;
 		ArrayList<String[]> cigarArray = parseArr(cigarArr);

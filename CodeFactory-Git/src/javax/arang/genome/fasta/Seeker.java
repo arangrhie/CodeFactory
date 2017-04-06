@@ -6,8 +6,8 @@ import javax.arang.IO.basic.RegExp;
 public class Seeker {
 
 	private FileReader fr;
-	private int posIdx = 0;	// currently buffered posIdx
-	private int seeker = 0;
+	private int posIdx = 0;	// currently buffered posIdx, 1-based
+	private int seeker = 0; // last time seeked position, 0-based
 	private String basesBuffer = ""; 
 	private String faName = "";
 	
@@ -18,12 +18,17 @@ public class Seeker {
 	 */
 	public Seeker(FileReader frFa) {
 		this.fr = frFa;
+		initSeeker();
+	}
+	
+	public void initSeeker() {
 		String line = fr.readLine();
 		if (line.startsWith(">")) {
 			this.faName = line.replace(">", "").split(RegExp.WHITESPACE)[0];
 		}
-		basesBuffer = fr.readLine();
-		posIdx = basesBuffer.trim().length();
+		posIdx = 0;
+		basesBuffer = "";
+		readNextLine();
 		seeker = 0;
 	}
 	
@@ -36,8 +41,8 @@ public class Seeker {
 			if (line.startsWith(">")) {
 				this.faName = line.replace(">", "").split(RegExp.WHITESPACE)[0];
 				if (this.faName.equals(contig)) {
-					basesBuffer = fr.readLine();
-					posIdx = basesBuffer.trim().length();
+					posIdx = 0;
+					readNextLine();
 					seeker = 0;
 					return true;
 				}
@@ -62,14 +67,14 @@ public class Seeker {
 			System.err.println("[DEBUG] :: Backward searching? " + pos);
 			System.exit(-1);
 		}
-		if (seeker < pos && pos <= posIdx) {
+		if (seeker <= pos && pos <= posIdx - 1) {
 			// already buffered
-			base = basesBuffer.charAt(basesBuffer.length() - (posIdx - pos) - 1);
+			base = basesBuffer.charAt(basesBuffer.length() - (posIdx - pos));
 		} else {
 			READ_LOOP : while (fr.hasMoreLines()) {
 				readNextLine();
-				if (posIdx >= pos) {
-					base = basesBuffer.charAt(basesBuffer.length() - (posIdx - pos) - 1);
+				if (posIdx > pos) {
+					base = basesBuffer.charAt(basesBuffer.length() - (posIdx - pos));
 					break READ_LOOP;
 				}
 			}
@@ -85,11 +90,18 @@ public class Seeker {
 	
 	/***
 	 * 
-	 * @param from
-	 * @param len
+	 * @param from (0-based)
+	 * @param len (1-based)
 	 * @return sequence[from,from+len-1]
 	 */
 	public String getBases(int from, int len) {
+		// TODO: Allow random access
+		if (seeker > from) {
+			this.fr.reset();
+			this.goToContig(getFaName());
+			initSeeker();
+		}
+		
 		StringBuffer buffer = new StringBuffer();
 		for (int pos = from; pos < (from + len); pos++) {
 			buffer.append(baseAt(pos));

@@ -8,7 +8,7 @@ import javax.arang.IO.basic.FileMaker;
 import javax.arang.IO.basic.FileReader;
 import javax.arang.IO.basic.RegExp;
 
-public class ExtractScaffoldsFromList extends I2Owrapper {
+public class ExtractFromList extends I2Owrapper {
 
 	@Override
 	public void hooker(FileReader frFasta, FileReader frScaffoldList, FileMaker fm) {
@@ -92,7 +92,7 @@ public class ExtractScaffoldsFromList extends I2Owrapper {
 
 	@Override
 	public void printHelp() {
-		System.out.println("Usage: java -jar <in.fasta> <in_scaffold.list> <out.fasta> [new_scaffold_name.list]");
+		System.out.println("Usage: java -jar fastaExtractFromList.jar <in.fasta> <in_fasta.list> <out.fasta> [new_scaffold_name.list]");
 		System.out.println("\t<in.fasta>: Total list of fasta file. Matches only the first token of lines starting with >.");
 		System.out.println("\t<in_scaffold.list>: List of scaffold (contig) names, with no \">\"");
 		System.out.println("\t<out.fasta>: Fasta file containing only listed scaffolds");
@@ -107,13 +107,13 @@ public class ExtractScaffoldsFromList extends I2Owrapper {
 	
 	public static void main(String[] args) {
 		if (args.length == 3) {
-			new ExtractScaffoldsFromList().go(args[0], args[1], args[2]);
+			new ExtractFromList().go(args[0], args[1], args[2]);
 		} else if (args.length == 4) {
 			hasNewScaffoldNames = true;
 			frNewScaffoldReader = new FileReader(args[3]);
-			new ExtractScaffoldsFromList().go(args[0], args[1], args[2]);
+			new ExtractFromList().go(args[0], args[1], args[2]);
 		} else {
-			new ExtractScaffoldsFromList().printHelp();
+			new ExtractFromList().printHelp();
 		}
 	}
 

@@ -7,7 +7,7 @@ import javax.arang.IO.R2wrapper;
 import javax.arang.IO.basic.FileMaker;
 import javax.arang.IO.basic.FileReader;
 import javax.arang.IO.basic.IOUtil;
-import javax.arang.genome.fasta.ExtractScaffoldsFromList;
+import javax.arang.genome.fasta.ExtractFromList;
 
 public class ExtractSubreadFaFromList extends R2wrapper {
 
@@ -50,7 +50,7 @@ public class ExtractSubreadFaFromList extends R2wrapper {
 			if (subreadList == null || subreadList.size() == 0)	continue;
 			FileMaker fm = new FileMaker(outDir, faFileName);
 			FileReader frFa = new FileReader(line);
-			faWritten = ExtractScaffoldsFromList.readFaExtractSeq(frFa, subreadList, fm);
+			faWritten = ExtractFromList.readFaExtractSeq(frFa, subreadList, fm);
 			fm.closeMaker();
 			frFa.closeReader();
 			System.out.println("[DEBUG] :: " + faWritten.size() + " / " + subreadList.size() + " (" + numSubreads + ") written to " + faFileName);

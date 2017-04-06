@@ -27,7 +27,7 @@ public class ExtractRegion extends IOwrapper {
 		System.out.println("Usage: java -jar fastaExtractRegion.jar <in.fa> <in.region> <out.fa>");
 		System.out.println("\tExtract specificed region out of <in.fa>");
 		System.out.println("\t<in.fa>: fasta file");
-		System.out.println("\t<in.region>: CHR:START-END in bed format (START:0-based, END:1-based)");
+		System.out.println("\t<in.region>: CHR:START-END (START:0-based, END:1-based)");
 		System.out.println("\t<out.fa>: output fa file, named after <in.region>");
 		System.out.println("2016-01-05. arrhie@gmail.com");
 	}

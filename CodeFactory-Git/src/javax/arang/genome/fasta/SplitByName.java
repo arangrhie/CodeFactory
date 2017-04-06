@@ -15,13 +15,15 @@ public class SplitByName extends Rwrapper {
 		String seqName;
 		while (fr.hasMoreLines()) {
 			line = fr.readLine();
+			// Extract the fa seq name for the out file name
 			if (line.startsWith(">")) {
 				seqName = line.substring(1);
 				tokens = seqName.split(RegExp.WHITESPACE);
 				if (tokens.length > 1) {
 					seqName = tokens[0];
 				}
-				System.out.println("\t" + seqName);
+				System.err.println("\t" + seqName);
+				
 				if (fm != null) {
 					fm.closeMaker();
 				}

@@ -11,53 +11,47 @@ public class ConcatinateFasta extends INOwrapper {
 
 	@Override
 	public void printHelp() {
-		System.out.println("Usage: java -jar fastaConcatinateFasta.jar <out-seq-name> <num-N-padds> <*.fasta>");
+		System.out.println("Usage: java -jar fastaConcatinate.jar <out-seq-name> <num-N-padds> <*.fasta>");
 		System.out.println("\t<out-seq-name>: out fasta file name.");
-		System.out.println("\t\t<out-seq-name>.fasta will be generated with a header ><out-seq-name>.");
+		System.out.println("\t\t<out-seq-name>.fa will be generated with a header ><out-seq-name>.");
 		System.out.println("\t<num-N-padds>: num. of N bases between fasta contigs");
-		System.out.println("2015-10-22. arrhie@gmail.com");
+		System.out.println("\t<out-seq-name>.bed: bed formatted file containing the merged fasta region within the final <out-seq-name>.fa");
+		System.out.println("2017-03-22. arrhie@gmail.com");
 	}
 
 	@Override
 	public void hooker(ArrayList<FileReader> frs, FileMaker fm) {
 		fm.writeLine(">" + seqName);
+		FileMaker fmBed = new FileMaker(fm.getDir(), fm.getFileName().replace(".fa", ".bed"));
+		int start = 0;
+		int end = 0;
+		String mergedSeqName = "";
+		
 		String line;
 		boolean isFirst = true;
-		for (int i = 0; i < frs.size() - 1; i++) {
+		for (int i = 0; i < frs.size(); i++) {
 			while (frs.get(i).hasMoreLines()) {
 				line = frs.get(i).readLine();
 				if (line.startsWith(">")) {
 					if (isFirst) {
-						// do nothing
 						isFirst = false;
 					} else {
+						fmBed.writeLine(seqName + "\t" + start + "\t" + end + "\t" + mergedSeqName);
+						end += numNs;
+						start = end;
 						for (int j = 0; j < numNs; j++) {
 							fm.write("N");
 						}
 						fm.writeLine();
 					}
+					mergedSeqName = line.substring(1);
 				} else {
 					fm.writeLine(line);
+					end += line.length();
 				}
 			}
-
 		}
-		while (frs.get(frs.size() - 1).hasMoreLines()) {
-			line = frs.get(frs.size() - 1).readLine();
-			if (line.startsWith(">")) {
-				if (isFirst) {
-					// do nothing
-					isFirst = false;
-				} else {
-					for (int j = 0; j < numNs; j++) {
-						fm.write("N");
-					}
-					fm.writeLine();
-				}
-			} else {
-				fm.writeLine(line);
-			}
-		}
+		fmBed.writeLine(seqName + "\t" + start + "\t" + end + "\t" + mergedSeqName);
 	}
 	
 	private static String seqName;

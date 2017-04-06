@@ -42,7 +42,7 @@ public class MarkHaplotypeSwitch extends IOwrapper {
 			AtoB = Integer.parseInt(tokens[PhasedSNPBase.OFFSET + PhasedSNPBase.AB + 2]);
 			BtoA = Integer.parseInt(tokens[PhasedSNPBase.OFFSET + PhasedSNPBase.BA + 2]);
 			
-			if (AtoA < BtoA && BtoB < AtoB) {
+			if (AtoA + BtoB < BtoA + AtoB) {
 				fm.writeLine(line + "\tSwitch");
 				countSwitched++;
 			} else {

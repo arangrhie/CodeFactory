@@ -19,6 +19,14 @@ public class SAMUtil {
 	private static final int MASK_QUAL_CONTROL = (int) Math.pow(2, 9);
 	private static final int MASK_DUP = (int) Math.pow(2, 10);
 	private static final int MASK_SUPPLEMENTARY = (int) Math.pow(2, 11);
+	
+	public static int setReverseComplemented(int flag) {
+		return (flag | MASK_REVERSE_COMPLEMENTED);
+	}
+	
+	public static int setFirstSegmentInTemplate(int flag) { 
+		return (flag | MASK_PAIR1);
+	}
 
 	/***
 	 * Template having multiple segments in sequencing

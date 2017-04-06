@@ -20,7 +20,7 @@ public class ToVcf extends IOwrapper {
 		String ps;
 		
 		fm.writeLine("##fileformat=VCFv4.1");
-		fm.writeLine("#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tAK1");
+		fm.writeLine("#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tNA12878");
 		while (fr.hasMoreLines()) {
 			line = fr.readLine();
 			if (line.startsWith("#"))	continue;

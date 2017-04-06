@@ -5,7 +5,7 @@ import javax.arang.IO.basic.FileReader;
 import javax.arang.IO.basic.RegExp;
 import javax.arang.phasing.util.PhasedRead;
 
-public class HaplotypeAtSNP extends Rwrapper {
+public class HaplotypeAtPos extends Rwrapper {
 
 	@Override
 	public void hooker(FileReader fr) {
@@ -56,10 +56,10 @@ public class HaplotypeAtSNP extends Rwrapper {
 
 	@Override
 	public void printHelp() {
-		System.out.println("Usage: java -jar phasingHaplotypeAtSNP.jar <in.read> <position>");
+		System.out.println("Usage: java -jar phasingHaplotypeAtPos.jar <in.read> <position>");
 		System.out.println("\t<in.read>: Generated with phasingSubreadBasedPhasedSNP.jar");
 		System.out.println("\t<position>: SNP position to look up");
-		System.out.println("\t<output>: <position>\t<BAC_ID>\thaplotype\thaplotype(full length, softmarking other sites than position)");
+		System.out.println("\t<output>: <position>\t<READ_ID>\thaplotype\thaplotype(full length, softmarking other sites than position)");
 		System.out.println("Arang Rhie, 2015-08-31. arrhie@gmail.com");
 	}
 
@@ -67,9 +67,9 @@ public class HaplotypeAtSNP extends Rwrapper {
 	public static void main(String[] args) {
 		if (args.length == 2) {
 			position = Integer.parseInt(args[1]);
-			new HaplotypeAtSNP().go(args[0]);
+			new HaplotypeAtPos().go(args[0]);
 		} else {
-			new HaplotypeAtSNP().printHelp();
+			new HaplotypeAtPos().printHelp();
 		}
 	}
 

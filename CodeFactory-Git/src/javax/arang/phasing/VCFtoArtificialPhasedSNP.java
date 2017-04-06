@@ -17,7 +17,7 @@ public class VCFtoArtificialPhasedSNP extends IOwrapper {
 		
 		String gt;
 		String[] alts;
-		String[] genotypes;
+		String[] genotypes = {""};
 		String hapA;
 		String hapB;
 		
@@ -42,17 +42,18 @@ public class VCFtoArtificialPhasedSNP extends IOwrapper {
 			this.pos = pos;
 			
 			if (gt.contains("/")) {
-				genotypes = gt.split("/");
+				genotypes = gt.split(RegExp.SLASH);
 			} else if (gt.contains("|")){
-				genotypes = gt.split("|");
+				genotypes = gt.split(RegExp.BAR);
 			} else {
 				// genotype is already haplotype
-				System.out.println(line);
-				continue;
+				System.out.println("Genotype is already haplotype: " + line);
+				System.exit(-1);
+				//continue;
 			}
 			
 			if (genotypes.length != 2) {
-				System.out.println(line);
+				System.out.println("Genotypes length: " + genotypes.length + " : " + line);
 				continue;
 			}
 			
