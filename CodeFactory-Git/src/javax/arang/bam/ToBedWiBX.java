@@ -20,9 +20,9 @@ public class ToBedWiBX extends BamRwrapper {
 			alignment = fr.getNextAlignmentRecord();
 			if (SAMUtil.isAligned(alignment.getFlag())) {
 				tags = alignment.getTags();
-				for (int i = 0; i < tags.length() - 10; i++) {
+				for (int i = 0; i < tags.length() - 21; i++) {
 					if (tags.charAt(i) == 'B' && tags.charAt(i + 1) == 'X' && tags.charAt(i + 2) == 'Z') {
-						bc = tags.substring(i + 3, i + 3 + 8);
+						bc = tags.substring(i + 3, i + 3 + 18);
 						break;
 					}
 				}
@@ -36,8 +36,6 @@ public class ToBedWiBX extends BamRwrapper {
 						"\t" + bc);
 			}
 		}
-		System.err.println("Done");
-		
 	}
 
 	@Override

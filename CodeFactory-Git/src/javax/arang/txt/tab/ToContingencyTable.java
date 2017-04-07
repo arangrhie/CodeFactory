@@ -14,6 +14,8 @@ public class ToContingencyTable extends I2Owrapper {
 	private static int filt1 = 10;
 	private static int filt2 = 10;
 	
+	private int sampleIdxOffset;	// sampleIdx1 + sampleIdxOffset = sampleIdx2 for the same sample.
+	
 	@Override
 	public void hooker(FileReader fr1, FileReader fr2, FileMaker fm) {
 		String line;
@@ -21,6 +23,8 @@ public class ToContingencyTable extends I2Owrapper {
 		
 		String key1;	// key identifier for fr1 (ex. SV)
 		String key2;	// key identifier for fr2 (ex. allelic expression site)
+		
+		sampleIdxOffset = sampleIdx2 - sampleIdx1;
 		
 		ArrayList<Integer> sampleIdxsHavingIn1 = new ArrayList<Integer>();
 		int a;
@@ -39,9 +43,10 @@ public class ToContingencyTable extends I2Owrapper {
 			sampleIdxsHavingIn1.clear();// reset sampleIdxsHavingIn1
 			for (int i = sampleIdx1; i < tokens.length; i++) {
 				if (!tokens[i].equals("NA") && Integer.parseInt(tokens[i]) >= filt1) {
-					sampleIdxsHavingIn1.add(i);
+					sampleIdxsHavingIn1.add(i + sampleIdxOffset);
 				}
 			}
+			System.out.println("[DEBUG] :: samples having SV: " + sampleIdxsHavingIn1.size());
 			
 			while (fr2.hasMoreLines()) {
 				line = fr2.readLine();
@@ -94,6 +99,7 @@ public class ToContingencyTable extends I2Owrapper {
 		System.out.println("\t\t\td: has not <in_1>, has not <in_2>");
 		System.out.println("\t\t[filt_1]: >= [filt_1] will be treated as 'has'. DEFAULT=10");
 		System.out.println("\t\t[filt_2]: Same as [filt_1]. DEFAULT=10");
+		System.out.println("Arang Rhie, 2017-01-25. arrhie@gmail.com");
 		
 	}
 
