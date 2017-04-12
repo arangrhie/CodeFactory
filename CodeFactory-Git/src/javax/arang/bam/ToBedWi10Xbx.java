@@ -7,7 +7,7 @@ import javax.arang.bam.util.RefInfo;
 import javax.arang.sam.SAMUtil;
 import javax.arang.sam.Sam;
 
-public class ToBedWiBX extends BamRwrapper {
+public class ToBedWi10Xbx extends BamRwrapper {
 
 	@Override
 	public void hooker(BamReader fr) {
@@ -36,23 +36,23 @@ public class ToBedWiBX extends BamRwrapper {
 						"\t" + bc);
 			}
 		}
-		System.err.println("Done");
-		
+
 	}
 
 	@Override
 	public void printHelp() {
-		System.out.println("Usage: java -jar bamToBedWiBX.jar <in.bam>");
+		System.out.println("Usage: java -jar bamToBedWi10Xbx.jar <in.bam>");
 		System.out.println("\tExtract the alignment region in bam, with sequence read-id, cigar string, flag, mq, and BX");
 		System.out.println("\t<sysout>: contig\tstart\tend\tread-id\tcigar\tflag\tmq\t[tag(s)]");
 		System.out.println("Arang Rhie, 2017-04-06. arrhie@gmail.com");
+
 	}
 
 	public static void main(String[] args) {
 		if (args.length == 1) {
-			new ToBedWiBX().go(args[0]);
+			new ToBedWi10Xbx().go(args[0]);
 		} else {
-			new ToBedWiBX().printHelp();
+			new ToBedWi10Xbx().printHelp();
 		}
 	}
 
