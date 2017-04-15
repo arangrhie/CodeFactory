@@ -14,25 +14,10 @@ public class ToReverseComplement extends IOwrapper {
 		}
 	}
 	
-	public static char toComplement(char base) {
-		switch(base) {
-		case 'a': return 't';
-		case 'A': return 'T';
-		case 'c': return 'g';
-		case 'C': return 'G';
-		case 'g': return 'c';
-		case 'G': return 'C';
-		case 't': return 'a';
-		case 'T': return 'A';
-		}
-		return 'n';
-	}
-
 	@Override
 	public void hooker(FileReader fr, FileMaker fm) {
 		String line;
 		StringBuffer newSeq = new StringBuffer();
-		char base;
 		while (fr.hasMoreLines()) {
 			line = fr.readLine();
 			if (line.startsWith(">")) {
@@ -44,10 +29,7 @@ public class ToReverseComplement extends IOwrapper {
 				continue;
 			}
 			line = line.trim();
-			for (int i = 0; i < line.length(); i++) {
-				base = line.charAt(i);
-				newSeq.insert(0, toComplement(base));
-			}
+			newSeq = FASTA.getReverseComplement(line, newSeq);
 		}
 		fm.writeLine(newSeq.toString());
 	}
