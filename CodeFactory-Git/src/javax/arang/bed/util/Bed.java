@@ -25,6 +25,8 @@ public class Bed {
 	public static final int START = 1;
 	public static final int END = 2;
 	public static final int NOTE = 3;
+	public static final int MQ = 4;
+	public static final int STRAND = 5;
 	
 	public static final short REGION_START = 0;
 	public static final short REGION_END = 1;
