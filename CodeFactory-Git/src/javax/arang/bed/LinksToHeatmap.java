@@ -33,10 +33,10 @@ public class LinksToHeatmap extends Rwrapper {
 				}
 			} else {
 				// Export previous links
-				if (!prevLinkId.equals("")) {
+				if (!prevLinkId.equals("") && contigs.size() > 1) {
 					Collections.sort(contigs);
 					for (int i = 0; i < contigs.size(); i++) {
-						for (int j = i; j < contigs.size(); j++) {
+						for (int j = i + 1; j < contigs.size(); j++) {
 							link = contigs.get(i) + ":" + contigs.get(j);
 							if (!linkToCount.containsKey(link)) {
 								linkToCount.put(link, 1);

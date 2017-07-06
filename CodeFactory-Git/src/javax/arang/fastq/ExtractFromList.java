@@ -33,6 +33,7 @@ public class ExtractFromList extends R2wrapper {
 			// if the line is readid
 			if (fastqLine == Fastq.READID_LINE) {
 				tokens = line.split(RegExp.WHITESPACE);
+				//System.err.println("[DEBUG] :: " + tokens[0].substring(1));
 				if (readIdList.contains(tokens[0].substring(1))) {
 					extract = true;
 					numExtracted++;

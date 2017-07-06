@@ -17,6 +17,7 @@ public class Sam {
 	public static final short TLEN = 8;
 	public static final short SEQ = 9;
 	public static final short QUAL = 10;
+	public static final short TAG = 11;
 	private static short MDTAG = 11;	// ion torrent
 
 	public static final short COUNT = 0;

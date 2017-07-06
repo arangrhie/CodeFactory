@@ -42,7 +42,11 @@ public class VCFtoArtificialPhasedSNP extends IOwrapper {
 			this.pos = pos;
 			
 			if (gt.contains("/")) {
-				genotypes = gt.split(RegExp.SLASH);
+				if (! takePhasedOnly) {
+					genotypes = gt.split(RegExp.SLASH);
+				} else {
+					continue;
+				}
 			} else if (gt.contains("|")){
 				genotypes = gt.split(RegExp.BAR);
 			} else {
@@ -136,14 +140,19 @@ public class VCFtoArtificialPhasedSNP extends IOwrapper {
 	
 	@Override
 	public void printHelp() {
-		System.out.println("Usage: java -jar phasingVCFtoArtificialPhasedSNP.jar <in.vcf> <out.phased.snp>");
+		System.out.println("Usage: java -jar phasingVCFtoPhasedSNP.jar <in.vcf> <out.phased.snp> [take_phased_only]");
 		System.out.println("\tConvert <in.vcf> to an artificial <out.phased.snp> containing Substitutions and Deletions.");
 		System.out.println("\tMulti-variant sites or sites that are already haplotypes (chrX, chrY) will be reported in stdout.");
-		System.out.println("Arang Rhie, 2017-01-16. arrhie@gmail.com");
+		System.out.println("\t[take_phased_only]: DEFAULT=TRUE. If you want to use all the unphased variants, give FALSE.");
+		System.out.println("Arang Rhie, 2017-06-26. arrhie@gmail.com");
 	}
 
+	private static boolean takePhasedOnly = true;
 	public static void main(String[] args) {
 		if (args.length == 2) {
+			new VCFtoArtificialPhasedSNP().go(args[0], args[1]);
+		} else if (args.length == 3) {
+			takePhasedOnly = Boolean.parseBoolean(args[2]);
 			new VCFtoArtificialPhasedSNP().go(args[0], args[1]);
 		} else {
 			new VCFtoArtificialPhasedSNP().printHelp();

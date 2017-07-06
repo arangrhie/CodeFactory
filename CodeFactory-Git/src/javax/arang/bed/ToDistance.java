@@ -36,6 +36,9 @@ public class ToDistance extends Rwrapper {
 				continue;
 			}
 			readId = tokens[Bed.NOTE];
+			if (readId.endsWith("/1") || readId.endsWith("/2")) {
+				readId = readId.split("/")[0];
+			}
 			contig = tokens[Bed.CHROM];
 			start = Integer.parseInt(tokens[Bed.START]);
 			end = Integer.parseInt(tokens[Bed.END]);

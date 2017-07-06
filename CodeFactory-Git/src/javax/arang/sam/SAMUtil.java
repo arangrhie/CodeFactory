@@ -353,6 +353,11 @@ public class SAMUtil {
 		return 'N';
 	}
 	
+	/***
+	 * M only
+	 * @param cigar
+	 * @return bases mappeds
+	 */
 	public static int getMappedBases(String cigar) {
 		ArrayList<String[]> cigarArr = Sam.parseArr(cigar);
 		int matchs = 0;

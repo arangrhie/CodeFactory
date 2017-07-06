@@ -68,7 +68,7 @@ public class GetGaps extends IOwrapper {
 	public void printHelp() {
 		System.out.println("Usage: java -jar fastaGetGaps.java <in.fasta> <gap.bed>");
 		System.out.println("\tRetrieve the gap positions in a bed format");
-		System.out.println("\t*Fixed the +1 end-position bug");
+		//System.out.println("\t*Fixed the +1 end-position bug");
 		System.out.println("Arang Rhie, 2016-10-26. arrhie@gmail.com");
 	}
 
