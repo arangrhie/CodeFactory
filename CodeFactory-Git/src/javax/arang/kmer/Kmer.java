@@ -39,7 +39,16 @@ public class Kmer {
 		return 'N';
 	}
 	
+	/***
+	 * 
+	 * @param bases of size k
+	 * @return null if bases contains n or N
+	 */
 	public static byte[] toKmer(String bases) {
+		if (bases.contains("n") || bases.contains("N")) {
+			return null;
+		}
+		
 		if (kSize == 0) {
 			kSize = bases.length();
 		}
@@ -59,7 +68,15 @@ public class Kmer {
 		return kmer;
 	}
 	
+	/***
+	 * Converts a kmer byte array back to the original sequence
+	 * @param kmer byte[]
+	 * @return kmer String
+	 */
 	public static String toBases(byte[] kmer) {
+		if (kmer == null) {
+			return "";
+		}
 		int i = 0;
 		for (i = 0; i < kmer.length - 1; i++) {
 			bases.append(toBase(kmer[i] & 0x3));
@@ -73,9 +90,9 @@ public class Kmer {
 	}
 	
 	public static void main(String[] args) {
-		String word="ACGGTTGG";
+		String word="ACGNTTGG";
 		System.out.println("Original: " + word);
 		byte[] kmer = toKmer(word);
-		System.out.println(Kmer.toBases(kmer));
+		System.out.println("Kmer: " + Kmer.toBases(kmer));
 	}
 }
