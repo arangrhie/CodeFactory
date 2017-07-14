@@ -1,4 +1,4 @@
-package javax.arang.ploidy;
+package javax.arang.kmer;
 
 public class Kmer {
 
