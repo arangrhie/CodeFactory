@@ -24,8 +24,8 @@ public class FileMaker {
 			newfile.mkdirs();
 			newfile = new File(dir+"/"+fileName);
 			if (newfile.exists()) {
-				System.out.println("File " + newfile.getName() + " already exists.");
-				System.out.println("Do you wish to override? Y,N");
+				System.err.println("File " + newfile.getName() + " already exists.");
+				System.err.println("Do you wish to override? Y,N");
 				Character in = (char) System.in.read();
 				while (in > 0) {
 					in = Character.toLowerCase(in);
@@ -59,8 +59,8 @@ public class FileMaker {
 			newfile.mkdirs();
 			newfile = new File(dir+"/"+fileName);
 			if (!append && newfile.exists()) {
-				System.out.println("File " + newfile.getName() + " already exists.");
-				System.out.println("Do you wish to override? Y,N");
+				System.err.println("File " + newfile.getName() + " already exists.");
+				System.err.println("Do you wish to override? Y,N");
 				Character in = (char) System.in.read();
 				while (in > 0) {
 					in = Character.toLowerCase(in);

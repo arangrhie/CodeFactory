@@ -122,4 +122,13 @@ public class Seeker {
 		
 		return posIdx;
 	}
+
+	public boolean isAt(String query) {
+		if (faName.equals(query)) return true;
+		return false;
+	}
+	
+	public void close() {
+		fr.closeReader();
+	}
 }

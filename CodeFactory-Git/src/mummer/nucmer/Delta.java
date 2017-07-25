@@ -1,17 +1,20 @@
 package mummer.nucmer;
 
 public class Delta {
-	public static final short REF_NAME = 0;
+	public static final short TARGET_NAME = 0;	// Ref
 	public static final short QUERY_NAME = 1;
+	public static final short TARGET_LEN = 2;
 	public static final short QUERY_LEN = 3;
-	public static final int REF_START = 0;
-	public static final int REF_END = 1;
+	public static final int TARGET_START = 0;
+	public static final int TARGET_END = 1;
 	public static final int QUERY_START = 2;
 	public static final int QUERY_END = 3;
 	
 	public static final short TYPE_UNSET = 0;
 	public static final short TYPE_D = 1;
 	public static final short TYPE_I = 2;
+	
+	public static final int EOA=0;
 	
 	public static boolean isHeader(String line) {
 		if (line.startsWith(">")) {
@@ -25,7 +28,7 @@ public class Delta {
 	}
 	
 	public static String getRefName(String[] tokens) {
-		return tokens[REF_NAME].substring(1);
+		return tokens[TARGET_NAME].substring(1);
 	}
 	
 	public static boolean isReverse(String[] tokens) {
@@ -105,7 +108,9 @@ public class Delta {
 		return Integer.parseInt(tokens[QUERY_LEN]);
 	}
 	
-	
+	public static int getTargetLen(String[] tokens) {
+		return Integer.parseInt(tokens[TARGET_LEN]);
+	}
 	
 	
 }

@@ -7,23 +7,26 @@ import javax.arang.IO.basic.FileReader;
 
 public class Count extends Rwrapper{
 
-	private HashMap<byte[], Integer> countTable = null;
+	private HashMap<String, Integer> countTable = null;
 	private int kSize = 0;
 	
 	public Count() {}
 	
 	public Count(int k) {
-		countTable = new HashMap<byte[], Integer>();
+		countTable = new HashMap<String, Integer>();
 		kSize = k;
 	}
 	
+	char[] kmerArr;
+	
 	public void addCount(String seq) {
-		byte[] kmer;
+		String kmer;
 		for (int i = 0; i < seq.length() - kSize; i++) {
-			kmer = Kmer.toKmer(seq.substring(i, i + kSize));
-			if (kmer == null) {
+			kmerArr = Kmer.toKmer(seq.substring(i, i + kSize));
+			if (kmerArr == null) {
 				continue;
 			}
+			kmer = String.valueOf(kmerArr);
 			if (this.countTable.containsKey(kmer)) {
 				this.countTable.put(kmer, this.countTable.get(kmer) + 1);
 			} else {
@@ -38,7 +41,7 @@ public class Count extends Rwrapper{
 	 * Value: counts in Integer
 	 * @return
 	 */
-	public HashMap<byte[], Integer> getTable() {
+	public HashMap<String, Integer> getTable() {
 		return countTable;
 	}
 	
@@ -76,10 +79,10 @@ public class Count extends Rwrapper{
 			}
 		}
 		
-		System.err.println("K-mer loading completed. Start to write out " + this.getTable().size() + " entries");
+		System.err.println("K-mer loading completed." + this.getTable().size() + " entries");
 		
-		for (byte[] kmerKey : this.getTable().keySet()) {
-			System.out.println(Kmer.toBases(kmerKey) + "\t" + this.getTable().get(kmerKey));
+		for (String kmerKey : this.getTable().keySet()) {
+			System.out.println(Kmer.toBases(kmerKey.toCharArray()) + "\t" + this.getTable().get(kmerKey));
 		}
 		
 	}

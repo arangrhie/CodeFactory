@@ -2,7 +2,7 @@ package javax.arang.kmer;
 
 public class Kmer {
 
-	private static StringBuffer bases = new StringBuffer();
+	private static StringBuffer bases = null;
 	public static int kSize = 0;
 	
 	public static short toKmerBits(char base) {
@@ -19,7 +19,7 @@ public class Kmer {
 		return -1;
 	}
 	
-	public static char toBase(byte base) {
+	public static char toBase(char base) {
 		switch(base) {
 			case 0: return 'A';
 			case 1: return 'T';
@@ -44,7 +44,7 @@ public class Kmer {
 	 * @param bases of size k
 	 * @return null if bases contains n or N
 	 */
-	public static byte[] toKmer(String bases) {
+	public static char[] toKmer(String bases) {
 		if (bases.contains("n") || bases.contains("N")) {
 			return null;
 		}
@@ -52,32 +52,33 @@ public class Kmer {
 		if (kSize == 0) {
 			kSize = bases.length();
 		}
-		byte[] kmer = new byte[(int)((kSize + 1) / 2)];
+		char[] kmer = new char[(int)((kSize + 1) / 2)];
 		int j = 0;
 		int i = 0;
 		
 		for (; i < bases.length() - 2; i += 2) {
-			kmer[j] = (byte) (toKmerBits(bases.charAt(i)) + (toKmerBits(bases.charAt(i + 1)) << 2));
+			kmer[j] = (char) (toKmerBits(bases.charAt(i)) + (toKmerBits(bases.charAt(i + 1)) << 2));
 			j++;
 		}
 		if (bases.length() % 2 == 0) {
-			kmer[j] = (byte) (toKmerBits(bases.charAt(i)) + (toKmerBits(bases.charAt(i + 1)) << 2));
+			kmer[j] = (char) (toKmerBits(bases.charAt(i)) + (toKmerBits(bases.charAt(i + 1)) << 2));
 		} else {
-			kmer[j] = (byte) toKmerBits(bases.charAt(i));
+			kmer[j] = (char) toKmerBits(bases.charAt(i));
 		}
 		return kmer;
 	}
 	
 	/***
 	 * Converts a kmer byte array back to the original sequence
-	 * @param kmer byte[]
+	 * @param kmer char[]
 	 * @return kmer String
 	 */
-	public static String toBases(byte[] kmer) {
+	public static String toBases(char[] kmer) {
 		if (kmer == null) {
 			return "";
 		}
 		int i = 0;
+		bases = new StringBuffer();
 		for (i = 0; i < kmer.length - 1; i++) {
 			bases.append(toBase(kmer[i] & 0x3));
 			bases.append(toBase((kmer[i] >> 2)));
@@ -90,9 +91,9 @@ public class Kmer {
 	}
 	
 	public static void main(String[] args) {
-		String word="ACGNTTGG";
+		String word="ACGCTTGG";
 		System.out.println("Original: " + word);
-		byte[] kmer = toKmer(word);
+		char[] kmer = toKmer(word);
 		System.out.println("Kmer: " + Kmer.toBases(kmer));
 	}
 }
