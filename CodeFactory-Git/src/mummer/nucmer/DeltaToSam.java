@@ -1,16 +1,20 @@
 package mummer.nucmer;
 
+import java.util.ArrayList;
+
 import javax.arang.IO.Rwrapper;
 import javax.arang.IO.basic.FileMaker;
 import javax.arang.IO.basic.FileReader;
 import javax.arang.IO.basic.RegExp;
+import javax.arang.genome.fasta.FASTA;
 import javax.arang.genome.fasta.Seeker;
 import javax.arang.sam.SAMUtil;
 
 public class DeltaToSam extends Rwrapper {
 	
 	private static String qereyFa = null;
-
+	private ArrayList<String> samHeaderLines = new ArrayList<String>();
+	
 	@Override
 	public void hooker(FileReader frDelta) {
 		String line;
@@ -28,6 +32,8 @@ public class DeltaToSam extends Rwrapper {
 		int mq = 60;	// arbitrary set to 60
 		String cigar = "";
 		String seq = null;
+		String seq_rv = null;
+		boolean isReverse = false;
 		
 		int start = 0;	// QuereyStart
 		int end = 0;	// QuereyEnd
@@ -73,13 +79,18 @@ public class DeltaToSam extends Rwrapper {
 				query = Delta.getQueryName(tokens);
 				queryLen = Delta.getQueryLen(tokens);
 				seq = null;
+				seq_rv = null;
+				isReverse = false;
 				sumM = 0;
 				sumI = 0;
 				prevMatched = 0;
 				mismatch = 0;
 				prevTypeID = Delta.TYPE_UNSET;
 				
-				fmHeader.writeLine("@SQ\tSN:" + ref + "\tLN:" + targetLen);	//	@SQ	SN:chr6	LN:170805979
+				if (!samHeaderLines.contains("@SQ\tSN:" + ref + "\tLN:" + targetLen)) {
+					samHeaderLines.add("@SQ\tSN:" + ref + "\tLN:" + targetLen);
+					fmHeader.writeLine("@SQ\tSN:" + ref + "\tLN:" + targetLen);	//	@SQ	SN:chr6	LN:170805979
+				}
 				continue;
 			}
 			
@@ -90,24 +101,34 @@ public class DeltaToSam extends Rwrapper {
 				
 				flag = SAMUtil.setFirstSegmentInTemplate(0);
 
-				start = Delta.getQueryStart(tokens);
-				end = Delta.getQueryEnd(tokens);
-				if (Delta.isReverse(tokens)) {
-					flag = SAMUtil.setReverseComplemented(flag);
-					tmp = start;
-					start = end;
-					end = tmp;
-				}
-				
-				if (start > 1) {
-					cigar = (start - 1) + "S";	// soft clipped bases
-				}
-				
 				if (!faSeeker.isAt(query) || seq == null) {
 					System.err.println("[DEBUG] :: " + "Start seeking...");
 					faSeeker.goToContig(query);
 					seq = faSeeker.getBases(0, queryLen);
 					System.err.println("[DEBUG] :: " + faSeeker.getFaName() + " seq loaded.");
+				}
+
+				start = Delta.getQueryStart(tokens);
+				end = Delta.getQueryEnd(tokens);
+				if (Delta.isReverse(tokens)) {
+					flag = SAMUtil.setReverseComplemented(flag);
+					isReverse = true;
+					tmp = start;
+					start = end;
+					end = tmp;
+				} else {
+					isReverse = false;
+				}
+				
+				if (isReverse) {
+					if (seq_rv == null) {
+						seq_rv = FASTA.getReverseComplement(seq).toString();
+					}
+				}
+				
+				cigar = "";
+				if (start > 1) {
+					cigar = (start - 1) + "S";	// soft clipped bases
 				}
 				
 				sumM = 0;
@@ -142,7 +163,11 @@ public class DeltaToSam extends Rwrapper {
 				}
 				// write the final output
 				// For DEBUGging..
-				System.out.println(query + "\t" + flag + "\t" + ref + "\t" + refPos + "\t" + mq + "\t" + cigar + "\t*\t0\t0\t" + seq + "\t*");
+				if (isReverse) {
+					System.out.println(query + "\t" + flag + "\t" + ref + "\t" + refPos + "\t" + mq + "\t" + cigar + "\t*\t0\t0\t" + seq_rv + "\t*");
+				} else {
+					System.out.println(query + "\t" + flag + "\t" + ref + "\t" + refPos + "\t" + mq + "\t" + cigar + "\t*\t0\t0\t" + seq + "\t*");
+				}
 //				System.err.println("S: " + (queryLen - end));
 //				System.err.println("M: " + sumM);
 //				System.err.println("I: " + sumI);
@@ -155,6 +180,8 @@ public class DeltaToSam extends Rwrapper {
 				// Initialize sumM and sumI
 				sumM = 0;
 				sumI = 0;
+				cigar = "";
+				isReverse = false;
 				continue;
 			}
 			

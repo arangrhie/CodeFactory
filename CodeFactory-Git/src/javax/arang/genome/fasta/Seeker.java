@@ -36,7 +36,24 @@ public class Seeker {
 		if (this.faName.equals(contig)) {
 			return true;
 		}
-		while (!this.faName.equals(contig)) {
+		while (fr.hasMoreLines() && !this.faName.equals(contig)) {
+			String line = fr.readLine();
+			if (line.startsWith(">")) {
+				this.faName = line.replace(">", "").split(RegExp.WHITESPACE)[0];
+				if (this.faName.equals(contig)) {
+					posIdx = 0;
+					readNextLine();
+					seeker = 0;
+					return true;
+				}
+			}
+		}
+		if (!fr.hasMoreLines()) {
+			System.err.println("[DEBUG] :: " + contig + " Not found. Searching again...");
+			fr.reset();
+			initSeeker();
+		}
+		while (fr.hasMoreLines() && !this.faName.equals(contig)) {
 			String line = fr.readLine();
 			if (line.startsWith(">")) {
 				this.faName = line.replace(">", "").split(RegExp.WHITESPACE)[0];
