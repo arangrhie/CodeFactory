@@ -2,15 +2,14 @@ package javax.arang.txt;
 
 import java.util.HashMap;
 
-import javax.arang.IO.I2Owrapper;
-import javax.arang.IO.basic.FileMaker;
+import javax.arang.IO.R2wrapper;
 import javax.arang.IO.basic.FileReader;
 import javax.arang.IO.basic.RegExp;
 
-public class ReplaceWords extends I2Owrapper {
+public class ReplaceWords extends R2wrapper {
 
 	@Override
-	public void hooker(FileReader frMap, FileReader frFile, FileMaker fm) {
+	public void hooker(FileReader frMap, FileReader frFile) {
 		String line;
 		String[] tokens;
 		HashMap<String, String> map = new HashMap<String, String>();
@@ -26,41 +25,41 @@ public class ReplaceWords extends I2Owrapper {
 		while (frFile.hasMoreLines()) {
 			line = frFile.readLine();
 			if (line.startsWith("#")) {
-				fm.writeLine(line);
+				System.out.println(line);
 				continue;
 			}
 			tokens = line.split(RegExp.TAB);
 			if (map.containsKey(tokens[colIdx])) {
-				writeContents(fm, tokens, map.get(tokens[colIdx]));
+				writeContents(tokens, map.get(tokens[colIdx]));
 				countReplaced++;
 			} else {
-				fm.writeLine(line);
+				System.out.println(line);
 			}
 		}
 		
-		System.out.println("Replaced lines / words: " + countReplaced + " / " + map.size());
+		System.err.println("Replaced lines / words: " + countReplaced + " / " + map.size());
 		
 	}
 
-	private void writeContents(FileMaker fm, String[] tokens, String newWord) {
+	private void writeContents(String[] tokens, String newWord) {
 		for (int i = 0; i < colIdx; i++) {
-			fm.write(tokens[i] + "\t");
+			System.out.print(tokens[i] + "\t");
 		}
-		fm.write(newWord);
+		System.out.print(newWord);
 		for (int i = colIdx + 1; i < tokens.length; i++) {
-			fm.write("\t" + tokens[i]);
+			System.out.print("\t" + tokens[i]);
 		}
-		fm.writeLine();
+		System.out.println();
 	}
 
 	@Override
 	public void printHelp() {
-		System.out.println("Usage: java -jar txtReplaceWords.jar <in.map> <in.file> <col_idx> [out.file]");
+		System.out.println("Usage: java -jar txtReplaceWords.jar <in.map> <in.file> <col_idx>");
 		System.out.println("\t<in.map>: 1st column = word to be replaced (key), 2nd column = word to replace (value)");
 		System.out.println("\t<in.file>: tab-delimited txt file");
 		System.out.println("\t<col_idx>: column index to be looked up. 1-based.");
-		System.out.println("\t[out.file]: DEFAULT = <in.file.replaced>");
-		System.out.println("Arang Rhie, 2015-12-02. arrhie@gmail.com");
+		System.out.println("\t<sysout>: <in.file> <col_idx> being replaced according to <in.map>");
+		System.out.println("Arang Rhie, 2017-08-24. arrhie@gmail.com");
 	}
 	
 	private static int colIdx = 0;
@@ -68,10 +67,7 @@ public class ReplaceWords extends I2Owrapper {
 	public static void main(String[] args) {
 		if (args.length == 3) {
 			colIdx = Integer.parseInt(args[2]) - 1;
-			new ReplaceWords().go(args[0], args[1], args[1] + ".replaced");
-		} else if (args.length == 4) {
-			colIdx = Integer.parseInt(args[2]) - 1;
-			new ReplaceWords().go(args[0], args[1], args[3]);
+			new ReplaceWords().go(args[0], args[1]);
 		} else {
 			new ReplaceWords().printHelp();
 		}

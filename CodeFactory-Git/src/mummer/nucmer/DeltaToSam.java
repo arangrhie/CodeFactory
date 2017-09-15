@@ -127,9 +127,6 @@ public class DeltaToSam extends Rwrapper {
 				}
 				
 				cigar = "";
-				if (start > 1) {
-					cigar = (start - 1) + "S";	// soft clipped bases
-				}
 				
 				sumM = 0;
 				sumI = 0;
@@ -158,9 +155,27 @@ public class DeltaToSam extends Rwrapper {
 				} 
 				cigar = cigar + (end - start + 1 - (sumM + sumI)) + "M";
 				sumM += (end - start + 1 - (sumM + sumI));
-				if (queryLen - end > 0) {
-					cigar += (queryLen - end) + "S";
+				
+				// Beginning Soft Clip
+				if (start > 1) {
+					if (isReverse) {
+						cigar += (start - 1) + "S";	// soft clipped bases
+					} else {
+						cigar = (start - 1) + "S" + cigar;	// soft clipped bases
+					}
 				}
+				
+				// Ending Soft Clip
+				if (queryLen - end > 0) {
+					if (isReverse) {
+						cigar = (queryLen - end) + "S" + cigar;	// because nucmer is softclipping first, and then reverse complementing
+						
+					} else {
+						cigar += (queryLen - end) + "S";
+					}
+				}
+				
+				
 				// write the final output
 				// For DEBUGging..
 				if (isReverse) {

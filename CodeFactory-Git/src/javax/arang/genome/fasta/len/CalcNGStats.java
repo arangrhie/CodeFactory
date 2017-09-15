@@ -14,16 +14,17 @@ public class CalcNGStats extends Rwrapper {
 		String line;
 		String[] tokens;
 		
-		ArrayList<Integer> lenList = new ArrayList<Integer>();
+		ArrayList<Double> lenList = new ArrayList<Double>();
 		
 		while (fr.hasMoreLines()) {
 			line = fr.readLine();
 			tokens = line.split(RegExp.TAB);
-			lenList.add(Integer.parseInt(tokens[tokens.length - lenIdx]));
+			lenList.add(Double.parseDouble(tokens[tokens.length - lenIdx]));
 		}
 		
 		Collections.sort(lenList);
-		int sum = 0;
+		System.err.println("[DEBUG] :: Num. of contigs (scaffolds): " + lenList.size());
+		double sum = 0;
 		
 		ArrayList<Double> ngVal = new ArrayList<Double>();
 		for (int i = 5; i <= 100; i += 5) {
@@ -40,8 +41,8 @@ public class CalcNGStats extends Rwrapper {
 			i = lenList.size() - j - 1;
 			sum += lenList.get(i);
 			while (ngValIdx < ngVal.size() && sum >= ngVal.get(ngValIdx)) {
-				ng=String.format("%,d", lenList.get(i));
-				System.out.println("NG" + (ngValIdx + 1) * 5 + "\t" + String.format("%,d", lenList.get(i)) + "\t" + (j + 1) + "\t" + String.format("%,d", sum) + "\t" + String.format("%,.0f", ngVal.get(ngValIdx)));
+				ng=String.format("%,.0f", lenList.get(i));
+				System.out.println("NG" + (ngValIdx + 1) * 5 + "\t" + String.format("%,.0f", lenList.get(i)) + "\t" + (j + 1) + "\t" + String.format("%,.0f", sum) + "\t" + String.format("%,.0f", ngVal.get(ngValIdx)));
 				ngValIdx++;
 				ng_list += ng + "\t";
 				if (ngValIdx == ngVal.size()) {
@@ -51,14 +52,14 @@ public class CalcNGStats extends Rwrapper {
 		}
 		
 		System.out.println();
-		System.out.println("Total num. bases:\t" + String.format("%,d", sum));
+		System.out.println("Total num. bases:\t" + String.format("%,.0f", sum));
 		System.out.println("Total num. contigs (scaffolds):\t" + String.format("%,d", lenList.size()));
-		System.out.println("Max contig (scaffold) size:\t" + String.format("%,d", lenList.get(lenList.size() - 1)));
+		System.out.println("Max contig (scaffold) size:\t" + String.format("%,.0f", lenList.get(lenList.size() - 1)));
 		
 		System.out.println();
 		System.out.println("1-line Summary");
 		System.out.println("TotalBP\tNum.Contigs(Scaffolds)\tMax\tNG5\tNG10\tNG15\tNG20\tNG25\tNG30\tNG35\tNG40\tNG45\tNG50\tNG55\tNG60\tNG65\tNG70\tNG75\tNG80\tNG85\tNG90\tNG95\tNG100");
-		System.out.println(String.format("%,d", sum) + "\t" + String.format("%,d", lenList.size()) + "\t" + String.format("%,d", lenList.get(lenList.size() - 1)) + "\t" + ng_list);
+		System.out.println(String.format("%,.0f", sum) + "\t" + String.format("%,d", lenList.size()) + "\t" + String.format("%,.0f", lenList.get(lenList.size() - 1)) + "\t" + ng_list);
 	}
 
 	@Override
@@ -76,7 +77,7 @@ public class CalcNGStats extends Rwrapper {
 	private static int lenIdx = 2;
 	
 	private static double getGenomeSize(String inSize) {
-		float genomeSize = Float.parseFloat(inSize.substring(0, inSize.length() - 1));
+		double genomeSize = Float.parseFloat(inSize.substring(0, inSize.length() - 1));
 		inSize = inSize.toLowerCase();
 		if (inSize.endsWith("k")) {
 			genomeSize *= 1000;
