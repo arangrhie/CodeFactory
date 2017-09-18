@@ -60,16 +60,46 @@ public class CalcNGStats extends Rwrapper {
 		System.out.println("1-line Summary");
 		System.out.println("TotalBP\tNum.Contigs(Scaffolds)\tMax\tNG5\tNG10\tNG15\tNG20\tNG25\tNG30\tNG35\tNG40\tNG45\tNG50\tNG55\tNG60\tNG65\tNG70\tNG75\tNG80\tNG85\tNG90\tNG95\tNG100");
 		System.out.println(String.format("%,.0f", sum) + "\t" + String.format("%,d", lenList.size()) + "\t" + String.format("%,.0f", lenList.get(lenList.size() - 1)) + "\t" + ng_list);
+
+		double totalBp = sum;
+		System.out.println();
+		System.out.println("N-XX values");
+		ngVal.clear();
+		for (i = 5; i <= 100; i += 5) {
+			//System.err.println("NG" + i + ": " + String.format("%,.0f", (genomeSize / 100) * i));
+			ngVal.add((totalBp / 100) * i);
+		}
+		ngValIdx = 0;
+
+		sum = 0;
+		for (int j = 0; j < lenList.size(); j++) {
+			i = lenList.size() - j - 1;
+			sum += lenList.get(i);
+			while (ngValIdx < ngVal.size() && sum >= ngVal.get(ngValIdx)) {
+				ng=String.format("%,.0f", lenList.get(i));
+				System.out.println("N" + (ngValIdx + 1) * 5 + "\t" + String.format("%,.0f", lenList.get(i)) + "\t" + (j + 1) + "\t" + String.format("%,.0f", sum) + "\t" + String.format("%,.0f", ngVal.get(ngValIdx)));
+				ngValIdx++;
+				ng_list += ng + "\t";
+				if (ngValIdx == ngVal.size()) {
+					break;
+				}
+			}
+		}
+		
+		System.out.println("TotalBP\tNum.Contigs(Scaffolds)\tMax\tN5\tN10\tN15\tN20\tN25\tN30\tN35\tN40\tN45\tN50\tN55\tN60\tN65\tN70\tN75\tN80\tN85\tN90\tN95\tN100");
+		System.out.println(String.format("%,.0f", sum) + "\t" + String.format("%,d", lenList.size()) + "\t" + String.format("%,.0f", lenList.get(lenList.size() - 1)) + "\t" + ng_list);
+
 	}
 
 	@Override
 	public void printHelp() {
 		System.out.println("Usage: java -jar lenCalcNGStats.jar <in.fasta.len> <genome_size> [lenIdx]");
+		System.out.println("Print the NG values and N values in stdout.");
 		System.out.println("\t<in.fasta.len>: generated with fastaContigSize.jar");
 		System.out.println("\t<genome_size>: ex. 3.2G or 1.1G. Either in numbers or with k, m, g notation.");
 		System.out.println("\t\tMaximum genome size: " + Double.MAX_VALUE);
 		System.out.println("\t[lenIdx]: DEFAULT=2. 1-based. Column index to look up, starting from the END.");
-		System.out.println("Arang Rhie, 2017-05-02. arrhie@gmail.com");
+		System.out.println("Arang Rhie, 2017-09-17. arrhie@gmail.com");
 		
 	}
 
@@ -82,9 +112,9 @@ public class CalcNGStats extends Rwrapper {
 		if (inSize.endsWith("k")) {
 			genomeSize *= 1000;
 		} else if (inSize.endsWith("m")) {
-			genomeSize *= 1000000;
+			genomeSize = genomeSize * 1000000;
 		} else if (inSize.endsWith("g")) {
-			genomeSize *= 1000000000;
+			genomeSize = genomeSize * 1000000000;
 		} else {
 			genomeSize *= 10;
 			genomeSize += Integer.parseInt(inSize.substring(inSize.length() - 1));

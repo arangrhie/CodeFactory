@@ -17,10 +17,10 @@ public class CalcN50 extends Rwrapper {
 		String line;
 		String[] tokens;
 		
-		int start;
-		int end;
-		int len;
-		ArrayList<Integer> lenArr = new ArrayList<Integer>();
+		double start;
+		double end;
+		double len;
+		ArrayList<Double> lenArr = new ArrayList<Double>();
 		double lenSum = 0;
 		while (fr.hasMoreLines()) {
 			line = fr.readLine();
@@ -35,7 +35,7 @@ public class CalcN50 extends Rwrapper {
 		
 		Collections.sort(lenArr);
 		System.err.println("Num. blocks:\t" + String.format("%,d", lenArr.size()));
-		int n50 = Util.getN50(lenArr, lenSum);
+		double n50 = Util.getN50(lenArr, lenSum);
 		System.err.println("N50:\t" + String.format("%,d", n50));
 		System.err.println("Avg. block size:\t" + String.format("%,.1f", ((float)lenSum / lenArr.size())));
 		System.err.println("Genome covered bases:\t" + String.format("%,.0f", lenSum));

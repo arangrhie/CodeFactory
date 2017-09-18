@@ -88,9 +88,9 @@ public class Util {
 	 * @param contigLenSum	Total len sum of all contigs
 	 * @return
 	 */
-	public static int getN50(ArrayList<Integer> sortedContigLenArr, double contigLenSum) {
+	public static double getN50(ArrayList<Double> sortedContigLenArr, double contigLenSum) {
 		double n50comp = contigLenSum / 2;
-		int n50 = 0;
+		double n50 = 0;
 		double lenSum = 0;
 		System.out.println("Longest block (contig) size:\t" + Format.numbersToDecimal(sortedContigLenArr.get(sortedContigLenArr.size() - 1)));
 		for (int i = sortedContigLenArr.size() - 1; i >= 0; i--) {
