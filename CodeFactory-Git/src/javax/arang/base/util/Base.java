@@ -1,5 +1,7 @@
 package javax.arang.base.util;
 
+import javax.arang.sam.BaseDepth;
+
 public class Base {
 	public static final short CHR = 0;
 	public static final short POS = 1;
@@ -81,6 +83,35 @@ public class Base {
 				+ Integer.parseInt(g)
 				+ Integer.parseInt(t)
 				+ Integer.parseInt(d));
+	}
+	
+	/***
+	 * baseDepth from samBaseDepth.jar:
+	 * baseDepth[BaseDepth.OFFSET_A] : A
+	 * baseDepth[BaseDepth.OFFSET_C] : C
+	 * baseDepth[BaseDepth.OFFSET_G] : G
+	 * baseDepth[BaseDepth.OFFSET_T] : T
+	 * baseDepth[BaseDepth.OFFSET_D] : D
+	 * @param depths
+	 * @return
+	 */
+	public static boolean isSnp(Integer[] depths) {
+		if (depths[BaseDepth.OFFSET_A] > 0) {
+			if (depths[BaseDepth.OFFSET_C] > 0 || depths[BaseDepth.OFFSET_G] > 0 || depths[BaseDepth.OFFSET_T] > 0) {
+				return true;
+			} else {
+				return false;
+			}
+		} else if (depths[BaseDepth.OFFSET_C] > 0) {
+			if (depths[BaseDepth.OFFSET_G] > 0 || depths[BaseDepth.OFFSET_T] > 0) {
+				return true;
+			} else {
+				return false;
+			}
+		} else if (depths[BaseDepth.OFFSET_G] > 0 && depths[BaseDepth.OFFSET_T] > 0){
+			return true;
+		}
+		return false;
 	}
 
 }

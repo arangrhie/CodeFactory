@@ -609,6 +609,62 @@ public class Sam {
 		return hardClippedBases;
 	}
 	
+	
+	/***
+	 * Convert back to ref-like sequence, with no inserted bases, deletions as Ds.
+	 * @param seq
+	 * @param cigar
+	 * @return
+	 */
+	public static String makeMockSequence(String seq, String cigar) {
+		StringBuffer mockSeqBuff = new StringBuffer();
+		ArrayList<String[]> cigarArray = parseArr(cigar);
+		
+		int alignRangeStart = 0;	// 0-based
+		int alignRangeEnd = 0;		// 1-based
+
+		int offset;
+
+		for (String[] cigarOp : cigarArray) {
+			// Skip
+			if( cigarOp[OP].equals("S")) {
+				offset = Integer.parseInt(cigarOp[COUNT]);
+				alignRangeEnd += offset;
+				alignRangeStart += offset;
+			}
+			// Match
+			else if ( cigarOp[OP].equals("M") || cigarOp[OP].equals("=") || cigarOp[OP].equals("X")){
+				offset = Integer.parseInt(cigarOp[COUNT]);
+				alignRangeEnd += offset;
+				mockSeqBuff.append(seq.substring(alignRangeStart, alignRangeEnd));
+				alignRangeStart += offset;
+			}
+			// Insertion
+			else if (cigarOp[OP].equals("I")) {
+				offset = Integer.parseInt(cigarOp[COUNT]);
+				alignRangeStart += offset;
+				alignRangeEnd += offset;
+			}
+			// Deletion
+			else if( cigarOp[OP].equals("D") ){
+				offset = Integer.parseInt(cigarOp[COUNT]);
+				for (int i = 0; i < offset; i++) {
+					mockSeqBuff.append('D');
+				}
+			}
+			
+			// N splicing
+			else if (cigarOp[OP].equals("N")) {
+				offset = Integer.parseInt(cigarOp[COUNT]);
+				for (int i = 0; i < offset; i++) {
+					mockSeqBuff.append('N');
+				}
+			}
+		}
+		return mockSeqBuff.toString();
+	}
+	
+	
 	/***
 	 * Make Reference Sequence out of sam read sequence, cigar, MD, etc.
 	 * @param sam

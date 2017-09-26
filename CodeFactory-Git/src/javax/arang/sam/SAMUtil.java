@@ -353,6 +353,24 @@ public class SAMUtil {
 		return 'N';
 	}
 	
+	private static String readId = "";
+	private static String mockRead;
+	/***
+	 * For computational speed-up, keep the last cigArr on heap
+	 * @param readid
+	 * @param pos	position to look up
+	 * @param posAligned	position the read is aligned in [POS] field
+	 * @param seqData
+	 * @return
+	 */
+	public static Character getBaseAtPos(String readid, int pos, int posAligned, String[] seqData) {
+		if (!readId.equals(readid)) {
+			mockRead = Sam.makeMockSequence(seqData[SEQ], seqData[CIGAR]);
+			readId = readid;
+		}
+		return mockRead.charAt(pos - posAligned);
+	}
+	
 	/***
 	 * M only
 	 * @param cigar
