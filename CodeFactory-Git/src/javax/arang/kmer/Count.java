@@ -4,13 +4,12 @@ import java.util.HashMap;
 
 import javax.arang.IO.Rwrapper;
 import javax.arang.IO.basic.FileReader;
+import javax.arang.IO.basic.RegExp;
 
 public class Count extends Rwrapper{
 
 	private HashMap<String, Integer> countTable = null;
-	private int kSize = 0;
-	
-	public Count() {}
+	public int kSize = 0;
 	
 	public Count(int k) {
 		countTable = new HashMap<String, Integer>();
@@ -20,19 +19,23 @@ public class Count extends Rwrapper{
 	char[] kmerArr;
 	
 	public void addCount(String seq) {
-		String kmer;
-		for (int i = 0; i < seq.length() - kSize; i++) {
-			kmerArr = Kmer.toKmer(seq.substring(i, i + kSize));
-			if (kmerArr == null) {
+		String kmer = null;
+		for (int i = 0; i <= seq.length() - kSize; i++) {
+			kmer = Kmer.toKmer(seq.substring(i, i + kSize));
+			if (kmer == null) {
 				continue;
 			}
-			kmer = String.valueOf(kmerArr);
+			kmer = String.valueOf(kmerArr);			
 			if (this.countTable.containsKey(kmer)) {
 				this.countTable.put(kmer, this.countTable.get(kmer) + 1);
 			} else {
 				this.countTable.put(kmer, 1);
 			}
 		}
+	}
+	
+	public void addCount(String seq, int count) {
+		this.countTable.put( Kmer.toKmer(seq), count);
 	}
 	
 	/***
@@ -63,7 +66,7 @@ public class Count extends Rwrapper{
 				}
 				this.addCount(line);
 				// add end / beginning bases
-				if (line.length() > kSize) {
+				if (line.length() >= kSize - 1) {
 					tmp = line.substring(line.length() - this.kSize + 1, line.length());
 				}
 			}
@@ -77,31 +80,46 @@ public class Count extends Rwrapper{
 				}
 				lineNum++;
 			}
+		} else if (fr.getFileName().endsWith(".counts") || fr.getFileName().endsWith(".count")) {
+			String[] tokens;
+			while (fr.hasMoreLines()) {
+				line = fr.readLine();
+				tokens = line.split(RegExp.WHITESPACE);
+				this.addCount(tokens[0], Integer.parseInt(tokens[1]));
+			}
+			
 		}
 		
-		System.err.println("K-mer loading completed." + this.getTable().size() + " entries");
-		
+		System.err.println("K-mer loading completed for " + fr.getFileName() + ". " + this.getTable().size() + " entries");
+	}
+	
+	public void printCounts() {
 		for (String kmerKey : this.getTable().keySet()) {
-			System.out.println(Kmer.toBases(kmerKey.toCharArray()) + "\t" + this.getTable().get(kmerKey));
+			System.out.println(Kmer.toBases(kmerKey, kSize) + "\t" + this.getTable().get(kmerKey));
 		}
-		
+	}
+	
+	public void clearTable() {
+		this.countTable.clear();
 	}
 	
 	public static void main(String[] args) {
 		if (args.length == 2) {
 			new Count(Integer.parseInt(args[1])).go(args[0]);
 		} else {
-			new Count().printHelp();
+			new Count(0).printHelp();
 		}
 	}
 
 	@Override
 	public void printHelp() {
 		System.out.println("Usage: java -jar kmerCount.jar <in> <k>");
-		System.out.println("\t<in>: .fasta, .fa file or .fastq file");
+		System.out.println("\t<in>: .fasta, .fa file / .fastq file / .counts or .count file");
 		System.out.println("\t<k>: k-size");
 		System.out.println("\t<stdout>: kmer count table. K-mer in bytes\tCount");
 		System.out.println("Arang Rhie, 2017-07-14. arrhie@gmail.com");
 	}
+
+
 
 }
