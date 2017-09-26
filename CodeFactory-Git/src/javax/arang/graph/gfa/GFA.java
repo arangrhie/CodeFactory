@@ -13,7 +13,7 @@ public class GFA {
 	
 	public static int getLen(String len) {
 		//System.err.println("[DEBUG] :: " + len);
-		return Integer.parseInt(len.substring(6));
+		return Integer.parseInt(len.substring(5));
 	}
 	
 	public static boolean isForward(char dir) {

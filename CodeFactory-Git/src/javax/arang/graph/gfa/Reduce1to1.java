@@ -60,7 +60,7 @@ public class Reduce1to1 extends Rwrapper {
 		
 		System.err.println("[DEBUG] :: Num. reduceable 1-to-1 segments: " + count1to1);
 		
-		Summary.printSummary(segments);
+		//Summary.printSummary(segments);
 		
 	}
 	
