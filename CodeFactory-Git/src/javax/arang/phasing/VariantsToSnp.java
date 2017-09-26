@@ -24,17 +24,17 @@ public class VariantsToSnp extends IOwrapper {
 		fm.writeLine(fr.readLine() + "\tDistance");
 		
 		String prevChr = "";
-		int pos;
-		int prevPos = 1;
-		int distance = 0;
+		double pos;
+		double prevPos = 1;
+		double distance = 0;
 		
 		double distanceSum = 0;
 		int numSnps = 0;
-		ArrayList<Integer> distanceArr = new ArrayList<Integer>();
-		int allSNPdistance = 0;
+		ArrayList<Double> distanceArr = new ArrayList<Double>();
+		double allSNPdistance = 0;
 		double allSNPdistanceSum = 0;
 		int allSNPnumSnps = 0;
-		ArrayList<Integer> allSNPdistanceArr = new ArrayList<Integer>();
+		ArrayList<Double> allSNPdistanceArr = new ArrayList<Double>();
 		
 		int allSNPPos = 1;
 		int allSNPprevPos = 1;
@@ -81,7 +81,7 @@ public class VariantsToSnp extends IOwrapper {
 		System.out.println("Total covered genome size: " + String.format("%,.0f", allSNPdistanceSum));
 		System.out.println("SNPs are almost on every " + (int) (allSNPdistanceSum / allSNPnumSnps) + " bp");
 		Collections.sort(allSNPdistanceArr);
-		int n50 = Util.getN50(allSNPdistanceArr, allSNPdistanceSum);
+		double n50 = Util.getN50(allSNPdistanceArr, allSNPdistanceSum);
 		System.out.println("Distance N50 " + n50 + " bp");
 		
 		System.out.println();

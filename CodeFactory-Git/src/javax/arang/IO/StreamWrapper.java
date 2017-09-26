@@ -6,23 +6,17 @@ import javax.arang.IO.basic.Wrapper;
 
 public abstract class StreamWrapper extends Wrapper {
 
-	public void go(String inFile, String outFile) {
+	public void go() {
 		startTiming();
 		
-		FileReader fr = new FileReader(inFile);
-		System.err.println("Processing file " + fr.getFileName());
-		FileMaker fm = new FileMaker(outFile);
-		System.err.println("Into " + fm.getFileName());
+		System.err.println("Processing streamed input");
 		
-		hooker(fr);
+		hooker();
 		
-		fr.closeReader();
-		fm.closeMaker();
-
 		printTiming();
 	}
 	
-	public abstract void hooker(FileReader fr);
+	public abstract void hooker();
 	
 	public abstract void printHelp();
 

@@ -2,15 +2,15 @@ package javax.arang.genome.snp;
 
 import java.io.IOException;
 
-import javax.arang.IO.I2Owrapper;
+import javax.arang.IO.I2OBufferedWrapper;
+import javax.arang.IO.basic.BufferedFileReader;
 import javax.arang.IO.basic.FileMaker;
-import javax.arang.IO.basic.FileReader;
 import javax.arang.annovar.util.ANNOVAR;
 
-public class AddHomopoly extends I2Owrapper {
+public class AddHomopoly extends I2OBufferedWrapper {
 
 	@Override
-	public void hooker(FileReader fr1, FileReader fr2, FileMaker fm) {
+	public void hooker(BufferedFileReader fr1, BufferedFileReader fr2, FileMaker fm) {
 		String line;
 		String[] tokens;
 		
@@ -121,7 +121,7 @@ public class AddHomopoly extends I2Owrapper {
 	String leftBuffer = "";
 	String rightBuffer = "";
 	int prevPos = 0;
-	private void seek(int pos, FileReader fr) {
+	private void seek(int pos, BufferedFileReader fr) {
 		pos--;	// 1-base to 0-base coordinate
 		if (readChars > pos) {
 			int movingSeqLen = pos - prevPos;

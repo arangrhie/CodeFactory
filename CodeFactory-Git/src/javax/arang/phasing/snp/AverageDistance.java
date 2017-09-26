@@ -16,12 +16,12 @@ public class AverageDistance extends Rwrapper {
 		String line;
 		String[] tokens;
 		
-		ArrayList<Integer> distList = new ArrayList<Integer>();
+		ArrayList<Double> distList = new ArrayList<Double>();
 		
 		int prevPos;
 		int pos;
-		int dist;
-		int totalLen = 0;
+		double dist;
+		double totalLen = 0;
 		line = fr.readLine();
 		tokens = line.split(RegExp.TAB);
 		prevPos = Integer.parseInt(tokens[PhasedSNP.POS]);
@@ -37,7 +37,7 @@ public class AverageDistance extends Rwrapper {
 		}
 		
 		Collections.sort(distList);
-		int n50 = Util.getN50(distList, totalLen);
+		double n50 = Util.getN50(distList, totalLen);
 		System.out.println("average: " + (totalLen / distList.size()));
 		System.out.println("n50: " + n50);
 	}

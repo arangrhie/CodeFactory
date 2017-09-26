@@ -338,14 +338,14 @@ public class SAMUtil {
 	 * @param seqData String[CIGAR, SEQ]
 	 * @return the base retrieved from record
 	 */
-	public static Character getBaseAtPos(int pos, int posAligned, String[] seqData) {
-		ArrayList<int[]> cigArr = Sam.getAllPosition(posAligned, seqData[CIGAR]);
-		int seqPos = -1;
+	public static Character getBaseAtPos(double pos, double posAligned, String[] seqData) {
+		ArrayList<int[]> cigArr = Sam.getAllPosition((int)posAligned, seqData[CIGAR]);
+		double seqPos = -1;
 		for (int[] posArr : cigArr) {
 			//System.out.println("[DEBUG] :: " + posArr[Sam.REF_START_POS] + "," + posArr[Sam.REF_END_POS]);
 			if (posArr[Sam.CIGAR_POS_TYPE] == Sam.M && posArr[Sam.CIGAR_POS_REF_START] <= pos && pos <= posArr[Sam.CIGAR_POS_REF_END]) {
 				seqPos = posArr[Sam.CIGAR_POS_ALGN_RANGE_START] + (pos - posArr[Sam.CIGAR_POS_REF_START]);
-				return seqData[SEQ].charAt(seqPos);
+				return seqData[SEQ].charAt((int)seqPos);
 			} else if (posArr[Sam.CIGAR_POS_TYPE] == Sam.D && posArr[Sam.CIGAR_POS_REF_START] <= pos && pos <= posArr[Sam.CIGAR_POS_REF_END]) {
 				return 'D';
 			}

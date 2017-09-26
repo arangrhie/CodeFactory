@@ -20,20 +20,20 @@ public class VariantsToSnpWiDel extends IOwrapper {
 		fm.writeLine(fr.readLine() + "\tDistance");
 		
 		String prevChr = "";
-		int pos;
-		int prevPos = 1;
-		int distance = 0;
+		double pos;
+		double prevPos = 1;
+		double distance = 0;
 		
 		double distanceSum = 0;
 		int numSnps = 0;
-		ArrayList<Integer> distanceArr = new ArrayList<Integer>();
-		int allSNPdistance = 0;
+		ArrayList<Double> distanceArr = new ArrayList<Double>();
+		double allSNPdistance = 0;
 		double allSNPdistanceSum = 0;
 		int allSNPnumSnps = 0;
-		ArrayList<Integer> allSNPdistanceArr = new ArrayList<Integer>();
+		ArrayList<Double> allSNPdistanceArr = new ArrayList<Double>();
 		
-		int allSNPPos = 1;
-		int allSNPprevPos = 1;
+		double allSNPPos = 1;
+		double allSNPprevPos = 1;
 		boolean isFirstSnp = true;
 		boolean isAllSNPFirstSnp = true;
 		
@@ -56,7 +56,7 @@ public class VariantsToSnpWiDel extends IOwrapper {
 				allSNPdistanceArr.add(allSNPdistance);
 			}
 			if (tokens[PhasedSNP.HAPLOTYPE_A].length() == 1 && tokens[PhasedSNP.HAPLOTYPE_B].length() == 1) {
-				pos = Integer.parseInt(tokens[PhasedSNP.POS]);
+				pos = Double.parseDouble(tokens[PhasedSNP.POS]);
 				if (isFirstSnp) {
 					distance = 0;
 					isFirstSnp = false;
@@ -78,9 +78,9 @@ public class VariantsToSnpWiDel extends IOwrapper {
 					distance = pos - prevPos;
 					distanceArr.add(distance);
 				}
-				for (int i = pos+1; i < pos + tokens[PhasedSNP.HAPLOTYPE_A].length(); i++) {
+				for (int i = (int) pos + 1; i < pos + tokens[PhasedSNP.HAPLOTYPE_A].length(); i++) {
 					fm.writeLine(tokens[PhasedSNP.CHR] + "\t" + i + "\t"
-							+ tokens[PhasedSNP.HAPLOTYPE_A].charAt(i-pos) + "\t" + "D" + "\t"
+							+ tokens[PhasedSNP.HAPLOTYPE_A].charAt((int) (i-pos)) + "\t" + "D" + "\t"
 							+ tokens[PhasedSNP.PS] + "\t" + distance);
 					numSnps++;
 					distanceSum += distance;
@@ -99,7 +99,7 @@ public class VariantsToSnpWiDel extends IOwrapper {
 		System.out.println("Total covered genome size: " + String.format("%,.0f", allSNPdistanceSum));
 		System.out.println("SNPs are almost on every " + (int) (allSNPdistanceSum / allSNPnumSnps) + " bp");
 		Collections.sort(allSNPdistanceArr);
-		int n50 = Util.getN50(allSNPdistanceArr, allSNPdistanceSum);
+		double n50 = Util.getN50(allSNPdistanceArr, allSNPdistanceSum);
 		System.out.println("Distance N50 " + n50 + " bp");
 		
 		System.out.println();

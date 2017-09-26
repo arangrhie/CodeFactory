@@ -73,7 +73,7 @@ public class PhasedReadsToPhasedBlocks extends IOwrapper {
 			}
 		}
 		
-		ArrayList<Integer> blockArr = new ArrayList<Integer>();
+		ArrayList<Double> blockArr = new ArrayList<Double>();
 		System.out.println("Total num. of phased blocks: " + phasedBlocks.size());
 		
 		if (phasedBlocks.size() == 0) {
@@ -82,7 +82,7 @@ public class PhasedReadsToPhasedBlocks extends IOwrapper {
 			System.exit(-1);
 		}
 		double lenSum = 0;
-		int len;
+		double len;
 		for (int i = 0; i < phasedBlocks.size(); i++) {
 			block = phasedBlocks.get(i);
 			len = block.getEnd() - block.getStart() + 1;
@@ -92,9 +92,9 @@ public class PhasedReadsToPhasedBlocks extends IOwrapper {
 		}
 		fmPhasedBlocks.closeMaker();
 		Collections.sort(blockArr);
-		int n50 = Util.getN50(blockArr, lenSum);
+		double n50 = Util.getN50(blockArr, lenSum);
 		System.out.println("Phased block coverage: " + String.format("%,.0f", lenSum));
-		System.out.println("N50: " + String.format("%,d", n50));
+		System.out.println("N50: " + String.format("%,.1f", n50));
 		System.out.println("For simplicity; order is longest block size, block N50, num. blocks, genome covered bases:");
 		System.out.println(blockArr.get(blockArr.size() - 1));
 		System.out.println(n50);

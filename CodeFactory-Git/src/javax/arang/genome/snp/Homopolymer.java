@@ -3,6 +3,7 @@ package javax.arang.genome.snp;
 import java.io.IOException;
 import java.util.HashMap;
 
+import javax.arang.IO.basic.BufferedFileReader;
 import javax.arang.IO.basic.FileReader;
 
 public class Homopolymer {
@@ -80,7 +81,7 @@ public class Homopolymer {
 	static String leftBuffer = "";
 	static String rightBuffer = "";
 	static int prevPos = 0;
-	public static void seek(int pos, FileReader fr) {
+	public static void seek(int pos, BufferedFileReader fr) {
 		pos--;	// 1-base to 0-base coordinate
 		if (readChars > pos) {
 			int movingSeqLen = pos - prevPos;

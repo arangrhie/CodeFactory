@@ -59,17 +59,17 @@ public class MergePSwithBACs extends I2Owrapper {
 		String prevChr = null;
 		String prevPS = null;
 		int len;
-		int prevLen = 0;
+		double prevLen = 0;
 		HashMap<String, String> mergedPhaseBlockMap = new HashMap<String, String>();	// PS PS1_PS2 : <prev_ps> <merged_ps>
-		ArrayList<Integer> blockLenArr = new ArrayList<Integer>();
+		ArrayList<Double> blockLenArr = new ArrayList<Double>();
 		int connectedCount = 0;
 		int numBlocks = 0;
 		double blockLenSum = 0;
 		String mergedPS = "";
-		int prevStart = 0;
-		int prevEnd = 0;
-		int start;
-		int end;
+		double prevStart = 0;
+		double prevEnd = 0;
+		double start;
+		double end;
 		
 		boolean isFirstLine = true;
 		while (frPhasedBed.hasMoreLines()) {
@@ -82,9 +82,9 @@ public class MergePSwithBACs extends I2Owrapper {
 				prevChr = tokens[Bed.CHROM];
 				prevPS = tokens[PS];
 				psToWrite = prevPS;
-				prevStart = Integer.parseInt(tokens[Bed.START]);
-				prevEnd = Integer.parseInt(tokens[Bed.END]);
-				prevLen = Integer.parseInt(tokens[LEN]);
+				prevStart = Double.parseDouble(tokens[Bed.START]);
+				prevEnd = Double.parseDouble(tokens[Bed.END]);
+				prevLen = Double.parseDouble(tokens[LEN]);
 				isFirstLine = false;
 				continue;
 			}
@@ -138,7 +138,7 @@ public class MergePSwithBACs extends I2Owrapper {
 		
 		// Calculate n50
 		Collections.sort(blockLenArr);
-		int n50 = Util.getN50(blockLenArr, blockLenSum);
+		double n50 = Util.getN50(blockLenArr, blockLenSum);
 		System.out.println("N50: " + Format.numbersToDecimal(n50 + 1));
 		
 		System.out.println();

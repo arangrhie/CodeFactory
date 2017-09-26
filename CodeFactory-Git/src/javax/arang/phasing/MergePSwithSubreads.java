@@ -88,10 +88,10 @@ public class MergePSwithSubreads extends R2wrapper {
 		boolean switchHaplotypes = false;
 		String prevPS = "";
 		String prevNewPS = "";
-		int prevStart = 0;
+		double prevStart = 0;
 		String prevEnd = "";
 		boolean isFirstLine = true;
-		ArrayList<Integer> blockLenArr = new ArrayList<Integer>();
+		ArrayList<Double> blockLenArr = new ArrayList<Double>();
 		double lenSum = 0;
 		while (frSNP.hasMoreLines()) {
 			line = frSNP.readLine();
@@ -112,7 +112,7 @@ public class MergePSwithSubreads extends R2wrapper {
 						prevStart = Integer.parseInt(tokens[PhasedSNP.POS]) - 1;
 						fmBed.write(tokens[PhasedSNP.CHR] + "\t" + prevStart);
 					} else {
-						int len = Integer.parseInt(prevEnd) - prevStart;
+						double len = Double.parseDouble(prevEnd) - prevStart;
 						lenSum += len;
 						blockLenArr.add(len);
 						fmBed.writeLine("\t" + prevEnd + "\t" + prevNewPS + "\t" + len);
@@ -132,7 +132,7 @@ public class MergePSwithSubreads extends R2wrapper {
 			}
 			prevEnd = tokens[PhasedSNP.POS];
 		}
-		int len = Integer.parseInt(prevEnd) - prevStart;
+		double len = Integer.parseInt(prevEnd) - prevStart;
 		lenSum += len;
 		blockLenArr.add(len);
 		fmBed.writeLine("\t" + prevEnd + "\t" + prevNewPS + "\t" + len);

@@ -39,7 +39,7 @@ public class FindPSgapsCoveredWithSubreads extends IOwrapper {
 	static final int UNKNOWN = 3;
 	
 	HashMap<PhasedSNP, ArrayList<PhasedBlock>> phasedSnpToGapsMap = new HashMap<PhasedSNP, ArrayList<PhasedBlock>>();	// SNP, <Gap> list
-	HashMap<String, HashMap<Integer, PhasedSNP>> chrPosOfSnpListMap = new HashMap<String, HashMap<Integer, PhasedSNP>>();
+	HashMap<String, HashMap<Double, PhasedSNP>> chrPosOfSnpListMap = new HashMap<String, HashMap<Double, PhasedSNP>>();
 
 	@Override
 	public void printHelp() {
@@ -120,23 +120,23 @@ public class FindPSgapsCoveredWithSubreads extends IOwrapper {
 		HashMap<PhasedBlock, ArrayList<PhasedSNP>> gapToSnpMap = new HashMap<PhasedBlock, ArrayList<PhasedSNP>>();
 		PhasedSNP snp;
 		String chr;
-		int start;
-		int end;
-		int pos;
+		double start;
+		double end;
+		double pos;
 		String ps1;
 		String ps2;
 		int numLeftSnps;	// left of gap
 		int numRightSnps;	// right of gap
 		ArrayList<PhasedBlock> snpGapList;
 		ArrayList<PhasedSNP> snpsAroundGap;	// snp list to look for gap in gapToSnpMap
-		HashMap<Integer, PhasedSNP> posSnpsAroundGaps = null;
+		HashMap<Double, PhasedSNP> posSnpsAroundGaps = null;
 		ArrayList<PhasedSNP> snpList = null;
 		for (PhasedBlock gap : gapList) {
 			chr = gap.getChr();
 			snpsAroundGap = new ArrayList<PhasedSNP>();
 			gapToSnpMap.put(gap, snpsAroundGap);
 			if (!chrPosOfSnpListMap.containsKey(chr)) {
-				posSnpsAroundGaps  = new HashMap<Integer, PhasedSNP>();
+				posSnpsAroundGaps  = new HashMap<Double, PhasedSNP>();
 				chrPosOfSnpListMap.put(chr, posSnpsAroundGaps);
 			}
 			posSnpsAroundGaps = chrPosOfSnpListMap.get(chr);
@@ -212,24 +212,24 @@ public class FindPSgapsCoveredWithSubreads extends IOwrapper {
 		
 		// Collect closest SNPs to the gap that needs to be seen from sam / bam
 		System.out.println("[DEBUG] :: Collecting closest " + NUM_SNPS_TO_COMPARE + " snp(s) of each gap");
-		HashMap<Integer, PhasedSNP> posSnpsAroundGaps = null;
+		HashMap<Double, PhasedSNP> posSnpsAroundGaps = null;
 		HashMap<PhasedBlock, ArrayList<PhasedSNP>> gapToSnpMap = getGapToSnpMap(gapList, chrSnpMap);
 		
 		// Sort by chr, pos to speed up search time
-		HashMap<String, Integer[]> chrPosArrOfSnpsAroundGapMap = new HashMap<String, Integer[]>();
-		Integer[] posArr;
+		HashMap<String, Double[]> chrPosArrOfSnpsAroundGapMap = new HashMap<String, Double[]>();
+		Double[] posArr;
 		System.out.println("Total num. of SNPs to look for : " + phasedSnpToGapsMap.size());
 		for (String chrom : chrPosOfSnpListMap.keySet()) {
 			posSnpsAroundGaps = chrPosOfSnpListMap.get(chrom);
-			posArr = posSnpsAroundGaps.keySet().toArray(new Integer[0]);
+			posArr = posSnpsAroundGaps.keySet().toArray(new Double[0]);
 			Arrays.sort(posArr);
 			chrPosArrOfSnpsAroundGapMap.put(chrom, posArr);
 			System.out.println("[DEBUG] :: " + chrom + " (" + posArr.length + " snps) : " + posArr[0] + "-" + posArr[posArr.length - 1]);
 		}
 		
-		int posAligned;
+		double posAligned;
 		String[] seqData = new String[2];
-		int matchedLen;
+		double matchedLen;
 		ArrayList<PhasedBlock> gapsToLookUp;
 		int readCount = 0;
 		
@@ -322,7 +322,7 @@ public class FindPSgapsCoveredWithSubreads extends IOwrapper {
 	
 	private void countGapCoveringReads(ArrayList<PhasedBlock> gapsToLookUp,
 			HashMap<PhasedBlock, ArrayList<PhasedSNP>> gapToSnpMap,
-			int posAligned, String[] seqData, String readName,
+			double posAligned, String[] seqData, String readName,
 			HashMap<PhasedBlock, Integer[]> gapHaplotypeMap) {
 		/***
 		 * value: leftA, leftB, leftOther, rightA, rightB, rightOther
@@ -437,12 +437,12 @@ public class FindPSgapsCoveredWithSubreads extends IOwrapper {
 	 * @param phasedSnpToGapMap	snp to gap ArrayList map (Some snps are markers of > 1 gaps)
 	 * @return
 	 */
-	private ArrayList<PhasedBlock> getGapsToLookup(int seqStart, int seqEnd, Integer[] snpPosArr,
-			HashMap<Integer, PhasedSNP> posSnpsAroundGaps, HashMap<PhasedSNP, ArrayList<PhasedBlock>> phasedSnpToGapMap) {
+	private ArrayList<PhasedBlock> getGapsToLookup(double seqStart, double seqEnd, Double[] snpPosArr,
+			HashMap<Double, PhasedSNP> posSnpsAroundGaps, HashMap<PhasedSNP, ArrayList<PhasedBlock>> phasedSnpToGapMap) {
 		ArrayList<PhasedBlock> gapsToLookup = new ArrayList<PhasedBlock>();
 		PhasedSNP snp = null;
 		ArrayList<PhasedBlock> gaps;
-		int pos = 0;
+		double pos = 0;
 		for (int i = 0; i < snpPosArr.length; i++) {
 			pos = snpPosArr[i];
 			if (seqEnd < pos)	break;

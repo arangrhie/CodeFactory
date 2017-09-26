@@ -4,12 +4,12 @@ import java.util.HashMap;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
-import javax.arang.IO.I2Owrapper;
+import javax.arang.IO.I2OBufferedWrapper;
+import javax.arang.IO.basic.BufferedFileReader;
 import javax.arang.IO.basic.FileMaker;
-import javax.arang.IO.basic.FileReader;
 import javax.arang.annovar.util.ANNOVAR;
 
-public class IonVCF4_1toAnnovar extends I2Owrapper {
+public class IonVCF4_1toAnnovar extends I2OBufferedWrapper {
 
 	final static int CHROM = 0;
 	final static int POS = 1;
@@ -21,7 +21,7 @@ public class IonVCF4_1toAnnovar extends I2Owrapper {
 	static int POS_OFFSET = 0;
 	
 	@Override
-	public void hooker(FileReader fr, FileReader refFr, FileMaker fm) {
+	public void hooker(BufferedFileReader fr, BufferedFileReader refFr, FileMaker fm) {
 		
 		String header = "Chromosome\tStartPos\tEndPos\tRef\tObserved";
 		
