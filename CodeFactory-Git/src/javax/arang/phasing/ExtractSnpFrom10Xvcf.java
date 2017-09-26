@@ -22,7 +22,7 @@ public class ExtractSnpFrom10Xvcf extends IOwrapper {
 		
 		String chr;
 		String prevChr = "";
-		int pos = -1;
+		double pos = -1;
 		String ref;
 		String alt;
 		String gt;
@@ -30,10 +30,10 @@ public class ExtractSnpFrom10Xvcf extends IOwrapper {
 		String[] sampleFields;
 		String prevPs = "";
 		
-		int phasedStart = 1;
-		int phasedEnd = 1;
-		int len;
-		ArrayList<Integer> phasedBlockLenArr = new ArrayList<Integer>();
+		double phasedStart = 1;
+		double phasedEnd = 1;
+		double len;
+		ArrayList<Double> phasedBlockLenArr = new ArrayList<Double>();
 		
 		double phasedBlockLenSum = 0;
 		int blockCount = 0;
@@ -45,7 +45,7 @@ public class ExtractSnpFrom10Xvcf extends IOwrapper {
 			if (line.startsWith("#"))	continue;
 			tokens = line.split(RegExp.TAB);
 			chr = tokens[VCF.CHROM];
-			pos = Integer.parseInt(tokens[VCF.POS]); 	// 1-base
+			pos = Double.parseDouble(tokens[VCF.POS]); 	// 1-base
 			ref = tokens[VCF.REF];
 			alt = tokens[VCF.ALT];
 			sampleFields = tokens[VCF.SAMPLE].split(":");
@@ -109,8 +109,8 @@ public class ExtractSnpFrom10Xvcf extends IOwrapper {
 		System.out.println("Average block len: " + String.format("%,d", (int)(phasedBlockLenSum / blockCount)) + " bp");
 		
 		Collections.sort(phasedBlockLenArr);
-		int n50 = Util.getN50(phasedBlockLenArr, phasedBlockLenSum);
-		System.out.println("Phased block N50: " + String.format("%,d",n50) + " bp");
+		double n50 = Util.getN50(phasedBlockLenArr, phasedBlockLenSum);
+		System.out.println("Phased block N50: " + String.format("%,.0f",n50) + " bp");
 	}
 
 	private String getGenotype(String gt, String ref, String alt) {

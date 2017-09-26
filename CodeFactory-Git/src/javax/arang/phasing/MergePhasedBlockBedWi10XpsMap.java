@@ -81,7 +81,7 @@ public class MergePhasedBlockBedWi10XpsMap extends I2Owrapper {
 		
 		String ps;
 		PhasedBlock block = null;
-		ArrayList<Integer> lenArr = new ArrayList<Integer>();
+		ArrayList<Double> lenArr = new ArrayList<Double>();
 		
 		while (fr1.hasMoreLines()) {
 			line = fr1.readLine();
@@ -111,24 +111,24 @@ public class MergePhasedBlockBedWi10XpsMap extends I2Owrapper {
 				
 			}
 		}
-		fm.writeLine(block.getChr() + "\t" + block.getStart() + "\t" + block.getEnd() + "\t" + block.getPS() + "\t" + block.getLen());
+		fm.writeLine(block.getChr() + "\t" + block.getStart() + "\t" + block.getEnd() + "\t" + block.getPS() + "\t" + String.format("%,.0f", block.getLen()));
 		lenArr.add(block.getLen());
 		
 		Collections.sort(lenArr);
-		int len;
+		double len;
 		double lenSum = 0;
 		for (int i = 0; i < lenArr.size(); i++) {
 			len = lenArr.get(i);
 			lenSum += len;
 		}
-		int n50 = Util.getN50(lenArr, lenSum);
+		double n50 = Util.getN50(lenArr, lenSum);
 		System.out.println("Longest Block Size: " + String.format("%,2d", lenArr.get(lenArr.size() - 1)));
 		System.out.println("N50: " + String.format("%,2d", n50));
 		System.out.println("Num. Blocks: " + numPhasedBlocks);
 		System.out.println("Genome Covered Bases: " + String.format("%,.0f", lenSum));
 		System.out.println("For simplicity; order is longest block size, block N50, num. blocks, genome covered bases:");
 		System.out.println(lenArr.get(lenArr.size() - 1));
-		System.out.println(n50);
+		System.out.println(String.format("%.0f", n50));
 		System.out.println(lenArr.size());
 		System.out.println(String.format("%.0f", lenSum));
 	}

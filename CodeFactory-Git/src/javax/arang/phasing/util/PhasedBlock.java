@@ -12,8 +12,8 @@ public class PhasedBlock implements Comparable<PhasedBlock> {
 	public static short END = 2;
 	public static short ID = 3;
 	private String chr;
-	private int blockStart;
-	private int blockEnd;
+	private double blockStart;
+	private double blockEnd;
 	private String blockID;
 	private int lastHetMarker;
 	
@@ -36,15 +36,15 @@ public class PhasedBlock implements Comparable<PhasedBlock> {
 		return lastHetMarker;
 	}
 	
-	public int getStart() {
+	public double getStart() {
 		return blockStart;
 	}
 
-	public int getEnd() {
+	public double getEnd() {
 		return blockEnd;
 	}
 	
-	public int getLen() {
+	public double getLen() {
 		return blockEnd - blockStart;
 	}
 
@@ -58,7 +58,13 @@ public class PhasedBlock implements Comparable<PhasedBlock> {
 
 	@Override
 	public int compareTo(PhasedBlock otherBlock) {
-		return this.blockEnd - otherBlock.getStart();
+		if (this.blockEnd > otherBlock.getStart()) {
+			return 1;
+		} else if (this.blockEnd == otherBlock.getStart()) {
+			return 0;
+		} else {
+			return -1;
+		}
 	}
 
 	public void setBlockEnd(int end) {
