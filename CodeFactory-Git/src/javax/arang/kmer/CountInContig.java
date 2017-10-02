@@ -7,7 +7,7 @@ public class CountInContig extends R2wrapper {
 
 	@Override
 	public void hooker(FileReader frMerylFasta, FileReader frAsmFasta) {
-		KmerCountQryTable merylCount = new KmerCountQryTable(k);
+		KmerQryTable merylCount = new KmerQryTable(k);
 		merylCount.readKmerFasta(frMerylFasta);
 		
 		KmerQryTable asmCount = new KmerQryTable(k);

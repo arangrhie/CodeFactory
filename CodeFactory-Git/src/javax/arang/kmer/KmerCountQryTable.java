@@ -91,6 +91,7 @@ public class KmerCountQryTable {
 	 */
 	private void updateTableSize() {
 		if (tableChanged) {
+			size = 0;
 			for (String key : kmerTable.keySet()) {
 				size += kmerTable.get(key).size();
 			}

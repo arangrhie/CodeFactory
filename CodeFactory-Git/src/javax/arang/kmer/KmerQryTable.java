@@ -4,6 +4,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.arang.IO.basic.FileReader;
+import javax.arang.IO.basic.RegExp;
+
 /***
  * This table is for simple unique kmer handling; i.e. exact matchs
  * @author rhiea
@@ -39,11 +42,14 @@ public class KmerQryTable {
 		}
 	}
 	
+	
+	
 	/***
 	 * only update table size if table has an update (insert)
 	 */
 	private void updateTableSize() {
 		if (tableChanged) {
+			size = 0;
 			for (String key : kmerTable.keySet()) {
 				size += kmerTable.get(key).size();
 			}
@@ -69,7 +75,11 @@ public class KmerQryTable {
 	}
 	
 	public void clearTable() {
+		for (String prefix : kmerTable.keySet()) {
+			kmerTable.get(prefix).clear();
+		}
 		kmerTable.clear();
+		tableChanged = true;
 	}
 
 	public void computeKmers(String seq) {
@@ -87,5 +97,46 @@ public class KmerQryTable {
 				System.out.println(prefix + postfix);
 			}
 		}
+	}
+	
+	public boolean hasKmer(String kmer) {
+		prefix = Kmer.toKmer(kmer.substring(0, prefixLen));
+		postfix = Kmer.toKmer(kmer.substring(prefixLen));
+		if (kmerTable.containsKey(prefix) && kmerTable.get(prefix).contains(postfix)) {
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean hasKmer(String prefix, String postfix) {
+		if (kmerTable.containsKey(prefix) && kmerTable.get(prefix).contains(postfix)) {
+			return true;
+		}
+		return false;
+	}
+	
+	/***
+	 * Reads in meryl dump kmer fasta count
+	 * @param fr
+	 */
+	public void readKmerFasta(FileReader fr) {
+		String line;
+		if (fr.getFileName().endsWith(".fa") || fr.getFileName().endsWith(".fasta")) {
+			while (fr.hasMoreLines()) {
+				line = fr.readLine();
+				if (line.startsWith(">")) {
+				} else {
+					this.addTable(line);
+				}
+			}
+		} else if (fr.getFileName().endsWith(".counts") || fr.getFileName().endsWith(".count")) {
+			String[] tokens;
+			while (fr.hasMoreLines()) {
+				line = fr.readLine();
+				tokens = line.split(RegExp.WHITESPACE);
+				this.addTable(tokens[0]);
+			}
+		}
+		System.err.println("Successfully loaded " + this.getTableSize() + " kmers.");
 	}
 }
