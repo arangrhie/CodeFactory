@@ -72,6 +72,7 @@ public class CalcNGStats extends Rwrapper {
 		ngValIdx = 0;
 
 		sum = 0;
+		ng_list = "";
 		for (int j = 0; j < lenList.size(); j++) {
 			i = lenList.size() - j - 1;
 			sum += lenList.get(i);
