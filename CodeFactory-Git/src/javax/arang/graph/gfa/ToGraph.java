@@ -95,8 +95,6 @@ public class ToGraph extends Rwrapper {
 		System.err.println("[DEBUG] :: num. circular segments: " + numCircular);
 		System.err.println("[DEBUG] :: num. palendromic links: " + numPalendromic);
 		
-		//
-		
 	}
 	
 	@Override

@@ -107,6 +107,10 @@ public class Segment {
 		return this.len;
 	}
 	
+	public String getPrintableSize() {
+		return String.format("%,.0f", this.len);
+	}
+	
 	public void setCircular() {
 		isCircular = true;
 	}

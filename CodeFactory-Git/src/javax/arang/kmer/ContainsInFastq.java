@@ -57,9 +57,9 @@ public class ContainsInFastq extends R2wrapper {
 				// beginning of a new sequence. read id line.
 				totalCount++;
 				if ((hasOverlap && !reportNotContained) || (!hasOverlap && reportNotContained)) {
-					fmR1.writeLine(seqBuff1.toString());
+					fmR1.write(seqBuff1.toString());
 					if (isPairedEnd) {
-						fmR2.writeLine(seqBuff2.toString());
+						fmR2.write(seqBuff2.toString());
 					}
 					filteredCount++;
 				}

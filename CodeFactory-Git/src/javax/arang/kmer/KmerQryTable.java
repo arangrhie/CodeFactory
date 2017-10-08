@@ -17,7 +17,7 @@ public class KmerQryTable {
 	private HashSet<String> postfixSet;
 	private int kSize;
 	private int prefixLen;
-	private int size;
+	private double size;
 	private boolean tableChanged = true;
 	
 	public KmerQryTable(int k) {
@@ -47,7 +47,7 @@ public class KmerQryTable {
 	/***
 	 * only update table size if table has an update (insert)
 	 */
-	private void updateTableSize() {
+	protected void updateTableSize() {
 		if (tableChanged) {
 			size = 0;
 			for (String key : kmerTable.keySet()) {
@@ -61,9 +61,14 @@ public class KmerQryTable {
 	 * Get the total number of kmers in this table
 	 * @return
 	 */
-	public int getTableSize() {
+	public double getTableSize() {
 		updateTableSize();
 		return size;
+	}
+	
+	public String getTablePrintableSize() {
+		updateTableSize();
+		return String.format("%,.0f", size);
 	}
 	
 	public Set<String> getPrefixSet() {
@@ -116,10 +121,11 @@ public class KmerQryTable {
 	}
 	
 	/***
-	 * Reads in meryl dump kmer fasta count
+	 * Reads in meryl dump kmer fasta count or list
+	 * Assemes each line = 1 kmer
 	 * @param fr
 	 */
-	public void readKmerFasta(FileReader fr) {
+	public void readKmerFile(FileReader fr) {
 		String line;
 		if (fr.getFileName().endsWith(".fa") || fr.getFileName().endsWith(".fasta")) {
 			while (fr.hasMoreLines()) {
@@ -135,6 +141,11 @@ public class KmerQryTable {
 				line = fr.readLine();
 				tokens = line.split(RegExp.WHITESPACE);
 				this.addTable(tokens[0]);
+			}
+		} else if (fr.getFileName().endsWith(".list")) {
+			while (fr.hasMoreLines()) {
+				line = fr.readLine();
+				this.addTable(line);
 			}
 		}
 		System.err.println("Successfully loaded " + this.getTableSize() + " kmers.");

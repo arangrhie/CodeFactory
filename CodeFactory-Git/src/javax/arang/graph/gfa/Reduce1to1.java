@@ -67,22 +67,30 @@ public class Reduce1to1 extends Rwrapper {
 	private void printPaths(ArrayList<Path> backPath, Segment seg, ArrayList<Path> forwardPath) {
 		int numEdges;
 		Path path;
+		double estimatedSum = 0;
 		for (int i = backPath.size() - 1; i >= 0; i--) {
 			path = backPath.get(i);
 			numEdges = path.segment.getEdges(path.isForward(), SEARCH_BACKWARD);
-			System.out.print("(" + numEdges + ")" + backPath.get(i).getName());
+			System.out.print("(" + numEdges + ")" + backPath.get(i).getName() + " : " + backPath.get(i).segment.getPrintableSize());
 			numEdges = path.segment.getEdges(path.isForward(), SEARCH_FORWARD);
 			System.out.print("(" + numEdges + ")" + "\t");
+			if (numEdges == 1) {
+				estimatedSum += backPath.get(i).segment.getSize();
+			}
 		}
-		System.out.print("(1)" + seg.getName() + "+(1)");
+		System.out.print("(1)" + seg.getName() + "+ : " + seg.getPrintableSize() + "(1)");
+		estimatedSum += seg.getSize();
 		for (int i = 0; i < forwardPath.size(); i++) {
 			path = forwardPath.get(i);
 			numEdges = path.segment.getEdges(path.isForward(), SEARCH_BACKWARD);
-			System.out.print("\t" + "(" + numEdges + ")" + forwardPath.get(i).getName());
+			if (numEdges == 1) {
+				estimatedSum += forwardPath.get(i).segment.getSize();
+			}
+			System.out.print("\t" + "(" + numEdges + ")" + forwardPath.get(i).getName() + " : " + forwardPath.get(i).segment.getPrintableSize());
 			numEdges = path.segment.getEdges(path.isForward(), SEARCH_FORWARD);
 			System.out.print("(" + numEdges + ")");
 		}
-		System.out.println();
+		System.out.println("\t|\t" + String.format("%,.0f", estimatedSum));
 	}
 	
 	/***

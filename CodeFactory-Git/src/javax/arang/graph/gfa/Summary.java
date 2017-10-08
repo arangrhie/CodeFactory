@@ -12,6 +12,7 @@ public class Summary extends Rwrapper {
 	public void hooker(FileReader fr) {
 		ToGraph graphConstructor = new ToGraph();
 		graphConstructor.hooker(fr);
+		printSummary(graphConstructor.segMap);
 	}
 
 	public static void printSummary(HashMap<String, Segment> segMap) {
@@ -55,8 +56,6 @@ public class Summary extends Rwrapper {
 				edgeBalancedMap.put(inEdges, edgeBalancedMap.get(inEdges) + 1);
 			}
 		}
-		System.err.println("[DEBUG] :: num. circular segments: " + count);
-		
 		System.out.println("n\tNum. segments with n links\tBalanced (num. in = num. out)");
 		Integer[] nList = edgeCountMap.keySet().toArray(new Integer[0]);
 		Arrays.sort(nList);
@@ -66,10 +65,9 @@ public class Summary extends Rwrapper {
 			System.out.println(nList[i] + "\t" + edgeCountMap.get(nList[i]) + "\t" + edgeBalancedMap.get(nList[i]));
 			count += nList[i] * edgeCountMap.get(nList[i]);
 		}
-		System.out.println();
 		System.err.println("[DEBUG] :: in + out link count: " + count);
-		
 	}
+	
 	@Override
 	public void printHelp() {
 		System.out.println("Usgae: java -jar gfaSummary.jar <in.gfa>");
