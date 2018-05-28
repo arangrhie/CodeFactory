@@ -97,9 +97,9 @@ public class ContainsInFastq extends R2wrapper {
 			}
 		}
 		if ((hasOverlap && !reportNotContained) || (!hasOverlap && reportNotContained)) {
-			fmR1.writeLine(seqBuff1.toString());
+			fmR1.write(seqBuff1.toString());
 			if (isPairedEnd) {
-				fmR2.writeLine(seqBuff2.toString());
+				fmR2.write(seqBuff2.toString());
 			}
 			filteredCount++;
 		}
@@ -124,7 +124,7 @@ public class ContainsInFastq extends R2wrapper {
 		System.out.println("\t[r2.fastq]: read 2 if paired end read needs to be looked up");
 		System.out.println("\t[-v]: contains NOT. Filteres out reads containing kmers from <meryl.count>");
 		System.out.println("\tReturn any fastq reads that contains kmers in <meryl.count>.");
-		System.out.println("Arang Rhie, 2017-09-27. arrhie@gmail.com");
+		System.out.println("Arang Rhie, 2017-10-25. arrhie@gmail.com");
 	}
 
 	public static void main(String[] args) {

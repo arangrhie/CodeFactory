@@ -1,14 +1,14 @@
 package mummer.nucmer;
 
 public class Delta {
-	public static final short TARGET_NAME = 0;	// Ref
-	public static final short QUERY_NAME = 1;
-	public static final short TARGET_LEN = 2;
-	public static final short QUERY_LEN = 3;
-	public static final int TARGET_START = 0;
-	public static final int TARGET_END = 1;
-	public static final int QUERY_START = 2;
-	public static final int QUERY_END = 3;
+	public static final short R_NAME = 0;	// Ref
+	public static final short Q_NAME = 1;
+	public static final short R_LEN = 2;
+	public static final short Q_LEN = 3;
+	public static final int R_START = 0;
+	public static final int R_END = 1;
+	public static final int Q_START = 2;
+	public static final int Q_END = 3;
 	
 	public static final short TYPE_UNSET = 0;
 	public static final short TYPE_D = 1;
@@ -24,16 +24,16 @@ public class Delta {
 	}
 	
 	public static String getQueryName(String[] tokens) {
-		return tokens[QUERY_NAME];
+		return tokens[Q_NAME];
 	}
 	
 	public static String getRefName(String[] tokens) {
-		return tokens[TARGET_NAME].substring(1);
+		return tokens[R_NAME].substring(1);
 	}
 	
 	public static boolean isReverse(String[] tokens) {
-		int start = Integer.parseInt(tokens[Delta.QUERY_START]);
-		int end = Integer.parseInt(tokens[Delta.QUERY_END]);
+		int start = Integer.parseInt(tokens[Delta.Q_START]);
+		int end = Integer.parseInt(tokens[Delta.Q_END]);
 		
 		if (end < start) {
 			return true;
@@ -73,7 +73,7 @@ public class Delta {
 	 * @return
 	 */
 	public static int getQueryStart(String[] tokens) {
-		return Integer.parseInt(tokens[QUERY_START]);
+		return Integer.parseInt(tokens[Q_START]);
 	}
 	
 	/***
@@ -82,7 +82,7 @@ public class Delta {
 	 * @return
 	 */
 	public static int getQueryEnd(String[] tokens) {
-		return Integer.parseInt(tokens[QUERY_END]);
+		return Integer.parseInt(tokens[Q_END]);
 	}
 
 	/***
@@ -105,11 +105,11 @@ public class Delta {
 	 * @return
 	 */
 	public static int getQueryLen(String[] tokens) {
-		return Integer.parseInt(tokens[QUERY_LEN]);
+		return Integer.parseInt(tokens[Q_LEN]);
 	}
 	
 	public static int getTargetLen(String[] tokens) {
-		return Integer.parseInt(tokens[TARGET_LEN]);
+		return Integer.parseInt(tokens[R_LEN]);
 	}
 	
 	

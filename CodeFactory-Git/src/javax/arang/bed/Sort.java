@@ -2,6 +2,7 @@ package javax.arang.bed;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 
 import javax.arang.IO.IOwrapper;
@@ -48,8 +49,14 @@ public class Sort extends IOwrapper {
 				fm.writeLine(line);
 				continue;
 			}
+			
+			try {
 			start = Integer.parseInt(tokens[Bed.START]);
 			end = Integer.parseInt(tokens[Bed.END]);
+			} catch (NumberFormatException e) {
+				System.err.println("Not a valid bed line: " + line);
+				continue;
+			}
 			note = "";
 			for (int i = Bed.NOTE; i < tokens.length; i++) {
 				note = note + "\t" + tokens[i];
@@ -94,7 +101,7 @@ public class Sort extends IOwrapper {
 		Chromosome[] chrs = new Chromosome[0];
 		chrs = bedMap.keySet().toArray(chrs);
 		Arrays.sort(chrs);
-		
+		Integer[] ends = new Integer[0];
 		for (int i = 0; i < chrs.length; i++) {
 			chrRegion = bedMap.get(chrs[i]);
 			System.out.println("[DEBUG] :: " + chrs[i].getChromStringVal() + " : " + chrRegion.size() + " unique starts");
@@ -106,9 +113,26 @@ public class Sort extends IOwrapper {
 					ArrayList<Integer> dupStartEnds = duplicateStartsMap.get(chrs[i].getChromStringVal() + "_" + starts[j]);
 					ArrayList<String> dupStartNotes = duplicateNotesMap.get(chrs[i].getChromStringVal() + "_" + starts[j]);
 					//System.out.println("[DEBUG] :: " + chrs[i].getChromStringVal() + ":" + starts[j] + " : " + dupStartEnds.size() + " dup ends");
-					for (int k = 0; k < dupStartEnds.size(); k++) {
-						end = dupStartEnds.get(k);
-						note = dupStartNotes.get(k);
+					if (dupStartEnds.size() > 1) {
+						ArrayList<Integer> endTmpList = new ArrayList<Integer>();
+						endTmpList.addAll(dupStartEnds);
+						Collections.sort(endTmpList);
+						ends = new Integer[endTmpList.size()];
+						for (int k = 0; k < ends.length; k++) {
+							ends[k] = dupStartEnds.indexOf(endTmpList.get(k));
+						}
+						for (int k = 0; k < dupStartEnds.size(); k++) {
+							end = dupStartEnds.get(ends[k]);
+							note = dupStartNotes.get(ends[k]);
+							fm.write(chrs[i].getChromStringVal() + "\t" + starts[j] + "\t" + end);
+							if (!note.equals("")) {
+								fm.write(note);
+							}
+							fm.writeLine();
+						}
+					} else {
+						end = dupStartEnds.get(0);
+						note = dupStartNotes.get(0);
 						fm.write(chrs[i].getChromStringVal() + "\t" + starts[j] + "\t" + end);
 						if (!note.equals("")) {
 							fm.write(note);

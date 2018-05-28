@@ -1,7 +1,5 @@
 package javax.arang.IO;
 
-import javax.arang.IO.basic.FileMaker;
-import javax.arang.IO.basic.FileReader;
 import javax.arang.IO.basic.Wrapper;
 
 public abstract class StreamWrapper extends Wrapper {

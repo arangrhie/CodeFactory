@@ -3,8 +3,10 @@
  */
 package javax.arang.IO.basic;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.util.Scanner;
 import java.util.zip.GZIPInputStream;
 
@@ -34,7 +36,7 @@ public class FileReader {
 			if (path.equals("-")) {
 				br = new Scanner(System.in);
 			} else if (path.endsWith(".gz")) {
-				br = new Scanner(new GZIPInputStream(new FileInputStream(path)));
+				br = new Scanner(new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(path)))));
 			} else {
 				br = new Scanner(new File(path));
 			}

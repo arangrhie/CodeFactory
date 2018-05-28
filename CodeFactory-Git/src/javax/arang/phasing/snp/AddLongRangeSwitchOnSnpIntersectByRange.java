@@ -8,7 +8,7 @@ import javax.arang.IO.basic.FileReader;
 import javax.arang.IO.basic.RegExp;
 import javax.arang.phasing.util.PhasedSNP;
 
-public class AddLongRangeSwitchOnSnpIntersect extends IOwrapper {
+public class AddLongRangeSwitchOnSnpIntersectByRange extends IOwrapper {
 	
 	private static int psIdx = 0;
 
@@ -34,7 +34,7 @@ public class AddLongRangeSwitchOnSnpIntersect extends IOwrapper {
 		String ps2;
 		//String lastSwitchedPos = "";
 		
-		HashMap<Integer, String> posToSwitchMap = new HashMap<Integer, String>();
+		HashMap<String, String> posToSwitchMap = new HashMap<String, String>();
 		int posBlockStart = 0;	// beginning position of a block agreeing
 		int prevPos = 0;
 		boolean isToDiscard = true;
@@ -68,20 +68,18 @@ public class AddLongRangeSwitchOnSnpIntersect extends IOwrapper {
 						if (!isToDiscard) {
 							if (switchInterval == 1) {
 								numShortSwitch1++;
-								posToSwitchMap.put(posBlockStart, "Short1");
+								posToSwitchMap.put(tokens[0] + "_" + posBlockStart, "Short1");
 								isToDiscard = true;
-							} else if (switchInterval == 2){
-								numShortSwitch2++;
-								posToSwitchMap.put(posBlockStart, "Short2");
-								isToDiscard = true;
-							} else if (switchInterval > 2) {
+							} else if (switchInterval >= 2 && prevPos - posBlockStart > 10000) {
 								numLongRangeSwitch++;
-								posToSwitchMap.put(posBlockStart, "Long");
+								posToSwitchMap.put(tokens[0] + "_" + posBlockStart, "Long");
+							} else {
+								numShortSwitch2++;
+								posToSwitchMap.put(tokens[0] + "_" + posBlockStart, "Short2");
+								isToDiscard = true;
 							}
 						} else {
-							if (switchInterval > 2) {
-								isToDiscard = false;
-							}
+							isToDiscard = false;
 						}
 					} else {
 						isFirstSwitch = false;
@@ -101,15 +99,15 @@ public class AddLongRangeSwitchOnSnpIntersect extends IOwrapper {
 				if (!isFirstSwitch && !isToDiscard) {
 					if (switchInterval == 1) {
 						numShortSwitch1++;
-						posToSwitchMap.put(posBlockStart, "Short1");
+						posToSwitchMap.put(tokens[0] + "_" + posBlockStart, "Short1");
 						isToDiscard = true;
-					} else if (switchInterval == 2) {
-						numShortSwitch2++;
-						posToSwitchMap.put(posBlockStart, "Short2");
-						isToDiscard = true;
-					} else if (switchInterval > 2) {
+					} else if (switchInterval >= 2 && prevPos - posBlockStart > 10000) {
 						numLongRangeSwitch++;
-						posToSwitchMap.put(posBlockStart, "Long");
+						posToSwitchMap.put(tokens[0] + "_" + posBlockStart, "Long");
+					} else {
+						numShortSwitch2++;
+						posToSwitchMap.put(tokens[0] + "_" + posBlockStart, "Short2");
+						isToDiscard = true;
 					}
 				}
 				
@@ -138,8 +136,8 @@ public class AddLongRangeSwitchOnSnpIntersect extends IOwrapper {
 			line = fr.readLine();
 			tokens = line.split(RegExp.TAB);
 			posBlockStart = Integer.parseInt(tokens[PhasedSNP.POS]);
-			if (posToSwitchMap.containsKey(posBlockStart)) {
-				fm.writeLine(line + "\t" + posToSwitchMap.get(posBlockStart));
+			if (posToSwitchMap.containsKey(tokens[0] + "_" + posBlockStart)) {
+				fm.writeLine(line + "\t" + posToSwitchMap.get(tokens[0] + "_" + posBlockStart));
 			} else {
 				fm.writeLine(line);
 			}
@@ -161,9 +159,9 @@ public class AddLongRangeSwitchOnSnpIntersect extends IOwrapper {
 	public static void main(String[] args) {
 		if (args.length > 1) {
 			psIdx = Integer.parseInt(args[2]) - 1;
-			new AddLongRangeSwitchOnSnpIntersect().go(args[0], args[1]);
+			new AddLongRangeSwitchOnSnpIntersectByRange().go(args[0], args[1]);
 		} else {
-			new AddLongRangeSwitchOnSnpIntersect().printHelp();
+			new AddLongRangeSwitchOnSnpIntersectByRange().printHelp();
 		}
 	}
 

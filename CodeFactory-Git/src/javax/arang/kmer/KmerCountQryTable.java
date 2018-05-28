@@ -112,7 +112,7 @@ public class KmerCountQryTable {
 	 * Reads in meryl dump kmer fasta count
 	 * @param fr
 	 */
-	public void readKmerFasta(FileReader fr) {
+	public void readKmerFile(FileReader fr) {
 		String line;
 		int count = 0;
 		if (fr.getFileName().endsWith(".fa") || fr.getFileName().endsWith(".fasta")) {

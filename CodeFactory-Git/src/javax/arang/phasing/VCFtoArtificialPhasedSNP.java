@@ -20,6 +20,7 @@ public class VCFtoArtificialPhasedSNP extends IOwrapper {
 		String[] genotypes = {""};
 		String hapA;
 		String hapB;
+		String prevChr = "";
 		
 		while (fr.hasMoreLines()) {
 			line = fr.readLine();
@@ -34,9 +35,8 @@ public class VCFtoArtificialPhasedSNP extends IOwrapper {
 			
 			alts = tokens[VCF.ALT].split(RegExp.COMMA);
 			int pos = Integer.parseInt(tokens[VCF.POS]);
-			if (this.pos >= pos) {
+			if (prevChr.equals(tokens[VCF.CHROM]) && this.pos >= pos) {
 				System.out.println(line + " : position is overlapping");
-				
 				continue;
 			}
 			this.pos = pos;
@@ -69,7 +69,7 @@ public class VCFtoArtificialPhasedSNP extends IOwrapper {
 			
 			
 			writePhasedVariant(fm, tokens[VCF.CHROM], tokens[VCF.REF], hapA, hapB);
-			
+			prevChr = tokens[VCF.CHROM];
 		}
 	}
 

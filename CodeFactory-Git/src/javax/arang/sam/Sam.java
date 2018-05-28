@@ -6,8 +6,15 @@ import java.util.regex.Pattern;
 
 public class Sam {
 	
+	/***
+	 * Query read id
+	 */
 	public static final short QNAME = 0;
 	public static final short FLAG = 1;
+	
+	/***
+	 * Reference name (Chromosome/Contig)
+	 */
 	public static final short RNAME = 2;	// AKA Chromosome
 	public static final short POS = 3;
 	public static final short MAPQ = 4;

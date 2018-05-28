@@ -33,7 +33,7 @@ public class CalcNGStats extends Rwrapper {
 		}
 		
 		int ngValIdx = 0;
-		System.out.println("NG\tSize\tIdx\tSum\tNGVal");
+		System.err.println("NG\tSize\tIdx\tSum\tNGVal");
 		String ng;
 		String ng_list = "";
 		int i;
@@ -42,7 +42,7 @@ public class CalcNGStats extends Rwrapper {
 			sum += lenList.get(i);
 			while (ngValIdx < ngVal.size() && sum >= ngVal.get(ngValIdx)) {
 				ng=String.format("%,.0f", lenList.get(i));
-				System.out.println("NG" + (ngValIdx + 1) * 5 + "\t" + String.format("%,.0f", lenList.get(i)) + "\t" + (j + 1) + "\t" + String.format("%,.0f", sum) + "\t" + String.format("%,.0f", ngVal.get(ngValIdx)));
+				System.err.println("NG" + (ngValIdx + 1) * 5 + "\t" + String.format("%,.0f", lenList.get(i)) + "\t" + (j + 1) + "\t" + String.format("%,.0f", sum) + "\t" + String.format("%,.0f", ngVal.get(ngValIdx)));
 				ngValIdx++;
 				ng_list += ng + "\t";
 				if (ngValIdx == ngVal.size()) {
@@ -51,19 +51,19 @@ public class CalcNGStats extends Rwrapper {
 			}
 		}
 		
-		System.out.println();
-		System.out.println("Total num. bases:\t" + String.format("%,.0f", sum));
-		System.out.println("Total num. contigs (scaffolds):\t" + String.format("%,d", lenList.size()));
-		System.out.println("Max contig (scaffold) size:\t" + String.format("%,.0f", lenList.get(lenList.size() - 1)));
+		System.err.println();
+		System.err.println("Total num. bases:\t" + String.format("%,.0f", sum));
+		System.err.println("Total num. contigs (scaffolds):\t" + String.format("%,d", lenList.size()));
+		System.err.println("Max contig (scaffold) size:\t" + String.format("%,.0f", lenList.get(lenList.size() - 1)));
 		
-		System.out.println();
-		System.out.println("1-line Summary");
-		System.out.println("TotalBP\tNum.Contigs(Scaffolds)\tMax\tNG5\tNG10\tNG15\tNG20\tNG25\tNG30\tNG35\tNG40\tNG45\tNG50\tNG55\tNG60\tNG65\tNG70\tNG75\tNG80\tNG85\tNG90\tNG95\tNG100");
-		System.out.println(String.format("%,.0f", sum) + "\t" + String.format("%,d", lenList.size()) + "\t" + String.format("%,.0f", lenList.get(lenList.size() - 1)) + "\t" + ng_list);
+		System.err.println();
+		System.err.println("1-line Summary");
+		System.out.println("Assembly\tTotalBP\tNum.Contigs(Scaffolds)\tMax\tNG5\tNG10\tNG15\tNG20\tNG25\tNG30\tNG35\tNG40\tNG45\tNG50\tNG55\tNG60\tNG65\tNG70\tNG75\tNG80\tNG85\tNG90\tNG95\tNG100");
+		System.out.println(fr.getFileName() + "\t" + String.format("%,.0f", sum) + "\t" + String.format("%,d", lenList.size()) + "\t" + String.format("%,.0f", lenList.get(lenList.size() - 1)) + "\t" + ng_list);
 
 		double totalBp = sum;
-		System.out.println();
-		System.out.println("N-XX values");
+		System.err.println();
+		System.err.println("N-XX values");
 		ngVal.clear();
 		for (i = 5; i <= 100; i += 5) {
 			//System.err.println("NG" + i + ": " + String.format("%,.0f", (genomeSize / 100) * i));
@@ -78,7 +78,7 @@ public class CalcNGStats extends Rwrapper {
 			sum += lenList.get(i);
 			while (ngValIdx < ngVal.size() && sum >= ngVal.get(ngValIdx)) {
 				ng=String.format("%,.0f", lenList.get(i));
-				System.out.println("N" + (ngValIdx + 1) * 5 + "\t" + String.format("%,.0f", lenList.get(i)) + "\t" + (j + 1) + "\t" + String.format("%,.0f", sum) + "\t" + String.format("%,.0f", ngVal.get(ngValIdx)));
+				System.err.println("N" + (ngValIdx + 1) * 5 + "\t" + String.format("%,.0f", lenList.get(i)) + "\t" + (j + 1) + "\t" + String.format("%,.0f", sum) + "\t" + String.format("%,.0f", ngVal.get(ngValIdx)));
 				ngValIdx++;
 				ng_list += ng + "\t";
 				if (ngValIdx == ngVal.size()) {
@@ -87,8 +87,9 @@ public class CalcNGStats extends Rwrapper {
 			}
 		}
 		
-		System.out.println("TotalBP\tNum.Contigs(Scaffolds)\tMax\tN5\tN10\tN15\tN20\tN25\tN30\tN35\tN40\tN45\tN50\tN55\tN60\tN65\tN70\tN75\tN80\tN85\tN90\tN95\tN100");
-		System.out.println(String.format("%,.0f", sum) + "\t" + String.format("%,d", lenList.size()) + "\t" + String.format("%,.0f", lenList.get(lenList.size() - 1)) + "\t" + ng_list);
+		System.out.println();
+		System.out.println("Assembly\tTotalBP\tNum.Contigs(Scaffolds)\tMax\tN5\tN10\tN15\tN20\tN25\tN30\tN35\tN40\tN45\tN50\tN55\tN60\tN65\tN70\tN75\tN80\tN85\tN90\tN95\tN100");
+		System.out.println(fr.getFileName() + "\t" + String.format("%,.0f", sum) + "\t" + String.format("%,d", lenList.size()) + "\t" + String.format("%,.0f", lenList.get(lenList.size() - 1)) + "\t" + ng_list);
 
 	}
 
@@ -97,10 +98,10 @@ public class CalcNGStats extends Rwrapper {
 		System.out.println("Usage: java -jar lenCalcNGStats.jar <in.fasta.len> <genome_size> [lenIdx]");
 		System.out.println("Print the NG values and N values in stdout.");
 		System.out.println("\t<in.fasta.len>: generated with fastaContigSize.jar");
-		System.out.println("\t<genome_size>: ex. 3.2G or 1.1G. Either in numbers or with k, m, g notation.");
+		System.out.println("\t<genome_size>: numbers. (deprecated to use g/m/k notations)");
 		System.out.println("\t\tMaximum genome size: " + Double.MAX_VALUE);
 		System.out.println("\t[lenIdx]: DEFAULT=2. 1-based. Column index to look up, starting from the END.");
-		System.out.println("Arang Rhie, 2017-09-17. arrhie@gmail.com");
+		System.out.println("Arang Rhie, 2018-04-24. arrhie@gmail.com");
 		
 	}
 

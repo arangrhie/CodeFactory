@@ -97,7 +97,7 @@ public class DeltaToSam extends Rwrapper {
 			// Same fa, different alignment
 			if (tokens.length == 7) {
 				System.err.println("[DEBUG] :: " + line);
-				refPos = tokens[Delta.TARGET_START];
+				refPos = tokens[Delta.R_START];
 				
 				flag = SAMUtil.setFirstSegmentInTemplate(0);
 

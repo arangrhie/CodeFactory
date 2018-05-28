@@ -476,5 +476,14 @@ public class SAMUtil {
 		return mdi;
 	}
 	
+	/***
+	 * Trim off the tag name and type.
+	 * @param tag
+	 * @return value of the tag
+	 */
+	public static String parseTag(String tag) {
+		String[] tokens = tag.split(":");
+		return tokens[2];
+	}
 	
 }

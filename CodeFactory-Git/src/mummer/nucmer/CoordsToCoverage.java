@@ -42,9 +42,9 @@ public class CoordsToCoverage extends R2wrapper {
 			while (frCoords.hasMoreLines()) {
 				line = frCoords.readLine();
 				tokens = line.split(RegExp.WHITESPACE);
-				if (tokens[COORDS.T_NAME].equals(target) && tokens[COORDS.Q_NAME].startsWith(querey)) {
-					tStart = Double.parseDouble(tokens[COORDS.T_START]);
-					tEnd = Double.parseDouble(tokens[COORDS.T_END]);
+				if (tokens[COORDS.R_NAME].equals(target) && tokens[COORDS.Q_NAME].startsWith(querey)) {
+					tStart = Double.parseDouble(tokens[COORDS.R_START]);
+					tEnd = Double.parseDouble(tokens[COORDS.R_END]);
 					if (start < tStart && tEnd < end) {
 						if (!quereyLen.containsKey(tokens[COORDS.Q_NAME])) {
 							quereyLen.put(tokens[COORDS.Q_NAME], Double.parseDouble(tokens[COORDS.Q_LEN]));

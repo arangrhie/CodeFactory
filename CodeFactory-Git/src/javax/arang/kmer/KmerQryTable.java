@@ -8,7 +8,7 @@ import javax.arang.IO.basic.FileReader;
 import javax.arang.IO.basic.RegExp;
 
 /***
- * This table is for simple unique kmer handling; i.e. exact matchs
+ * This table is for simple unique kmer handling; i.e. exact matches
  * @author rhiea
  *
  */
@@ -107,6 +107,9 @@ public class KmerQryTable {
 	public boolean hasKmer(String kmer) {
 		prefix = Kmer.toKmer(kmer.substring(0, prefixLen));
 		postfix = Kmer.toKmer(kmer.substring(prefixLen));
+		if (prefix == null || postfix == null) {
+			return false;
+		}
 		if (kmerTable.containsKey(prefix) && kmerTable.get(prefix).contains(postfix)) {
 			return true;
 		}

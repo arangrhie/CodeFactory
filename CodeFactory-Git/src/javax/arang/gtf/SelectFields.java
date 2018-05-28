@@ -15,51 +15,66 @@ public class SelectFields extends IOwrapper {
 		String line;
 		String[] tokens;
 		
-		System.out.print("[DEBUG] Following fields are selected:");
+		System.err.print("[DEBUG] Following fields are selected:");
 		for (String args : SelectFields.fieldsAndAttrisToSelect) {
 			int col = GTF.getColumn(args);
 			if (col != GTF.UNKNOWN) {
-				System.out.print(" " + args + "(field) ");
+				System.err.print(" " + args + "(field) ");
 			} else {
-				System.out.print(" " + args + "(attribute) ");
+				System.err.print(" " + args + "(attribute) ");
 			}
 		}
-		System.out.println();
+		System.err.println();
 		
 		int col;
 		int numLines = 0;
-		while (fr.hasMoreLines()) {
+		int selected = 0;
+		String outline = "";
+		String attribute;
+		READ_LOOP : while (fr.hasMoreLines()) {
 			line = fr.readLine();
 			if (line.startsWith("#"))	continue;
 			tokens = line.split(RegExp.TAB);
+			outline = "";
 			numLines++;
 			for (int i = 0; i < fieldsAndAttrisToSelect.size(); i++) {
 				col = GTF.getColumn(fieldsAndAttrisToSelect.get(i));
 				if (col != GTF.UNKNOWN) {
-					fm.write(tokens[col]);
+					outline += tokens[col];
+					//fm.write(tokens[col]);
 				} else {
 					ATTRIBUTE_LOOP : for (int j = GTF.ATTRIBUTE; j < tokens.length; j++) {
 						if (tokens[j].contains("=")) {
-							fm.write(GFF.parseField(tokens[GTF.ATTRIBUTE], fieldsAndAttrisToSelect.get(i)));
+							attribute = GFF.parseField(tokens[GTF.ATTRIBUTE], fieldsAndAttrisToSelect.get(i));
+							if (attribute == null) {
+								continue READ_LOOP;
+							} else {
+								outline += attribute;
+							}
+							//fm.write(GFF.parseField(tokens[GTF.ATTRIBUTE], fieldsAndAttrisToSelect.get(i)));
 							break ATTRIBUTE_LOOP;
 						} else {
 							if (fieldsAndAttrisToSelect.get(i).equals(tokens[j])) {
 								tokens[j+1] = tokens[j+1].replace("\"", "");
 								tokens[j+1] = tokens[j+1].replace(";", "");
-								fm.write(tokens[j+1]);
+								outline += tokens[j+1];
+								//fm.write(tokens[j+1]);
 								break ATTRIBUTE_LOOP;
 							}
 							j++;
 						}
 					}
 				}
+				selected++;
 				if (i < fieldsAndAttrisToSelect.size() - 1) {
-					fm.write("\t");
+					outline += "\t";
+					//fm.write("\t");
 				}
 			}
-			fm.writeLine();
+			//fm.writeLine();
+			fm.writeLine(outline);
 		}
-		System.out.println(numLines + " are selected");
+		System.err.println(selected + " / " + numLines + " lines selected");
 	}
 
 	@Override

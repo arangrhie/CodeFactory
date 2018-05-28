@@ -69,7 +69,32 @@ public class Bed {
 		return false;
 	}
 	
-	
+	public boolean hasRegion(String contig, int start, int end) {
+		System.err.println("[DEBUG] :: " + contig + " " + start + " " + end);
+		int closestStart = Util.getRegionStartContainingPos(starts.get(contig), start);
+		int closestStartIdx = starts.get(contig).indexOf(closestStart);
+		if (closestStart < 0)	return false;
+		int closestEnd = ends.get(contig).get(closestStartIdx);
+		
+		System.err.println("[DEBIG] :: closestStartIdx = " + closestStartIdx + " " +
+				contig + " " + closestStart + " " + closestEnd);
+		if (start <= closestEnd && closestStart <= end) {
+			return true;
+		}
+		
+		if (starts.get(contig).size() > closestStartIdx + 1) {
+			closestStart = starts.get(contig).get(closestStartIdx + 1);
+			closestEnd = ends.get(contig).get(closestStartIdx + 1);
+			System.err.println("[DEBIG] :: closestStartIdx+1 = " + (closestStartIdx+1) + " " +
+					contig + " " + closestStart + " " + closestEnd);
+			if (start <= closestEnd && closestStart <= end) {
+				return true;
+			}
+		}
+		
+		
+		return false;
+	}
 	
 	/***
 	 * Get the closest start position in the Bed regions to the given pos

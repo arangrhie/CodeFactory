@@ -6,9 +6,11 @@ import java.util.HashMap;
 import javax.arang.genome.util.Util;
 
 public class Region {
+	private String chr;
 	private int start = -1;
 	private int end = -1;
 	private String notes = "";
+	private boolean strand = true; // TRUE = +, FALSE = -
 	
 	public Region(int start, int end, String notes) {
 		this.start = start;
@@ -16,11 +18,27 @@ public class Region {
 		this.notes = notes;
 	}
 	
+	public Region(int start, int end, boolean strand) {
+		this.start = start;
+		this.end = end;
+		this.strand = strand;
+	}
+	
+	public Region(String chr, int start, int end) {
+		this.chr = chr;
+		this.start = start;
+		this.end = end;
+	}
+	
 	public boolean isInRegion(int pos) {
 		if (start < pos && pos <= end) {
 			return true;
 		}
 		return false;
+	}
+	
+	public boolean getStrand() {
+		return strand;
 	}
 	
 	public String getName() {

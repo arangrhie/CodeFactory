@@ -38,8 +38,8 @@ public class FindSequence extends Rwrapper {
 	}
 	
 	protected void matchingStrategy(String line, int i, String contig, int pos) {
-		if (line.charAt(i) == sequenceToSearchFirstBase && line.substring(i).startsWith(sequenceToSearch)
-				|| line.charAt(i) == sequenceToSearchRCFirstBase && line.substring(i).startsWith(sequenceToSearchRC)) {
+		if (line.substring(i, i + sequenceToSearchLen).matches(sequenceToSearch)
+				|| line.substring(i, i + sequenceToSearchLen).matches(sequenceToSearchRC)) {
 			System.out.println(contig + "\t" + pos + "\t" + (pos + sequenceToSearchLen));
 		}
 	}
@@ -49,10 +49,11 @@ public class FindSequence extends Rwrapper {
 		System.out.println("Usage: java -jar fastaFindSequence.jar <sequence> <in.fasta>");
 		System.out.println("Simple exact match finder.");
 		System.out.println("\tSearch for <sequence> in <in.fasta> and report positions in bed format.");
-		System.out.println("\t<sequence>: Sequence to find. Automatically finds for reverse complement sequence.");
+		System.out.println("\t<sequence>: Sequence to find. Finds for reverse complement sequence as well.");
+		System.out.println("\t\tAccepts wild card: N. ex. GANTC will search for GAATC, GATTC, GAGTC, GACTC, and GATC.");
 		System.out.println("\t<in.fasta>: Fasta file to search in.");
 		System.out.println("\t<stdout>: BED format of positions containing the <sequence>.");
-		System.out.println("Arang Rhie, 2017-04-15. arrhie@gmail.com");
+		System.out.println("Arang Rhie, 2018-03-15. arrhie@gmail.com");
 		
 	}
 	
@@ -65,10 +66,13 @@ public class FindSequence extends Rwrapper {
 		sequenceToSearch = sequence.toLowerCase();
 		sequenceToSearchRC = FASTA.getReverseComplement(sequenceToSearch).toString();
 		sequenceToSearchLen = sequenceToSearch.length();
+		sequenceToSearch = sequenceToSearch.replace("n", "([atgc])?") + "\\S+";
+		sequenceToSearchRC = sequenceToSearchRC.replace("n", "([atgc])?") + "\\S+";
 		sequenceToSearchFirstBase = sequenceToSearch.charAt(0);
 		sequenceToSearchRCFirstBase = sequenceToSearchRC.charAt(0);
 		System.err.println("Sequence to find: " + sequenceToSearch);
 		System.err.println("Reverse complement: " + sequenceToSearchRC);
+		
 	}
 
 	protected static String sequenceToSearch;	// sequence to search.
@@ -84,6 +88,13 @@ public class FindSequence extends Rwrapper {
 		} else {
 			new FindSequence().printHelp();
 		}
+		
+//		System.out.println();
+//		System.out.println();
+//		
+//		String seqToSearch = "GA([ATGC])?TC\\S+";
+//		String givenSeq = "GATCAA";
+//		System.out.println("givenSeq.matches(seqToSearch) = " + givenSeq.matches(seqToSearch));
 	}
 	
 	

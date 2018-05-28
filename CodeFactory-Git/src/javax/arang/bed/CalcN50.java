@@ -34,17 +34,22 @@ public class CalcN50 extends Rwrapper {
 		}
 		
 		Collections.sort(lenArr);
-		System.err.println("Num. blocks:\t" + String.format("%,d", lenArr.size()));
 		double n50 = Util.getN50(lenArr, lenSum);
-		System.err.println("N50:\t" + String.format("%,d", n50));
-		System.err.println("Avg. block size:\t" + String.format("%,.1f", ((float)lenSum / lenArr.size())));
-		System.err.println("Genome covered bases:\t" + String.format("%,.0f", lenSum));
-		System.err.println("Num. Blocks\tBlock Size N50\tAvg. Block Size\tLongest Block Size\tGenome Covered (bp)");
-		System.out.println(String.format("%,d", lenArr.size())
-				+ "\t" + String.format("%,d", n50)
-				+ "\t" + String.format("%,.1f", ((float)lenSum / lenArr.size()))
+		System.err.println("Num. blocks:\t" + Format.numbersToDecimal(lenArr.size()));
+		System.err.println("Genome covered bases:\t" + Format.numbersToDecimal(lenSum));
+		System.err.println("Min: \t" + Format.numbersToDecimal(lenArr.get(0)));
+		System.err.println("Avg. block size:\t" + Format.numbersToDecimal((float)lenSum / lenArr.size()));
+		System.err.println("N50:\t" + Format.numbersToDecimal(n50));
+		System.err.println("Longest block (contig) size:\t" + Format.numbersToDecimal(lenArr.get(lenArr.size() - 1)));
+		
+		System.out.println("Num. Blocks\tGenome Covered (bp)\tMin. Block\tAvg. Block Size\tBlock Size N50\tLongest Block Size");
+		System.out.println(Format.numbersToDecimal(lenArr.size())
+				+ "\t" + Format.numbersToDecimal(lenSum)
+				+ "\t" + Format.numbersToDecimal(lenArr.get(0))
+				+ "\t" + Format.numbersToDecimal((float)lenSum / lenArr.size())
+				+ "\t" + Format.numbersToDecimal(n50)
 				+ "\t" + Format.numbersToDecimal(lenArr.get(lenArr.size() - 1))
-				+ "\t" + String.format("%,.0f", lenSum));
+				);
 	}
 
 	@Override
@@ -52,7 +57,7 @@ public class CalcN50 extends Rwrapper {
 		System.out.println("Usage: java -jar phasingBedN50.jar <sort.merged.bed>");
 		System.out.println("Simple tools for calculating num. blocks, N50, L50, longest block size, genome covered bases.");
 		System.out.println("\t<in.bed>: bedSort.jar <in.bed> <sort.bed>, bedtools merge -i <sort.bed> > <sort.merged.bed>");
-		System.out.println("Arang Rhie, 2016-02-18. arrhie@gmail.com");
+		System.out.println("Arang Rhie, 2018-05-01. arrhie@gmail.com");
 	}
 
 	public static void main(String[] args) {
