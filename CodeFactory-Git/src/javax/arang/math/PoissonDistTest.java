@@ -6,14 +6,14 @@ import org.apache.commons.math3.distribution.PoissonDistribution;
 
 public class PoissonDistTest extends Wrapper {
 	
-	PoissonDistribution pd = new PoissonDistribution(31);
+	PoissonDistribution pd = new PoissonDistribution(26);
 	private void test() {
 		//System.out.println(Integer.MAX_VALUE);
 		startTiming();
 		
 		double sum = 0;
-		for (int i = 1; i < 62; i++) {
-			sum += pd.probability(i);
+		for (int i = 1; i < 10; i++) {
+			sum += pd.probability(i) * 25745942 * 2;
 		}
 		System.out.println(sum);
 		printTiming();
