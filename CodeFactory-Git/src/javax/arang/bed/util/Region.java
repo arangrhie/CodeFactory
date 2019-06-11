@@ -6,7 +6,6 @@ import java.util.HashMap;
 import javax.arang.genome.util.Util;
 
 public class Region {
-	private String chr;
 	private int start = -1;
 	private int end = -1;
 	private String notes = "";
@@ -25,7 +24,6 @@ public class Region {
 	}
 	
 	public Region(String chr, int start, int end) {
-		this.chr = chr;
 		this.start = start;
 		this.end = end;
 	}
