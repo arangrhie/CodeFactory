@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.Vector;
 
 import javax.arang.IO.basic.FileReader;
-import javax.arang.IO.basic.Format;
 
 public class Util {
 	
