@@ -7,9 +7,9 @@ public class MashMap {
 	public static final int Q_END = 3;
 	public static final int Q_STRAND = 4;
 	
-	public static final int T_CHR = 5;
-	public static final int T_LEN = 6;
-	public static final int T_START = 7;
-	public static final int T_END = 8;
-	public static final int T_IDENTITY = 9;
+	public static final int R_CHR = 5;
+	public static final int R_LEN = 6;
+	public static final int R_START = 7;
+	public static final int R_END = 8;
+	public static final int R_IDENTITY = 9;
 }
