@@ -95,9 +95,9 @@ public class Chain extends Rwrapper {
 			}
 			
 			// add to covered R regions
-			tChr = tokens[MashMap.T_CHR];
-			tStart = Integer.parseInt(tokens[MashMap.T_START]);
-			tEnd = Integer.parseInt(tokens[MashMap.T_END]);
+			tChr = tokens[MashMap.R_CHR];
+			tStart = Integer.parseInt(tokens[MashMap.R_START]);
+			tEnd = Integer.parseInt(tokens[MashMap.R_END]);
 			
 			
 			prevQchr = qChr;
