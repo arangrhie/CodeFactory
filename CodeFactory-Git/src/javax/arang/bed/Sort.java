@@ -104,7 +104,7 @@ public class Sort extends IOwrapper {
 		Integer[] ends = new Integer[0];
 		for (int i = 0; i < chrs.length; i++) {
 			chrRegion = bedMap.get(chrs[i]);
-			System.out.println("[DEBUG] :: " + chrs[i].getChromStringVal() + " : " + chrRegion.size() + " unique starts");
+			System.err.println("[DEBUG] :: " + chrs[i].getChromStringVal() + " : " + chrRegion.size() + " unique starts");
 			Integer[] starts = new Integer[0];
 			starts = chrRegion.keySet().toArray(starts);
 			Arrays.sort(starts);
