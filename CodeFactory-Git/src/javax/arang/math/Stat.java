@@ -15,14 +15,12 @@ public class Stat {
 	 * @param average average value
 	 * @return standard deviation of the given list of values
 	 */
-	public static double getSD(ArrayList<Integer> values, double average) {
-		double sa = 0;	// x - average
-		double sd;
-		int n = values.size();
-		for (int i = 1; i < n; i++) {
-			sa += Math.pow(values.get(i) - average, 2);
-		}
-		sd = Math.sqrt(sa) / n;
-		return sd;
+	public static double getSD(ArrayList<Double> values, double average) {
+		Double standardDeviation = 0d;
+		for(double dist: values) {
+			standardDeviation += Math.pow(dist - average, 2);
+        }
+
+        return Math.sqrt(standardDeviation/values.size());
 	}
 }
