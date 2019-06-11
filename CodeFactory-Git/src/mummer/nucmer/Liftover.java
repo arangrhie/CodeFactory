@@ -270,7 +270,7 @@ public class Liftover extends R2wrapper {
 									start = rStart;
 									isTruncated = true;
 								}
-								System.out.print(contig + "\t" + String.format("%.0f", start) + "\t" + String.format("%.0f", end));
+								//System.out.print(contig + "\t" + String.format("%.0f", start) + "\t" + String.format("%.0f", end));
 								coordinates = "\t" + liftedContig + "\t" + String.format("%.0f", liftStart);
 								foundLiftStart = true;
 							} else if (!isRefRegion) {
@@ -281,7 +281,7 @@ public class Liftover extends R2wrapper {
 									start = qStart;
 									isTruncated = true;
 								}
-								System.out.print(contig + "\t" + String.format("%.0f", start) + "\t" + String.format("%.0f", end));
+								//System.out.print(contig + "\t" + String.format("%.0f", start) + "\t" + String.format("%.0f", end));
 								coordinates = "\t" + liftedContig + "\t" + String.format("%.0f", liftStart);
 								foundLiftStart = true;
 							}
@@ -336,7 +336,7 @@ public class Liftover extends R2wrapper {
 		System.out.println("\t<r or q>: r if given <region> is reference coordinate, else q if query coordinate");
 		System.out.println("\t<region>: contig:start-end style region to lift over. Could be a bed file (ending with .bed extension).");
 		System.out.println("\t<stdout>: query\tlifted_coords\tstrand\tedit_distance\tcomplete/truncated\texact-matching query coords if truncated paired-bed style.");
-		System.out.println("Arang Rhie, 2017-10-18. arrhie@gmail.com");
+		System.out.println("Arang Rhie, 2019-01-07. arrhie@gmail.com");
 	}
 
 }
