@@ -25,6 +25,7 @@ public class CalcN50 extends Rwrapper {
 		while (fr.hasMoreLines()) {
 			line = fr.readLine();
 			if (line.startsWith("#"))	continue;
+			if (line.startsWith("track"))	continue;
 			tokens = line.split(RegExp.TAB);
 			start = Integer.parseInt(tokens[Bed.START]);
 			end = Integer.parseInt(tokens[Bed.END]);
@@ -54,10 +55,10 @@ public class CalcN50 extends Rwrapper {
 
 	@Override
 	public void printHelp() {
-		System.out.println("Usage: java -jar phasingBedN50.jar <sort.merged.bed>");
+		System.out.println("Usage: java -jar bedCalcN50.jar <sort.merged.bed>");
 		System.out.println("Simple tools for calculating num. blocks, N50, L50, longest block size, genome covered bases.");
 		System.out.println("\t<in.bed>: bedSort.jar <in.bed> <sort.bed>, bedtools merge -i <sort.bed> > <sort.merged.bed>");
-		System.out.println("Arang Rhie, 2018-05-01. arrhie@gmail.com");
+		System.out.println("Arang Rhie, 2019-06-10. arrhie@gmail.com");
 	}
 
 	public static void main(String[] args) {
