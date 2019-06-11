@@ -4,28 +4,24 @@ import java.util.ArrayList;
 
 public class VGPData {
 
-	private String speciesId;
+	private String genomeId;
 	private String speciesName;
 	
 	private int numSubreadBams = 0;
 	private int numScrapsBams = 0;
 	private int num10xR1 = 0;
 	
-	private boolean bspqi = false;
-	private boolean bsssi = false;
-	private boolean tgh = false;
-	private boolean hasOneBS = false;
-	private boolean dls = false;
-	private boolean hasBnx = false;
-	private boolean hasCmap = false;
+	ArrayList<String> bionanoReBnx = new ArrayList<String>();
+	ArrayList<String> bionanoReCmap = new ArrayList<String>();
 	ArrayList<String> hicVenders = new ArrayList<String>();
+	ArrayList<String> assemblies = new ArrayList<String>();
 	
 	private boolean updateCount = false;
 	private int tech_count = 0;
 	private int internal_score = 0;
 	
-	public VGPData(String speciesId, String speciesName) {
-		this.speciesId = speciesId;
+	public VGPData(String genomeId, String speciesName) {
+		this.genomeId = genomeId;
 		this.speciesName = speciesName;
 	}
 	
@@ -53,18 +49,21 @@ public class VGPData {
 	}
 	
 	public void addBionano(String file) {
-		if (file.contains("bspqi")) {
-			bspqi = true;
-		} else if (file.contains("bsssi")) {
-			bsssi = true;
-		} else if (file.contains("dle") || file.contains("dls")) {
-			dls = true;
-		}
+		ArrayList<String> bionanoRe = null;
 		if (file.contains("bnx")) {
-			hasBnx = true;
+			bionanoRe = bionanoReBnx;
 		} else if (file.contains("cmap")) {
-			hasCmap = true;
+			bionanoRe = bionanoReCmap;
 		}
+		
+		if (file.contains("bspqi") && !bionanoRe.contains("BspQI")) {
+			bionanoRe.add("BspQI");
+		} else if (file.contains("bsssi") && !bionanoRe.contains("BssSI")) {
+			bionanoRe.add("BssSI");
+		} else if ((file.contains("dle") || file.contains("dls")) && !bionanoRe.contains("DLE1")) {
+			bionanoRe.add("DLE1");
+		}
+		
 		updateCount = true;
 	}
 	
@@ -73,36 +72,33 @@ public class VGPData {
 		
 		if (isMDstyle) {
 			System.out.println("| " + speciesName + "\t" +
-					"| " + speciesId + "\t" +
+					"| " + genomeId + "\t" +
 					"| " + tech_count + "\t" +
 					"| " + numSubreadBams + "\t" + 
 					"| " + numScrapsBams + "\t" +
 					"| " + num10xR1 + "\t" +
-					"| " + (tgh ? "O" : "X") + "\t" +
-					"| " + (dls ? "O" : "X") + "\t" +
-					"| " + (hasBnx ? "O" : "X") + "\t" +
-					"| " + (hasCmap ? "O" : "X") + "\t" +
-					"| " + listHiC() + " |");
+					"| " + list(bionanoReBnx) + "\t" +
+					"| " + list(bionanoReCmap) + "\t" +
+					"| " + list(hicVenders) + "\t" +
+					"| " + list(assemblies) + " |");
 		} else {
 			System.out.println(speciesName + "\t" +
-					speciesId + "\t" +
+					genomeId + "\t" +
 					tech_count + "\t" +
 					numSubreadBams + "\t" + 
 					numScrapsBams + "\t" +
 					num10xR1 + "\t" +
-					(tgh ? "O" : "X") + "\t" +
-					(dls ? "O" : "X") + "\t" +
-					(hasBnx ? "O" : "X") + "\t" +
-					(hasCmap ? "O" : "X") + "\t" +
-					listHiC());
+					list(bionanoReBnx) + "\t" +
+					list(bionanoReCmap) + "\t" +
+					list(hicVenders) + "\t" +
+					list(assemblies));
 		}
 	}
 	
 	private void updateTechCount() {
 		if (updateCount) {
-			if (bspqi && bsssi) {
-				tgh = true;
-			}
+			tech_count = 0;
+			internal_score = 0;
 			if (numSubreadBams + numScrapsBams > 0) {
 				tech_count++;
 				internal_score++;
@@ -111,18 +107,34 @@ public class VGPData {
 				tech_count++;
 				internal_score++; 
 			}
-			if (tgh || dls) {
+			if (bionanoReBnx.size() + bionanoReCmap.size() > 0) {
 				tech_count++;
-				if (tgh) {
-					internal_score++;
+				if (bionanoReBnx.size() > 0) {
+					internal_score ++;
 				}
-				if (dls) {
-					internal_score++;
+				if (bionanoReCmap.size() > 0) {
+					internal_score ++;
 				}
 			}
 			if (hicVenders.size() > 0) {
 				tech_count++;
 				internal_score += hicVenders.size();
+			}
+			
+			// Give priorities to genomes with at least 1 assembly done
+			if (assemblies.size() > 0) {
+				tech_count ++;
+				internal_score += 10;
+			}
+			
+			// Earn extra +4 if all 4 platforms are collected
+			if (tech_count == 4) {
+				internal_score += 4;
+			}
+			
+			// Earn extra +6 if all 4 platforms + 1 assembly is collected
+			if (tech_count >= 5) {
+				internal_score += 6;
 			}
 		}
 		
@@ -141,34 +153,44 @@ public class VGPData {
 	public static void printHeader(boolean isMDstyle) {
 		if (isMDstyle) {
 			System.out.println("| species_name\t"
-					+ "| species_id\t"
+					+ "| genome_id\t"
 					+ "| tech_count\t"
 					+ "| pacbio_subreads\t"
 					+ "| pacbio_scrubs\t"
 					+ "| 10x\t"
-					+ "| bionano_tgh\t"
-					+ "| bionano_dls\t"
 					+ "| bionano_bnx\t"
 					+ "| bionano_cmap\t"
-					+ "| hic |");
-			System.out.println("| :---------- | :---------- | :---------- | :---------- | :---------- | :----- | :----- | :----- | :----- | :----- | :----- |");
+					+ "| hic \t"
+					+ "| assembly |");
+			System.out.println("| :---------- | :---------- | :---------- | :---------- | :---------- | :----- | :----- | :----- | :----- | :----- |");
 		} else {
-			System.out.println("species_name\tspecies_id\t"
+			System.out.println("species_name\tgenome_id\t"
 					+ "tech_count\t"
 					+ "pacbio_subreads\tpacbio_scrubs\t10x\t"
-					+ "bionano_tgh\tbionano_dls\tbionano_bnx\tbionano_cmap\t"
-					+ "hic");
+					+ "bionano_bnx\tbionano_cmap\t"
+					+ "hic\t"
+					+ "assembly");
 		}
 	}
 	
-	private String listHiC() {
-		String vendors = "";
-		for(String hiC : hicVenders) {
-			vendors += hiC + ",";
+	private String list(ArrayList<String> list) {
+		String elements = "";
+		for(String element : list) {
+			elements += element + ",";
 		}
-		if (!vendors.equals("")) {
-			vendors = vendors.substring(0, vendors.length() - 1);
+		if (!elements.equals("")) {
+			elements = elements.substring(0, elements.length() - 1);
 		}
-		return vendors;
+		if (elements.equals("")) {
+			elements = "X";
+		}
+		return elements;
+	}
+
+	public void addAssembly(String file) {
+		if(file.contains(".fasta")) {
+			assemblies.add(file.substring(file.indexOf("_") + 1, file.indexOf(".fasta")));
+		}
+		
 	}
 }
