@@ -114,14 +114,22 @@ public class HistToPloidyDepth extends Rwrapper {
 				} else if (d < prevD) {
 					// kick out the previous local maxima
 					System.err.println("Next max here: " + (depth - 1) + ", " + prevCount);
+					if (hasHaploidDepthAdded && countMin == 1) {
+						// no min between estimated haploid peak and next max
+						ploidyBoundary.add(ploidyDepth.get(ploidyDepth.size() - 1) + (depth - 1 - ploidyDepth.get(ploidyDepth.size() - 1)) / 2);
+						hasHaploidDepthAdded = false;
+					}
 					if (ploidyCount.size() > 0 && ploidyDepth.get(ploidyDepth.size() - 1) + 5 > depth) {
 						if (ploidyCount.get(ploidyCount.size() - 1) < prevCount) {
 							System.err.println("Kick out local maxima: " + ploidyDepth.get(ploidyDepth.size() - 1) + ", " + ploidyCount.get(ploidyCount.size() - 1));
 							ploidyDepth.remove(ploidyDepth.size() - 1);
 							ploidyCount.remove(ploidyCount.size() - 1);
-							ploidyBoundary.remove(ploidyBoundary.size() - 1);
+							if (ploidyBoundary.size() > 0) {
+								ploidyBoundary.remove(ploidyBoundary.size() - 1);
+							}
 							ploidyDepth.add(depth - 1);
 							ploidyCount.add(prevCount);
+							hasHaploidDepthAdded = false;
 						} // else don't add this depth - 1
 					} else {
 						ploidyDepth.add(depth - 1);
