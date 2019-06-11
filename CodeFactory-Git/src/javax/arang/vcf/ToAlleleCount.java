@@ -42,7 +42,7 @@ public class ToAlleleCount extends IOwrapper {
 			} else if (gt.equals("2")) {
 				gt = "HOM";
 				hom++;
-			} else if (gt.equals("3")) {
+			} else {
 				gt = "MULTI";
 			}
 			if (!sampleInfo.containsKey("AD")) {
@@ -62,7 +62,7 @@ public class ToAlleleCount extends IOwrapper {
 	public void printHelp() {
 		System.out.println("Usage: java -jar vcfToAlleleCount.jar <in.vcf> <out.allele.cnt>");
 		System.out.println("\t<in.vcf>: vcf file made with GATK, containing AD GQ field");
-		System.out.println("\t<out.allele.cnt>: CHROM\tPOS\tREF\tALT\tQUAL\tINFO\tGQ\tHET/HOM\tREF_CNT\tALT_CNT");
+		System.out.println("\t<out.allele.cnt>: CHROM\tPOS\tREF\tALT\tQUAL\tFILTER\tGQ\tHET/HOM\tREF_CNT\tALT_CNT");
 		System.out.println("Arang Rhie, 2016-02-12. arrhie@gmail.com");
 	}
 
