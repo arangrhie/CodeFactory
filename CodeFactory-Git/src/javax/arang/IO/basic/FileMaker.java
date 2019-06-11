@@ -147,4 +147,14 @@ public class FileMaker {
 		} catch (Exception e) {
 		}
 	}
+	
+	public boolean remove() {
+		closeMaker();
+		File file = new File(dir+"/"+fileName);
+		if (file.exists()) {
+			return file.delete();
+		} else {
+			return false;
+		}
+	}
 }
