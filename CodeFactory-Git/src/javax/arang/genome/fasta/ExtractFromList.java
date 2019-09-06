@@ -10,6 +10,8 @@ import javax.arang.IO.basic.RegExp;
 
 public class ExtractFromList extends I2Owrapper {
 
+	private static ArrayList<String> sequenceWritten = new ArrayList<String>();
+	
 	@Override
 	public void hooker(FileReader frFasta, FileReader frSequenceList, FileMaker fm) {
 		String line;
@@ -27,30 +29,34 @@ public class ExtractFromList extends I2Owrapper {
 			}
 		}
 		
-		System.out.println("[DEBUG] :: Sequence listed: " + sequenceList.size());
+		System.err.println("[DEBUG] :: Sequence listed: " + sequenceList.size());
 		if (hasNewSequenceNames) {
-			System.out.println("[DEBUG] :: New sequence names listed: " + newSequenceList.size());
-			readFaExtractSeq(frFasta, sequenceList, fm, newSequenceList);
+			System.err.println("[DEBUG] :: New sequence names listed: " + newSequenceList.size());
+			sequenceWritten = readFaExtractSeq(frFasta, sequenceList, fm, newSequenceList);
 		} else {
-			readFaExtractSeq(frFasta, sequenceList, fm);
+			sequenceWritten = readFaExtractSeq(frFasta, sequenceList, fm);
 		}
+		System.err.println("[DEBUG] :: Sequence written: " +sequenceWritten.size());
 	}
 	
 	public static ArrayList<String> readFaExtractSeq(FileReader frFasta, ArrayList<String> sequenceList,
 											FileMaker fm, HashMap<String, String> newSequenceList) {
 		String line;
-		String[] tokens;
 		boolean toInclude = false;
-		ArrayList<String> sequenceWritten = new ArrayList<String>();
+		String faNameShort;
 		String faName;
 		while (frFasta.hasMoreLines()) {
 			line = frFasta.readLine();
 			if (line.startsWith(">")) {
-				tokens = line.split(RegExp.WHITESPACE);
-				faName = tokens[0].substring(1);
-				if (sequenceList.contains(tokens[0]) || sequenceList.contains(faName)) {
-					//System.out.println("[DEBUG] :: Adding " + newScaffoldList.get(tokens[0]));
-					fm.writeLine(newSequenceList.get(tokens[0]));
+				faName = line.trim();
+				faNameShort = line.split(RegExp.WHITESPACE)[0];
+				if (sequenceList.contains(faName)) {
+					fm.writeLine(newSequenceList.get(faName));
+					sequenceWritten.add(faName);
+					toInclude = true;
+				} else if (sequenceList.contains(faNameShort)){
+					//System.err.println("[DEBUG] :: Adding " + newScaffoldList.get(tokens[0]));
+					fm.writeLine(newSequenceList.get(faNameShort));
 					sequenceWritten.add(faName);
 					toInclude = true;
 				} else {
@@ -65,17 +71,15 @@ public class ExtractFromList extends I2Owrapper {
 	
 	public static ArrayList<String> readFaExtractSeq(FileReader frFasta, ArrayList<String> sequenceList, FileMaker fm) {
 		String line;
-		String[] tokens;
 		boolean toInclude = false;
 		String faName;
-		ArrayList<String> sequenceWritten = new ArrayList<String>();
+		String faNameShort;
 		while (frFasta.hasMoreLines()) {
 			line = frFasta.readLine();
 			if (line.startsWith(">")) {
-				tokens = line.split(RegExp.WHITESPACE);
-				faName = tokens[0].substring(1);
-				if (sequenceList.contains(tokens[0]) || sequenceList.contains(faName)) {
-					//System.out.println("[DEBUG] :: Adding " + line);
+				faName = line.trim();
+				faNameShort = line.split(RegExp.WHITESPACE)[0];
+				if (sequenceList.contains(faName) || sequenceList.contains(faNameShort)) {   
 					fm.writeLine(line);
 					toInclude = true;
 					sequenceWritten.add(faName);
@@ -93,13 +97,14 @@ public class ExtractFromList extends I2Owrapper {
 	@Override
 	public void printHelp() {
 		System.out.println("Usage: java -jar fastaExtractFromList.jar <in.fasta> <in_sequence.list> <out.fasta> [new_sequence.list]");
-		System.out.println("\t<in.fasta>: Total list of fasta file. Matches only the first token of lines starting with >.");
-		System.out.println("\t<in_sequence.list>: List of scaffold (contig) names, with no \">\"");
+		System.out.println("\t<in.fasta>: Multi fasta file.");
+		System.out.println("\t<in_sequence.list>: List of scaffold (contig) names, with no \">\". 1 line = 1 fa entry (including whitespaces).");
 		System.out.println("\t<out.fasta>: Fasta file containing only listed scaffolds");
 		System.out.println("\t[new_sequence.list]: Optional. Instead of names used in <in_sequence.list>, use these names");
 		System.out.println("\t\tThe order must be the same as in <in_sequence.list>");
 		System.out.println("\t*Recommended -Xmx option slightly higher than <in_scaffold.list> +  [new_sequence.list] size");
-		System.out.println("Arang Rhie, 2018-03-31. arrhie@gmail.com");
+		System.out.println("\t2019-09-05: Look for exact matches in <in.fasta> fa entry or the first word (tokenized by whitespace) of the fa entry.");
+		System.out.println("Arang Rhie, 2019-09-05. arrhie@gmail.com");
 	}
 	
 	static boolean hasNewSequenceNames = false;
