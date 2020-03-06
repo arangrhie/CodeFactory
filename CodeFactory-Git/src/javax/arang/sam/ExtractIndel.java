@@ -11,7 +11,7 @@ public class ExtractIndel {
 		if (args.length > 0) {
 			new ExtractIndel().go(args[0], args[1]);
 		} else {
-			String inFile = "C://Documents and Settings/ï¿½ê¾¨?˜‰/è«›ë?ê¹? ï¿½ë¶¾?ˆƒ/ak6_chr20.indel.test.sam";
+			String inFile = "ak6_chr20.indel.test.sam";
 			String outFile = "ak6_chr20.indel.sam";
 			new ExtractIndel().go(inFile, outFile);
 		}
