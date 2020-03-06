@@ -3,6 +3,7 @@ package javax.arang.genome.fasta;
 import javax.arang.IO.IOwrapper;
 import javax.arang.IO.basic.FileMaker;
 import javax.arang.IO.basic.FileReader;
+import javax.arang.IO.basic.RegExp;
 
 public class GetGaps extends IOwrapper {
 
@@ -25,7 +26,7 @@ public class GetGaps extends IOwrapper {
 					refNbaseLen = 0;
 					wasN = false;
 				}
-				chr = line.replace(">", "");
+				chr = line.replace(">", "").split(RegExp.WHITESPACE)[0];
 				basePos = 0;
 				totalNumGaps += numGaps;
 				numGaps = 0;
@@ -57,7 +58,7 @@ public class GetGaps extends IOwrapper {
 			writeLine(fm, basePos, refNbaseLen, type, chr, numGaps);
 		}
 		totalNumGaps += numGaps;
-		System.out.println("Total number of gaps: " + totalNumGaps);
+		System.err.println("Total number of gaps: " + totalNumGaps);
 	}
 	
 	private void writeLine(FileMaker fm, long basePos, int refNbaseLen, char type, String chr, int numGaps) {
@@ -69,7 +70,7 @@ public class GetGaps extends IOwrapper {
 		System.out.println("Usage: java -jar fastaGetGaps.java <in.fasta> <gap.bed>");
 		System.out.println("\tRetrieve the gap positions in a bed format");
 		//System.out.println("\t*Fixed the +1 end-position bug");
-		System.out.println("Arang Rhie, 2016-10-26. arrhie@gmail.com");
+		System.out.println("Arang Rhie, 2019-11-02. arrhie@gmail.com");
 	}
 
 	public static void main(String[] args) {
