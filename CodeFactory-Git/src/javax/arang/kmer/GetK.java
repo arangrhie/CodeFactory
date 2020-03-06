@@ -1,4 +1,4 @@
-package javax.arang.test;
+package javax.arang.kmer;
 
 public class GetK {
 
