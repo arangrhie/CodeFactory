@@ -25,15 +25,15 @@ public class SimpleStatByRegion extends R2wrapper {
 		String prevChr = "";
 		int prevRegionStart = -1;
 		
-		int depth;
+		double depth;
 		
-		int depthMin = Integer.MAX_VALUE;
-		int depthMax = -1;
-		int depthSum = 0;
+		double depthMin = Double.MAX_VALUE;
+		double depthMax = -1;
+		double depthSum = 0;
 		float depthAvg;
 		double depthSD;
-		int depthMedian;
-		ArrayList<Integer> depthValuesInRegion = new ArrayList<Integer>();
+		double depthMedian;
+		ArrayList<Double> depthValuesInRegion = new ArrayList<Double>();
 		int n;
 		
 		while (frDepth.hasMoreLines()) {
