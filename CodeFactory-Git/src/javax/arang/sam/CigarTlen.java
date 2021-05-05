@@ -5,7 +5,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
-public class GetTlen {
+import javax.arang.IO.Rwrapper;
+import javax.arang.IO.basic.FileReader;
+
+public class CigarTlen extends Rwrapper {
 
 	public static void main(String[] args) throws IOException {
 		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
@@ -51,6 +54,18 @@ public class GetTlen {
 		System.out.println("\tM: " + matchs);
 		System.out.println("\tD: " + deletions);
 		System.out.println("\tI: " + insertions);
+	}
+
+	@Override
+	public void hooker(FileReader fr) {
+		
+	}
+
+	@Override
+	public void printHelp() {
+		System.out.println("Usage: java -jar samCigarTlen.jar <sam>");
+		System.out.println("\tParses CIGAR string to prints the number of matched, deletion, insertion bases to reference");
+		System.out.println("\tTLEN = matchs + deletions");		
 	}
 
 }
