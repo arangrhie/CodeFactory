@@ -276,7 +276,7 @@ public class BaseDepth extends Rwrapper {
 
 	@Override
 	public void printHelp() {
-		System.out.println("Usage: java -jar bamBaseDepth.jar <in.sam> [-snp] [-qual Q-filter]");
+		System.out.println("Usage: java -jar samBaseDepth.jar <in.sam> [-snp] [-qual Q-filter]");
 		System.out.println("\t<in.sam>: filtered, comprehensive sam");
 		System.out.println("\t<stdout>: chr\tpos(int)\tDepth of > Q-filter (A C G T D) (int)\n" +
 				"\t\tQ is phred-scaled base quality (assumes bam quality string is Phred+33).");
