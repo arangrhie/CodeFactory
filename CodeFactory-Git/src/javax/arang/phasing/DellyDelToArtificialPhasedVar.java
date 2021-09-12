@@ -75,12 +75,12 @@ public class DellyDelToArtificialPhasedVar extends I2Owrapper {
 		System.out.println("Arang Rhie, 2016-09-29. arrhie@gmail.com");
 	}
 
-	private static int sampling;
+	//private static int sampling;
 	public static void main(String[] args) {
 		if (args.length == 3) {
 			new DellyDelToArtificialPhasedVar().go(args[0], args[1], args[2]);
 		} else if (args.length == 4) {
-			sampling = Integer.parseInt(args[3]);
+			//sampling = Integer.parseInt(args[3]);
 			new DellyDelToArtificialPhasedVar().go(args[0], args[1], args[2]);
 		} else {
 			new DellyDelToArtificialPhasedVar().printHelp();

@@ -7,7 +7,7 @@ import javax.arang.IO.R2wrapper;
 import javax.arang.IO.basic.FileReader;
 import javax.arang.IO.basic.RegExp;
 import javax.arang.bed.util.Bed;
-import javax.arang.math.Stat;
+import math.Stat;
 
 public class SimpleStatByRegion extends R2wrapper {
 

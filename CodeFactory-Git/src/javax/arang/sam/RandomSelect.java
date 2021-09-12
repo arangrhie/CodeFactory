@@ -35,7 +35,7 @@ public class RandomSelect extends IOwrapper {
 		boolean isRandId = false;
 		long writtenReads = 0;
 		Long lineNum = 0l;
-		READ_LOOP : while (fr.hasMoreLines()) {
+		while (fr.hasMoreLines()) {	// READ_LOOP
 			line = fr.readLine();
 			if (line.startsWith("@"))	continue;
 			if (line.equals(""))	continue;
@@ -61,7 +61,7 @@ public class RandomSelect extends IOwrapper {
 				lineNum++;
 			}
 			prevKey = key;
-		}
+		} // READ_LOOP
 		System.out.println("Finished");
 		System.out.println("Total Reads Passed: " + lineNum);
 		System.out.println("Total Reads: " + writtenReads);

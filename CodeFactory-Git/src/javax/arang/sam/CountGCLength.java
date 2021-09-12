@@ -222,7 +222,7 @@ public class CountGCLength extends R2wrapper {
 								String refSeq, Integer posInRef) {
 		String rightBases = "";
 		int nonBaseCount = 0;
-		int baseCount = 0;
+		//int baseCount = 0;
 		int j = 0;
 		for (int i = right; i < readSeq.length(); i++) {
 			if (gcBases.contains(String.valueOf(readSeq.charAt(i)))) {
@@ -236,7 +236,7 @@ public class CountGCLength extends R2wrapper {
 					}
 				} else {
 					rightBases = rightBases + readSeq.charAt(i);
-					baseCount++;
+					//baseCount++;
 					j++;
 				}
 			} else {

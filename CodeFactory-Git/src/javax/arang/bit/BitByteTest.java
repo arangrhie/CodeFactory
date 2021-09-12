@@ -17,8 +17,8 @@ public class BitByteTest {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-/*		float floatNum = 3.2f;
-//		System.out.println(Math.ceil(floatNum));
+		float floatNum = 3.2f;
+		System.out.println(Math.ceil(floatNum));
 		
 		char at = '@';
 		System.out.println("@ is " + (int)at);
@@ -57,7 +57,7 @@ public class BitByteTest {
 		
 		System.out.println("--------------");
 //		qualTest();
-*/		
+		
 		System.out.println("Long.MAX_VALUE: " + Long.MAX_VALUE);
 		
 		System.out.println("# is " + (int) "#".charAt(0));

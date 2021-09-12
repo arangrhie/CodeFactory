@@ -27,7 +27,7 @@ public class Placement {
 	private int altStartTail;
 	private int altStopTail;
 	private int altMatchedBases;
-	private int parentMatchedBases;
+	//private int parentMatchedBases;
 	
 	boolean isEmpty = false;
 	
@@ -48,7 +48,7 @@ public class Placement {
 			this.altStartTail = Integer.parseInt(placementTokens[ALT_START_TAIL]);
 			this.altStopTail = Integer.parseInt(placementTokens[ALT_STOP_TAIL]);
 			this.altMatchedBases = altScafStop - altScafStart + 1;
-			this.parentMatchedBases = parentStop - parentStart + 1;
+			//this.parentMatchedBases = parentStop - parentStart + 1;
 		}
 	}
 	
@@ -86,7 +86,7 @@ public class Placement {
 		this.altStartTail = Math.min(this.altStartTail, placement.altStartTail);
 		this.altStopTail = Math.min(this.altStopTail, placement.altStopTail);
 		this.altMatchedBases = altScafStop - altScafStart + 1;
-		this.parentMatchedBases = parentStop - parentStart + 1;
+		//this.parentMatchedBases = parentStop - parentStart + 1;
 		return this;
 	}
 	

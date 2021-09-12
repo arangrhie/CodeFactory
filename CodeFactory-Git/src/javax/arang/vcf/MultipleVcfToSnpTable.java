@@ -28,7 +28,7 @@ public class MultipleVcfToSnpTable extends INOwrapper {
 		HashMap<String, String> formatTable = null;
 
 		int sampleNum = 0;
-		boolean isFirst = true;
+		//boolean isFirst = true;
 		for (FileReader fr : frs) {
 			sampleNum++;
 			READ_LINE : while(fr.hasMoreLines()) {
@@ -93,7 +93,7 @@ public class MultipleVcfToSnpTable extends INOwrapper {
 				}
 				genoMap.put(pos, preString);
 			}
-			isFirst = false;
+			//isFirst = false;
 		}
 		
 		int totalVars = 0;

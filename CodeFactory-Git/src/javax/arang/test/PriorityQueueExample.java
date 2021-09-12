@@ -10,8 +10,8 @@ public class PriorityQueueExample {
 	      PriorityQueue < Integer >  prq = new PriorityQueue < Integer > (); 
 	       
 	      // insert values in the queue
-	      for ( int i = 3; i  <  10; i++ ){  
-	         prq.add (new Integer (i)) ; 
+	      for ( Integer i = 3; i  <  10; i++ ){  
+	         prq.add (i) ; 
 	      }
 	      System.out.println ( "Initial priority queue values are: "+ prq);
 	      

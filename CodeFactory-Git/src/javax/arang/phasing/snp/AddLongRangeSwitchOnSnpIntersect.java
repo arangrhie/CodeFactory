@@ -36,7 +36,7 @@ public class AddLongRangeSwitchOnSnpIntersect extends IOwrapper {
 		
 		HashMap<Integer, String> posToSwitchMap = new HashMap<Integer, String>();
 		int posBlockStart = 0;	// beginning position of a block agreeing
-		int prevPos = 0;
+		//int prevPos = 0;
 		boolean isToDiscard = true;
 		
 		while (fr.hasMoreLines()) {
@@ -124,7 +124,7 @@ public class AddLongRangeSwitchOnSnpIntersect extends IOwrapper {
 			prevPs1 = ps1;
 			prevPs2 = ps2;
 			prevSameOrSwitch = sameOrSwitch;
-			prevPos = Integer.parseInt(tokens[PhasedSNP.POS]);
+			//prevPos = Integer.parseInt(tokens[PhasedSNP.POS]);
 		}
 		
 		System.out.println(numShortSwitch1 + "\tShortRangeSwitch(1)");

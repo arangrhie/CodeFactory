@@ -82,6 +82,31 @@ public class Sam {
 		return array;
 	}
 	
+	/***
+	 * Return length of mapped query sequence length (M + I)
+	 * @param cigar
+	 * @return
+	 */
+	public static Integer getQLen(String cigar) {
+		
+		String count = "";
+		Integer len = 0;
+		
+		for (int i = 0; i < cigar.length(); i++) {
+			if (Pattern.matches("[A-Z^]", Character.toString(cigar.charAt(i)))) {
+				if ( cigar.charAt(i) == 'M' || cigar.charAt(i) == 'I') {
+					len += Integer.parseInt(count);
+				}
+				// else: D -> ignore this count
+				count = "";
+			} else {
+				count += cigar.charAt(i);
+			}
+		}
+		
+		return len;
+	}
+	
 	public static ArrayList<String> getDeletionBases(String arr) {
 		String count = "";
 		String cigarOp = null;

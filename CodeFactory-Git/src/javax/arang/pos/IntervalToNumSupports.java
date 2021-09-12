@@ -7,7 +7,7 @@ import java.util.HashMap;
 import javax.arang.IO.Rwrapper;
 import javax.arang.IO.basic.FileReader;
 import javax.arang.IO.basic.RegExp;
-import javax.arang.math.Stat;
+import math.Stat;
 
 public class IntervalToNumSupports extends Rwrapper {
 

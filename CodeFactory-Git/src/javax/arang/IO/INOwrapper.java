@@ -13,7 +13,7 @@ public abstract class INOwrapper extends Wrapper {
 	private String path = "";
 	private int numFiles = 0;
 	
-	@Deprecated
+	// @Deprecated -- why?
 	public void go(String[] files) {
 		startTiming();
 		

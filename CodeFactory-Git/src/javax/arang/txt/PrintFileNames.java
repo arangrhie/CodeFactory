@@ -5,8 +5,6 @@ package javax.arang.txt;
 
 import java.io.File;
 
-import javax.arang.IO.basic.FileReader;
-
 /**
  * @author Arang Rhie
  *
