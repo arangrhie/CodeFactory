@@ -58,7 +58,7 @@ public class ToCovWig extends Rwrapper {
 		Collections.sort(chrs);
 		
 		// track type="wiggle_0" name="HiFi"
-		System.out.println("track type= \"wiggle_0\" name=\"" + name + "\"");
+		System.out.println("track type=\"wiggle_0\" name=\"" + name + "\"");
 		for (int i = 0; i < chrs.size(); i++) {
 			tName = chrs.get(i);
 
