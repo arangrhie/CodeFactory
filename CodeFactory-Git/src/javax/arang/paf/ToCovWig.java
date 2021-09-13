@@ -76,7 +76,7 @@ public class ToCovWig extends Rwrapper {
 		System.out.println("\t<name>  : name of this track. String");
 		System.out.println("\t<span>  : span of the interval. INT");
 		System.out.println("\tstdout: .wig format.");
-		System.out.println("Arang Rhie, 2021-03-10. arrhie@gmail.com");
+		System.out.println("Arang Rhie, 2021-09-12. arrhie@gmail.com");
 	}
 	
 	private static int span = 10000;

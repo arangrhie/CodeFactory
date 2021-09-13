@@ -81,7 +81,7 @@ public class ToStrandedWig extends Rwrapper {
 		Collections.sort(chrs);
 		
 		// track type="wiggle_0" name="HiFi"
-		System.out.println("track type= \"wiggle_0\" name=\"" + name + "\"");
+		System.out.println("track type=\"wiggle_0\" name=\"" + name + "\"");
 		for (int i = 0; i < chrs.size(); i++) {
 			tName = chrs.get(i);
 
@@ -115,7 +115,7 @@ public class ToStrandedWig extends Rwrapper {
 		System.out.println("\t<span>  : span of the interval. INT");
 		System.out.println("\t<type>  : + | - | norm. norm = normalized + counts by total reads");
 		System.out.println("\tstdout: .wig format.");
-		System.out.println("Arang Rhie, 2021-04-09. arrhie@gmail.com");
+		System.out.println("Arang Rhie, 2021-09-12. arrhie@gmail.com");
 		
 	}
 	

@@ -74,10 +74,10 @@ public class ToMinAvgMedMaxWig extends Rwrapper {
 		oMax = new FileMaker(fr.getDirectory() + "/" + outPrefix + ".max.wig");
 		oBed = new FileMaker(fr.getDirectory() + "/" + outPrefix + ".bed");
 		
-		oMin.writeLine("track type= \"wiggle_0\" name=\"" + name + " Min\"");
-		oAvg.writeLine("track type= \"wiggle_0\" name=\"" + name + " Avg\"");
-		oMed.writeLine("track type= \"wiggle_0\" name=\"" + name + " Med\"");
-		oMax.writeLine("track type= \"wiggle_0\" name=\"" + name + " Max\"");
+		oMin.writeLine("track type=\"wiggle_0\" name=\"" + name + " Min\"");
+		oAvg.writeLine("track type=\"wiggle_0\" name=\"" + name + " Avg\"");
+		oMed.writeLine("track type=\"wiggle_0\" name=\"" + name + " Med\"");
+		oMax.writeLine("track type=\"wiggle_0\" name=\"" + name + " Max\"");
 		
 		double sum, avg;
 		
@@ -145,7 +145,7 @@ public class ToMinAvgMedMaxWig extends Rwrapper {
 		System.out.println("\t<col-idx>: column to collect stats. DEFAULT=2");
 		System.out.println("\t<out-prefix>: output prefix");
 		System.out.println("\t<out-prefix.type.wig> : 4 .wig formatted files for type = min avg med and max.");
-		System.out.println("Arang Rhie, 2021-03-01. arrhie@gmail.com");
+		System.out.println("Arang Rhie, 2021-09-12. arrhie@gmail.com");
 
 	}
 	
