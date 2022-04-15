@@ -47,7 +47,7 @@ public class ExtractOverlapsFromPreads extends I2Owrapper {
 		String pread2OvlLeft;
 		String pread2OvlRight;
 		int left;
-		int right;
+		//int right;
 		
 		StringBuffer blank = new StringBuffer();
 		for (int i = 0; i < FLANKED; i++) {

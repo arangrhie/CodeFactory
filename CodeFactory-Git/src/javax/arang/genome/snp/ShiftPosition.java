@@ -35,13 +35,13 @@ public class ShiftPosition extends IOwrapper {
 			st = new StringTokenizer(line);
 			String chr = st.nextToken();
 			int pos1 = Integer.parseInt(st.nextToken()) + shift;
-//			int pos2 = Integer.parseInt(st.nextToken()) + shift;
+			int pos2 = Integer.parseInt(st.nextToken()) + shift;
 			String left = "";
 			while (st.hasMoreTokens()) {
 				left += "\t" + st.nextToken();
 			}
-//			fm.writeLine(chr + "\t" + pos1 + "\t" + pos2 + left);
-			fm.writeLine("chr20\t" + pos1 + left);
+			fm.writeLine(chr + "\t" + pos1 + "\t" + pos2 + left);
+			// fm.writeLine("chr20\t" + pos1 + left);
 		}
 	}
 

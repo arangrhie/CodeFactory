@@ -28,9 +28,9 @@ public class BitByteTest {
 		int genomePos = 4318;
 		System.out.println("ORIGINAL NUM: " + genomePos);
 		System.out.println("=========== int to bytes ==========");
-//		byte[] keys = toBytes(genomePos);
-//		System.out.println(genomePos + " -> " + keys[0] + " " + keys[1] + " " + keys[2] + " " + keys[3]);
-		byte[] keys = Util.to2Bytes(genomePos);
+		byte[] keys = toBytes(genomePos);
+		System.out.println(genomePos + " -> " + keys[0] + " " + keys[1] + " " + keys[2] + " " + keys[3]);
+		keys = Util.to2Bytes(genomePos);
 		System.out.println(genomePos + " -> " + keys[0] + " " + keys[1]);
 		
 		System.out.println("=========== bytes to int ==========");
@@ -56,9 +56,13 @@ public class BitByteTest {
 		System.out.println("MAP OUT: genoPos=" + genoPos);
 		
 		System.out.println("--------------");
-//		qualTest();
+		qualTest();
+		charTest(keys);
+		shiftTest();
 		
-		System.out.println("Long.MAX_VALUE: " + Long.MAX_VALUE);
+		maxValues();
+		
+		utfTest();
 		
 		System.out.println("# is " + (int) "#".charAt(0));
 		System.out.println("-3 is " + (char) (-1));
@@ -149,10 +153,11 @@ public class BitByteTest {
 		return chr;
 	}
 	
-	private void maxValues() {
+	private static void maxValues() {
 		System.out.println("Byte.MAX_VALUE : "+Byte.MAX_VALUE);
 		System.out.println("Integer.MAX_VALUE : "+Integer.MAX_VALUE);
 		System.out.println("Character.MAX_VALUE : " + Character.MAX_VALUE);
+		System.out.println("Long.MAX_VALUE: " + Long.MAX_VALUE);
 	}
 	
 	private static void qualTest() {
@@ -178,7 +183,7 @@ public class BitByteTest {
 		String str = "\t";
 		System.out.println("qua: " + str.getBytes().length);
 	}
-	private void charTest(byte[] keys) {
+	private static void charTest(byte[] keys) {
 		// char is too long!!
 		System.out.println("2^7 = " + (int) Math.pow(2, 7));
 		System.out.println("============ Using char ============");
@@ -193,7 +198,7 @@ public class BitByteTest {
 		int key3 = (int) key3C;
 		System.out.println("154183401 : " + key1 + " " + key2 + " " + key3);
 	}
-	private void shiftTest() {
+	private static void shiftTest() {
 		byte shif1 = 1;
 		System.out.println("shif1 << 1: " + (shif1 << 1));
 		System.out.println("shif1 << 2: " + (shif1 << 2));
@@ -209,7 +214,7 @@ public class BitByteTest {
 		System.out.println(chromosome + " = " + chrom);
 		System.out.println("byte chr: " + chr);
 	}
-	private void utfTest() {
+	private static void utfTest() {
 		printUTFbyte(" ");
 		printByte(" ");
 		printUTFbyte("\t");

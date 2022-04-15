@@ -2,7 +2,6 @@ package javax.arang.falcon;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Vector;
 
 import javax.arang.IO.I2Owrapper;
 import javax.arang.IO.basic.FileMaker;

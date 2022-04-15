@@ -128,7 +128,7 @@ public class FishersExact extends IOwrapper {
 		factNums.put(0, value);
 		for (int i = 1; i <= numSampleSides*2; i++) {
 			value = value * i;
-			factNums.put(i, new Double(value));
+			factNums.put(i, value);
 		}
 	}
 	
