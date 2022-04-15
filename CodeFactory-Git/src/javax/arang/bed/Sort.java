@@ -5,29 +5,30 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 
-import javax.arang.IO.IOwrapper;
+import javax.arang.IO.Rwrapper;
 import javax.arang.IO.basic.FileMaker;
 import javax.arang.IO.basic.FileReader;
 import javax.arang.IO.basic.RegExp;
 import javax.arang.bed.util.Bed;
 import javax.arang.genome.Chromosome;
 
-public class Sort extends IOwrapper {
+public class Sort extends Rwrapper {
 
-	public void hooker(FileReader fr, FileMaker fm) {
+	public void hooker(FileReader fr) {
+		
 		// chr, <start, end>
-		HashMap<Chromosome, HashMap<Integer, Integer>> bedMap = new HashMap<Chromosome, HashMap<Integer, Integer>>();
-		HashMap<Chromosome, HashMap<Integer, String>> notesMap = new HashMap<Chromosome, HashMap<Integer, String>>();
+		HashMap<Chromosome, HashMap<Integer, Integer>> bedMap   = new HashMap<Chromosome, HashMap<Integer, Integer>>();
+		HashMap<Chromosome, HashMap<Integer, String>>  notesMap = new HashMap<Chromosome, HashMap<Integer, String>>();
 		// chr, chromosome
 		HashMap<String, Chromosome> chrList = new HashMap<String, Chromosome>();
 		// chr_start, end
 		HashMap<String, ArrayList<Integer>> duplicateStartsMap = new HashMap<String, ArrayList<Integer>>();
-		HashMap<String, ArrayList<String>> duplicateNotesMap = new HashMap<String, ArrayList<String>>();
+		HashMap<String, ArrayList<String>>  duplicateNotesMap  = new HashMap<String, ArrayList<String>>();
 		
-		String line;
+		String   line;
 		String[] tokens;
 		
-		String chr;
+		String  chr;
 		Integer start;
 		Integer end;
 		
@@ -38,15 +39,17 @@ public class Sort extends IOwrapper {
 		
 		while (fr.hasMoreLines()) {
 			line = fr.readLine();
+			
+			// Skip comments
 			if (line.startsWith("#")){
-				fm.writeLine(line);
+				writeOutputLine(line);
 				continue;
 			}
 			tokens = line.split(RegExp.TAB);
 			
 			chr = tokens[Bed.CHROM];
 			if (chr.equalsIgnoreCase("chr")) {
-				fm.writeLine(line);
+				writeOutputLine(line);
 				continue;
 			}
 			
@@ -54,7 +57,7 @@ public class Sort extends IOwrapper {
 			start = Integer.parseInt(tokens[Bed.START]);
 			end = Integer.parseInt(tokens[Bed.END]);
 			} catch (NumberFormatException e) {
-				System.err.println("Not a valid bed line: " + line);
+				System.err.println("[ WARNING ] :: Not a valid bed line: " + line);
 				continue;
 			}
 			note = "";
@@ -74,13 +77,13 @@ public class Sort extends IOwrapper {
 				noteRegion = notesMap.get(chrList.get(chr));
 			}
 			if (chrRegion.containsKey(start)) {
-				ArrayList<Integer> dupStartEnds = new ArrayList<Integer>();
-				ArrayList<String> dupStartNotes = new ArrayList<String>();
+				ArrayList<Integer> dupStartEnds  = new ArrayList<Integer>();
+				ArrayList<String>  dupStartNotes = new ArrayList<String>();
 				if (duplicateStartsMap.containsKey(chr + "_" + start)) {
-					dupStartEnds = duplicateStartsMap.get(chr + "_" + start);
+					dupStartEnds  = duplicateStartsMap.get(chr + "_" + start);
 					dupStartNotes = duplicateNotesMap.get(chr + "_" + start);
 				} else {
-					dupStartEnds = new ArrayList<Integer>();
+					dupStartEnds  = new ArrayList<Integer>();
 					dupStartNotes = new ArrayList<String>();
 					// Move previous start / notes to dupStart maps
 					dupStartEnds.add(chrRegion.get(start));
@@ -124,46 +127,70 @@ public class Sort extends IOwrapper {
 						for (int k = 0; k < dupStartEnds.size(); k++) {
 							end = dupStartEnds.get(ends[k]);
 							note = dupStartNotes.get(ends[k]);
-							fm.write(chrs[i].getChromStringVal() + "\t" + starts[j] + "\t" + end);
+							writeOutput(chrs[i].getChromStringVal() + "\t" + starts[j] + "\t" + end);
 							if (!note.equals("")) {
-								fm.write(note);
+								writeOutput(note);
 							}
-							fm.writeLine();
+							writeOutputLine("");
 						}
 					} else {
 						end = dupStartEnds.get(0);
 						note = dupStartNotes.get(0);
-						fm.write(chrs[i].getChromStringVal() + "\t" + starts[j] + "\t" + end);
+						writeOutput(chrs[i].getChromStringVal() + "\t" + starts[j] + "\t" + end);
 						if (!note.equals("")) {
-							fm.write(note);
+							writeOutput(note);
 						}
-						fm.writeLine();
+						writeOutputLine("");
 					}
 				} else {
-					fm.write(chrs[i].getChromStringVal() + "\t" + starts[j] + "\t" + chrRegion.get(starts[j]));
+					writeOutput(chrs[i].getChromStringVal() + "\t" + starts[j] + "\t" + chrRegion.get(starts[j]));
 					note = notesMap.get(chrs[i]).get(starts[j]);
 					if (!note.equals("")) {
-						fm.write(note);
+						writeOutput(note);
 					}
-					fm.writeLine();
+					writeOutputLine("");
 				}
 			}
 		}
 		
  	}
+	
+	private void writeOutputLine(String line) {
+		if (outToFile) {
+			fm.writeLine(line);
+		} else {
+			System.out.println(line);
+		}
+	}
+	
+	private void writeOutput(String line) {
+		if (outToFile) {
+			fm.write(line);
+		} else {
+			System.out.print(line);
+		}
+	}
 
 	@Override
 	public void printHelp() {
-		System.out.println("Usage: java -jar bedSort.jar <in.bed> <out.bed>");
-		System.out.println("\t<out.bed>: Sorted bed file according to chr start position");
-		System.out.println("\t\tLine stating with chr or # will be treated as header line.");
-		System.out.println("Arang Rhie, 2016-02-11. arrhie@gmail.com");
+		System.err.println("Usage: java -jar bedSort.jar <in.bed> [out.bed]");
+		System.err.println("\t[out.bed]: Sorted bed file according to chr start position. OPTIONAL. STDOUT by default.");
+		System.err.println("\t\tLine stating with chr or # will be treated as header line.");
+		System.err.println("\t* Support STDOUT if no output file is provided");
+		System.err.println("Arang Rhie, 2021-12-22. arrhie@gmail.com");
 
 	}
+	
+	private static FileMaker fm = null;
+	private static boolean outToFile = false;
 
 	public static void main(String[] args) {
 		if (args.length == 2) {
-			new Sort().go(args[0], args[1]);
+			fm = new FileMaker(args[1]);
+			outToFile = true;
+			new Sort().go(args[0]);
+		} else if (args.length == 1) {
+			new Sort().go(args[0]);
 		} else {
 			new Sort().printHelp();
 		}
