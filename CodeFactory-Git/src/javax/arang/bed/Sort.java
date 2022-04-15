@@ -181,6 +181,12 @@ public class Sort extends Rwrapper {
 
 	}
 	
+	public static void goWithOutput(String input, String output) {
+		fm = new FileMaker(output);
+		outToFile = true;
+		new Sort().go(input);
+	}
+	
 	private static FileMaker fm = null;
 	private static boolean outToFile = false;
 

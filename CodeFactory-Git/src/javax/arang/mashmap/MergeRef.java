@@ -45,8 +45,8 @@ public class MergeRef extends Rwrapper{
 					// write down results
 					fmSortF.remove();
 					fmSortR.remove();
-					new Sort().go("_forward", "_forward.sort");
-					new Sort().go("_reverse", "_reverse.sort");
+					Sort.goWithOutput("_forward", "_forward.sort");
+					Sort.goWithOutput("_reverse", "_reverse.sort");
 					merger.go("_forward.sort");
 					qryCoveredFowardLen = merger.getMergedLen();
 					
@@ -91,8 +91,8 @@ public class MergeRef extends Rwrapper{
 		// write down results
 		fmSortF.remove();
 		fmSortR.remove();
-		new Sort().go("_forward", "_forward.sort");
-		new Sort().go("_reverse", "_reverse.sort");
+		Sort.goWithOutput("_forward", "_forward.sort");
+		Sort.goWithOutput("_reverse", "_reverse.sort");
 		merger.go("_forward.sort");
 		qryCoveredFowardLen = merger.getMergedLen();
 		

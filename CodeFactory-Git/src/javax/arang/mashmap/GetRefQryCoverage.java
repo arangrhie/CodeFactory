@@ -50,7 +50,7 @@ public class GetRefQryCoverage extends IOwrapper {
 				
 					// sort the stored qry regions
 					sortedBed.remove();
-					new Sort().go("_tmp", "_tmp.sort");
+					Sort.goWithOutput("_tmp", "_tmp.sort");
 					merger.go("_tmp.sort");
 					qryCoveredLen = merger.getMergedLen();
 					System.out.println(String.format("%.0f", qryCoveredLen) + "\t" + String.format("%.1f", (qryCoveredLen * 100) / qryLen));
@@ -101,7 +101,7 @@ public class GetRefQryCoverage extends IOwrapper {
 
 		// sort the stored qry regions
 		sortedBed.remove();
-		new Sort().go("_tmp", "_tmp.sort");
+		Sort.goWithOutput("_tmp", "_tmp.sort");
 		merger.go("_tmp.sort");
 		qryCoveredLen = merger.getMergedLen();
 		System.out.println(String.format("%.0f", qryCoveredLen) + "\t" + String.format("%.1f", (qryCoveredLen * 100) / qryLen));
