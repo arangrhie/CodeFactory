@@ -6,4 +6,5 @@ public class RegExp {
 	public static final String COMMA = ",";
 	public static final String SLASH = "/";
 	public static final String BAR = "\\|";
+	public static final String ANGLE_BRACKET = "<|>";
 }
