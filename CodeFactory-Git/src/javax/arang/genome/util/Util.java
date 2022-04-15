@@ -96,7 +96,7 @@ public class Util {
 			lenSum += sortedContigLenArr.get(i);
 			if (lenSum > n50comp) {
 				n50 = sortedContigLenArr.get(i);
-				System.out.println("L50: " + (sortedContigLenArr.size()  - i));
+				System.err.println("L50: " + (sortedContigLenArr.size()  - i));
 				break;
 			}
 		}
