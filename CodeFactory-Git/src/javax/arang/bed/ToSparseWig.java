@@ -17,7 +17,7 @@ public class ToSparseWig extends Rwrapper {
 		int span = 0;
 		
 		// track type="wiggle_0" name="HiFi"
-		System.out.println("track type= \"wiggle_0\" name=\"" + name + "\"");
+		System.out.println("track type=\"wiggle_0\" name=\"" + name + "\"");
 		while (fr.hasMoreLines()) {
 			line = fr.readLine();
 			tokens = line.split(RegExp.TAB);
