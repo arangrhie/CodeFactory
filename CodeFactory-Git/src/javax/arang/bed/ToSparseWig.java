@@ -24,7 +24,7 @@ public class ToSparseWig extends Rwrapper {
 			
 			seqName = tokens[Bed.CHROM];
 			start = Integer.parseInt(tokens[Bed.START]) + 1;
-			span = Integer.parseInt(tokens[Bed.END]) - start;
+			span = Integer.parseInt(tokens[Bed.END]) - start + 1;
 			
 			// fixedStep chrom=chr1 start=1 step=1024 span=1024
 			System.out.println("fixedStep chrom=" + seqName + " start=" + start + " step=" + span + " span=" + span);
@@ -43,7 +43,7 @@ public class ToSparseWig extends Rwrapper {
 		System.out.println("\t<name>  : name of this track. String");
 		System.out.println("\t[i]     : index of the value column. 1-base. DEFAULT=0; using fixed value=1");
 		System.out.println("\t<stdout>: .wig formatted. Use wigToBigWig to make a binary version.");
-		System.out.println("Arang Rhie, 2021-05-04. arrhie@gmail.com");
+		System.out.println("Arang Rhie, 2024-08-21. arrhie@gmail.com");
 
 	}
 
