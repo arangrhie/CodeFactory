@@ -2,16 +2,15 @@ package javax.arang.gtf;
 
 import java.util.ArrayList;
 
-import javax.arang.IO.IOwrapper;
-import javax.arang.IO.basic.FileMaker;
+import javax.arang.IO.Rwrapper;
 import javax.arang.IO.basic.FileReader;
 import javax.arang.IO.basic.RegExp;
 import javax.arang.gff.GFF;
 
-public class SelectFields extends IOwrapper {
+public class SelectFields extends Rwrapper {
 
 	@Override
-	public void hooker(FileReader fr, FileMaker fm) {
+	public void hooker(FileReader fr) {
 		String line;
 		String[] tokens;
 		
@@ -72,29 +71,29 @@ public class SelectFields extends IOwrapper {
 				}
 			}
 			//fm.writeLine();
-			fm.writeLine(outline);
+			System.out.println(outline);
 		}
 		System.err.println(selected + " / " + numLines + " lines selected");
 	}
 
 	@Override
 	public void printHelp() {
-		System.out.println("Usage: java -jar gtfSelectFields.jar <in.gtf> <out.txt> <field_or_attri_name> [field_or_attri_name]");
-		System.out.println("\tSelect <field_or_attri_name> value(s) from <in.gtf> and write to <out.txt> as a tab-delimited file.");
+		System.out.println("Usage: java -jar gtfSelectFields.jar <in.gtf> <field_or_attri_name> [field_or_attri_name]");
+		System.out.println("\tSelect <field_or_attri_name> value(s) from <in.gtf> and write to <stderr> as a tab-delimited file.");
 		System.out.println("\t<field_or_attri_name> could be one of: seqname or chr, source, feature, start, end, score, strand, frame,\n"
 				+ "\t\tattribute, gene_id, transcript_id, ...");
 		System.out.println("\t\tTakes both GFF and GTF format.");
-		System.out.println("Arang Rhie, 2016-06-24. arrhie@gmail.com");
+		System.out.println("Arang Rhie, 2021-04-22. arrhie@gmail.com");
 	}
 
 	static ArrayList<String> fieldsAndAttrisToSelect =  new ArrayList<String>();
 	
 	public static void main(String[] args) {
-		if (args.length >= 3) {
-			for (int i = 2; i < args.length; i++) {
+		if (args.length >= 2) {
+			for (int i = 1; i < args.length; i++) {
 				fieldsAndAttrisToSelect.add(args[i]);
 			}
-			new SelectFields().go(args[0], args[1]);
+			new SelectFields().go(args[0]);
 		} else {
 			new SelectFields().printHelp();
 		}
