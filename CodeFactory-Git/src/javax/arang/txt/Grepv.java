@@ -40,9 +40,9 @@ public class Grepv extends R2wrapper {
 		System.out.println("Similar to grep -v option. Outputs are written in standard output.");
 		System.out.println("Lines containing words from <words_to_remove.txt> in <col_idx>'th column of <in.txt>  will be removed");
 		System.out.println("\t<words_to_remove.txt>: a file containing 1 word or strings in 1 line to be removed from <in.txt>");
-		System.out.println("\t<in.txt>: tab delimited txt file.");
+		System.out.println("\t<in.txt>: tab delimited txt file. Could be piped in with -");
 		System.out.println("\t<col_idx>: 1-based column index.");
-		System.out.println("Arang Rhie, 2017-01-24. arrhie@gmail.com");
+		System.out.println("Arang Rhie, 2024-06-07. arrhie@gmail.com");
 		
 	}
 
