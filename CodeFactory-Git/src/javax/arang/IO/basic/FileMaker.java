@@ -49,16 +49,17 @@ public class FileMaker {
 	 * Override a file with the directory name and file name
 	 * @param directory
 	 * @param filename
-	 * @param append If true; append. False; ask to override if the file already exists.
+	 * @param append   If true; append. False; ask to override if the file already exists.
+	 * @param override If true; ignore and override even if a file already exists.
 	 */
-	public FileMaker(String directory, String filename, boolean append){
+	public FileMaker(String directory, String filename, boolean append, boolean override){
 		try{
 			dir = directory;
 			fileName = filename;
 			File newfile = new File(dir);
 			newfile.mkdirs();
 			newfile = new File(dir+"/"+fileName);
-			if (!append && newfile.exists()) {
+			if (!append && newfile.exists() && !override) {
 				System.err.println("File " + newfile.getName() + " already exists.");
 				System.err.println("Do you wish to override? Y,N");
 				Character in = (char) System.in.read();
@@ -72,7 +73,6 @@ public class FileMaker {
 						in = (char) System.in.read();
 					}
 				}
-				
 			}
 			bw = new BufferedWriter(new FileWriter(newfile, append));
 		}catch(Exception e){
@@ -80,12 +80,16 @@ public class FileMaker {
 		}
 	}
 	
+	public FileMaker(String filename, boolean append, boolean override) {
+		this(IOUtil.retrieveDirectory(filename), IOUtil.retrieveFileName(filename), append, override);
+	}
+	
 	public FileMaker(String filename, boolean append) {
-		this(IOUtil.retrieveDirectory(filename), IOUtil.retrieveFileName(filename), append);
+		this(IOUtil.retrieveDirectory(filename), IOUtil.retrieveFileName(filename), append, false);
 	}
 	
 	public FileMaker(String filename) {
-		this(IOUtil.retrieveDirectory(filename), IOUtil.retrieveFileName(filename));
+		this(IOUtil.retrieveDirectory(filename), IOUtil.retrieveFileName(filename), false, false);
 	}
 	
 	public void setDir(String dir) {
