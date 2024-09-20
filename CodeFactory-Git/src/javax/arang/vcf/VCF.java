@@ -97,6 +97,19 @@ public class VCF {
 		return valueTable;
 	}
 	
+	public static String getGT(String format, String sample) {
+		String[] formatTokens = format.split(":");
+		String[] sampleTokens = sample.split(":");
+		for (int i = 0; i < formatTokens.length; i++) {
+			String form = formatTokens[i];
+			String value = sampleTokens[i];
+			if (form.equals("GT")) {
+				return value;
+			}
+		}
+		return "NA";				
+	}
+	
 	public static String parseGT(String format, String sample) {
 		String[] formatTokens = format.split(":");
 		String[] sampleTokens = sample.split(":");
