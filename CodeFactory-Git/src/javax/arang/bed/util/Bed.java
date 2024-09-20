@@ -492,7 +492,7 @@ public class Bed {
 	}
 	
 	public boolean hasChromosome(String chr) {
-		return chrList.contains(chr);
+		return chrList.contains(new Chromosome(chr));
 	}
 
 	public void sortChr() {
