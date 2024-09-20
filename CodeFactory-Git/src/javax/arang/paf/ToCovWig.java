@@ -21,10 +21,11 @@ public class ToCovWig extends Rwrapper {
 		int tStart, tEnd, tLen;
 		
 		// initialize tables
-		HashMap<String, HashMap<Integer, Integer>> chr_pos_total = new HashMap<String, HashMap<Integer, Integer>>();
-		HashMap<Integer, Integer> pos_total = null;
+		HashMap<String, HashMap<Integer, Double>> chr_pos_total = new HashMap<String, HashMap<Integer, Double>>();
+		HashMap<Integer, Double> pos_total = null;
 		ArrayList<String> chrs = new ArrayList<String>();
 		int key;
+		Double cov;
 		
 		while (fr.hasMoreLines()) {
 			line 	= fr.readLine();
@@ -35,21 +36,34 @@ public class ToCovWig extends Rwrapper {
 			tEnd	= Integer.parseInt(tokens[PAF.T_END]);
 			tLen	= Integer.parseInt(tokens[PAF.T_LEN]);
 			
+			// tLen/span = total num. windows
+			
 			if (!prevTName.equals(tName)) {
 				pos_total = chr_pos_total.get(tName);
 				if (pos_total == null) {
 					System.err.println("Collecting info for " + tName + " ...");
 					chrs.add(tName);
 					
-					HashMap<Integer, Integer> pt = new HashMap<Integer, Integer>();
-					for (int i = 0; i <= tLen/span; i++) pt.put(i, 0);
+					HashMap<Integer, Double> pt = new HashMap<Integer, Double>();
+					for (int i = 0; i <= tLen/span; i++) pt.put(i, 0.0d);
 					chr_pos_total.put(tName, pt);
 					pos_total = pt;
 				}
 			}
 
 			for (key = tStart / span; key <= tEnd/span; key++) {
-				pos_total.put(key, pos_total.get(key) + 1);
+				// is it partially falling in the window?
+				int wStart = key    * span;   // start position of the window at key
+				int wEnd   = wStart + span;   // end   position of the window at key
+				if (wEnd > tLen) wEnd = tLen; // not to exceed the target sequence length for the last window
+				
+				if (tStart > wStart || tEnd < wEnd) {
+					cov = (Math.min(tEnd, wEnd) - Math.max(tStart, wStart)) / (double) span;
+				} else {
+					cov = 1.0d;
+				}
+				
+				pos_total.put(key, pos_total.get(key) + cov);
 			}
 			
 			prevTName = tName;
@@ -66,17 +80,17 @@ public class ToCovWig extends Rwrapper {
 			System.out.println("fixedStep chrom=" + tName + " start=1 step=" + span + " span=" + span);
 			pos_total = chr_pos_total.get(tName);
 			
-			for (int j = 0; j < pos_total.size(); j++) System.out.println(pos_total.get(j));
+			for (int j = 0; j < pos_total.size(); j++) System.out.println(String.format("%.2f", pos_total.get(j)));
 		}
 	}
 
 	@Override
 	public void printHelp() {
-		System.out.println("Usage: java -jar pafToCovWig.jar <in.paf> <name> <span>");
-		System.out.println("\t<name>  : name of this track. String");
-		System.out.println("\t<span>  : span of the interval. INT");
-		System.out.println("\tstdout: .wig format.");
-		System.out.println("Arang Rhie, 2021-09-12. arrhie@gmail.com");
+		System.err.println("Usage: java -jar pafToCovWig.jar <in.paf> <name> <span>");
+		System.err.println("\t<name>  : name of this track. String");
+		System.err.println("\t<span>  : span of the interval. INT");
+		System.err.println("\tstdout: .wig format.");
+		System.err.println("Arang Rhie, 2023-09-22. arrhie@gmail.com");
 	}
 	
 	private static int span = 10000;
