@@ -48,6 +48,35 @@ public class Sam {
 		return null;
 	}
 	
+	/***
+	 * Parse CIGAR string, put them in a String array list
+	 * @param arr
+	 * @return
+	 */
+	public static ArrayList<String[]> parseCIGAR(String arr) {
+		ArrayList<String[]> array = new ArrayList<String[]>();
+		String count = "";
+		
+		for( int idx=0; idx<arr.length(); idx++ ){
+			// Find non digit CIGAR operations
+			if( Pattern.matches("[\\D]", Character.toString(arr.charAt(idx))) ){
+				
+				// initialize count and op pair
+				String[] tmp = new String[2];
+				tmp[COUNT] = count;		// int
+				tmp[OP] = Character.toString(arr.charAt(idx));	// [\\D]
+				
+				array.add(tmp);
+				count = "";
+				
+			} else {
+				// always begins with digits, don't worry
+				count = count + arr.charAt(idx);
+			}
+		}
+		return array;
+	}
+	
 	public static ArrayList<String[]> parseArr(String arr) {
 		String count = "";
 		String cigarOp = null;
@@ -56,12 +85,12 @@ public class Sam {
 		arr = arr.substring(arr.lastIndexOf(":") + 1);
 		
 		for( int idx=0; idx<arr.length(); idx++ ){
-			if( Pattern.matches("[A-Z^]", Character.toString(arr.charAt(idx))) ){
+			if( Pattern.matches("[\\D]", Character.toString(arr.charAt(idx))) ){
 				cigarOp = Character.toString(arr.charAt(idx));
 				String[] tmp = new String[2];
 				tmp[COUNT] = count;		// int
-				tmp[OP] = cigarOp;		// [A-Z^]
-				while (idx + 1 < arr.length() && Pattern.matches("[A-Z^]", Character.toString(arr.charAt(idx + 1))) ) {
+				tmp[OP] = cigarOp;		// [\\D]
+				while (idx + 1 < arr.length() && Pattern.matches("[\\D]", Character.toString(arr.charAt(idx + 1))) ) {
 					if (arr.charAt(idx + 1) == '^') {
 						break;
 					}
