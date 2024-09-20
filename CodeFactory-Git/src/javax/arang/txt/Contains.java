@@ -15,9 +15,6 @@ import javax.arang.IO.basic.RegExp;
  */
 public class Contains extends R2wrapper {
 
-	/* (non-Javadoc)
-	 * @see javax.arang.IO.I2Owrapper#hooker(javax.arang.IO.FileReader, javax.arang.IO.FileReader, javax.arang.IO.FileMaker)
-	 */
 	@Override
 	public void hooker(FileReader fr1, FileReader fr2) {
 		HashSet<String> lookups = new HashSet<String>();
@@ -61,22 +58,19 @@ public class Contains extends R2wrapper {
 		System.err.println(count + " / " + lookups.size() + " found.");
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.arang.IO.I2Owrapper#printHelp()
-	 */
 	@Override
 	public void printHelp() {
-		System.out.println("Usage: java -jar txtContains.jar <in1.txt> <in2.txt> <col_num_of_in1.txt> [isExactSearch=TRUE]");
-		System.out.println("\tLooks up for <in2.txt> if <col_num_of_in1.txt> in <in1.txt> contains it,");
-		System.out.println("\t and returns the overlapping line to standard output.");
-		System.out.println("\t<in1.txt>: any tab-delemited file");
-		System.out.println("\t\tLines starting with # will be copied to stdout.");
-		System.out.println("\t\t*Commas in tab-delimited, specified cloumn are also treated as seperator.");
-		System.out.println("\t<in2.txt>: values to look up. 1-value 1-line.");
-		System.out.println("\t<col_num_of_in1.txt>: INTEGER, 1-based column number to look up.");
-		System.out.println("\t[isExactSearch]: Only reports if value in <in2.txt> exactly matches <in1.txt>. DEFAULT=TRUE");
-		System.out.println("\t\tIf set to FALSE, reports everything that contains <in2.txt> in <in1.txt>.");
-		System.out.println("Arang Rhie, 2017-11-27. arrhie@gmail.com");
+		System.err.println("Usage: java -jar txtContains.jar <in1.txt> <in2.txt> <col_num_of_in1.txt> [isExactSearch=TRUE]");
+		System.err.println("\tLooks up for <in2.txt> if <col_num_of_in1.txt> in <in1.txt> contains it,");
+		System.err.println("\t and returns the overlapping line to standard output.");
+		System.err.println("\t<in1.txt>: any tab-delemited file");
+		System.err.println("\t\tLines starting with # will be copied to stdout.");
+		System.err.println("\t\t*Commas in tab-delimited, specified cloumn are also treated as seperator.");
+		System.err.println("\t<in2.txt>: values to look up. 1-value 1-line.");
+		System.err.println("\t<col_num_of_in1.txt>: INTEGER, 1-based column number to look up.");
+		System.err.println("\t[isExactSearch]: Only reports if value in <in2.txt> exactly matches <in1.txt>. DEFAULT=TRUE");
+		System.err.println("\t\tIf set to FALSE, reports everything that contains <in2.txt> in <in1.txt>.");
+		System.err.println("Arang Rhie, 2024-03-07. arrhie@gmail.com");
 	}
 	
 	private static int colIdx = 0;
